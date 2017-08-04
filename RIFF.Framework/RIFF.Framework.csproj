@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{664C1AAD-D414-4362-815E-E4FDBEC98D94}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RIFF.Framework</RootNamespace>
+    <AssemblyName>RIFF.Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+    <DocumentationFile>
+    </DocumentationFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp, Version=4.1.6.16, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\RedGate.iTextSharp.4.1.6.16\lib\net40\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activity\RFActivityRunnerProcessor.cs" />
+    <Compile Include="Activity\RFActivityContext.cs" />
+    <Compile Include="Activity\RFAttributionActivity.cs" />
+    <Compile Include="Config\RFEngineActivity.cs" />
+    <Compile Include="Console\RFConsoleExecutor.cs" />
+    <Compile Include="DataEditor\RFDataEditorActivity.cs" />
+    <Compile Include="DataSet\RFAttribution.cs" />
+    <Compile Include="DataSet\RFDataMatrix.cs" />
+    <Compile Include="DataSet\RFDataSetProcessor.cs" />
+    <Compile Include="DataSet\RFDataSetsActivity.cs" />
+    <Compile Include="DataSet\RFMappedProperty.cs" />
+    <Compile Include="DataSet\RFMappingDataSet.cs" />
+    <Compile Include="DataSet\RFDataSetSinkSQL.cs" />
+    <Compile Include="DataSet\RFDataSetGenerator.cs" />
+    <Compile Include="DataSet\RFDataSet.cs" />
+    <Compile Include="Email\EntryNotificationEmail.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntryNotificationEmail.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Email\GenericEmail.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GenericEmail.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Email\ImageEmail.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ImageEmail.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Email\ImageListEmail.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ImageListEmail.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Email\RFEmail.cs" />
+    <Compile Include="Email\RFImageListEmail.cs" />
+    <Compile Include="Email\RFTemplateBase.cs" />
+    <Compile Include="Email\_EmailLayout.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>_EmailLayout.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Empty\RFEmptyEngine.cs" />
+    <Compile Include="Import\RFDocumentFileSite.cs" />
+    <Compile Include="Import\RFFile.cs" />
+    <Compile Include="Import\RFFTPFileSite.cs" />
+    <Compile Include="Import\RFLocalFileSite.cs" />
+    <Compile Include="Import\RFMonitoredFile.cs" />
+    <Compile Include="Import\RFSeenFiles.cs" />
+    <Compile Include="Import\RFSimpleReportBuilder.cs" />
+    <Compile Include="Maintenance\RFCatalogMaintaner.cs" />
+    <Compile Include="RawReport\RFRawReportKey.cs" />
+    <Compile Include="RawReport\RFRawReportRow.cs" />
+    <Compile Include="RawReport\RFRawReportSection.cs" />
+    <Compile Include="Secure\RFLoginCache.cs" />
+    <Compile Include="Secure\RFSecureActivity.cs" />
+    <Compile Include="Secure\RFKeyVault.cs" />
+    <Compile Include="Secure\RFSecure.cs" />
+    <Compile Include="Export\RFSQLReportRunner.cs" />
+    <Compile Include="Flow\RFCopyExactProcessor.cs" />
+    <Compile Include="Flow\RFInputSelector.cs" />
+    <Compile Include="Maintenance\RFSQLCatalogMaintaner.cs" />
+    <Compile Include="Maintenance\RFDatabaseMaintainer.cs" />
+    <Compile Include="Maintenance\RFLogMaintainer.cs" />
+    <Compile Include="Maintenance\RFMaintainers.cs" />
+    <Compile Include="Import\RFRawReportBuilder.cs" />
+    <Compile Include="Import\RFFileSite.cs" />
+    <Compile Include="Import\RFInputReportsActivity.cs" />
+    <Compile Include="Activity\RFRequestActivity.cs" />
+    <Compile Include="Activity\RFActivity.cs" />
+    <Compile Include="Config\RFConfigActivity.cs" />
+    <Compile Include="Import\RFInputFilesActivity.cs" />
+    <Compile Include="Monitoring\RFMonitors.cs" />
+    <Compile Include="Notification\RFEntryNotification.cs" />
+    <Compile Include="Preferences\UserPreferences.cs" />
+    <Compile Include="RawReport\RFRawReportArchiver.cs" />
+    <Compile Include="RFFramework.cs" />
+    <Compile Include="RawReport\RFRawReport.cs" />
+    <Compile Include="Import\RFReportParserProcessor.cs" />
+    <Compile Include="Import\RFFileWatcherProcessor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Monitoring\RFSystemMonitor.cs" />
+    <Compile Include="Service\IRFService.cs" />
+    <Compile Include="Service\RFServiceClient.cs" />
+    <Compile Include="Service\RFServiceMaintainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Email\GenericEmail.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>GenericEmail.generated.cs</LastGenOutput>
+      <CustomToolNamespace>RIFF.Framework</CustomToolNamespace>
+    </None>
+    <None Include="Email\ImageListEmail.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>ImageListEmail.generated.cs</LastGenOutput>
+      <CustomToolNamespace>RIFF.Framework</CustomToolNamespace>
+    </None>
+    <None Include="Email\ImageEmail.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>ImageEmail.generated.cs</LastGenOutput>
+      <CustomToolNamespace>RIFF.Framework</CustomToolNamespace>
+    </None>
+    <None Include="Email\EntryNotificationEmail.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>EntryNotificationEmail.generated.cs</LastGenOutput>
+      <CustomToolNamespace>RIFF.Framework</CustomToolNamespace>
+    </None>
+    <None Include="Email\razorgenerator.directives" />
+    <None Include="Email\_EmailLayout.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>_EmailLayout.generated.cs</LastGenOutput>
+      <CustomToolNamespace>RIFF.Framework</CustomToolNamespace>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RIFF.Core\RIFF.Core.csproj">
+      <Project>{70420891-f043-4cf0-aec9-cdc61f2363c5}</Project>
+      <Name>RIFF.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RIFF.Interfaces\RIFF.Interfaces.csproj">
+      <Project>{2d095ac1-a543-41c8-b854-c2184ebbfc97}</Project>
+      <Name>RIFF.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{70420891-F043-4CF0-AEC9-CDC61F2363C5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RIFF.Core</RootNamespace>
+    <AssemblyName>RIFF.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <DocumentationFile>
+    </DocumentationFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="LZ4, Version=1.0.15.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
+      <HintPath>..\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Component\IRFEnvironment.cs" />
+    <Compile Include="Component\RFActiveComponent.cs" />
+    <Compile Include="Component\RFComponentContext.cs" />
+    <Compile Include="Component\RFEnvironmentBase.cs" />
+    <Compile Include="Component\RFPassiveComponent.cs" />
+    <Compile Include="Component\RFConsoleEnvironment.cs" />
+    <Compile Include="Component\RFServiceEnvironment.cs" />
+    <Compile Include="Component\RFStatic.cs" />
+    <Compile Include="Component\RFSystemConfig.cs" />
+    <Compile Include="Component\RFWebEnvironment.cs" />
+    <Compile Include="Compress\RFCompressor.cs" />
+    <Compile Include="Config\IRFUserConfig.cs" />
+    <Compile Include="Config\RIFFSection.cs" />
+    <Compile Include="Config\RFUserConfig.cs" />
+    <Compile Include="DataTypes\RFDateConverter.cs" />
+    <Compile Include="DataTypes\RFSecureDecimal.cs" />
+    <Compile Include="DataTypes\RFFileTrackedAttributes.cs" />
+    <Compile Include="Data\IRFCatalog.cs" />
+    <Compile Include="Data\IRFDataSet.cs" />
+    <Compile Include="Data\RFCatalogEntry.cs" />
+    <Compile Include="Data\RFDataSources.cs" />
+    <Compile Include="Data\RFDocument.cs" />
+    <Compile Include="Data\RFJSONSerializer.cs" />
+    <Compile Include="Data\RFStore.cs" />
+    <Compile Include="Data\RFXMLObject.cs" />
+    <Compile Include="Engine\IRFEngine.cs" />
+    <Compile Include="Engine\IRFEngineBuilder.cs" />
+    <Compile Include="Engine\IRFEngineConsole.cs" />
+    <Compile Include="Component\RFComponentCounter.cs" />
+    <Compile Include="Engine\RFEngineConsoleBase.cs" />
+    <Compile Include="Engine\RFEngineProcessInstanceParams.cs" />
+    <Compile Include="Engine\RFEngineProcessDefinition.cs" />
+    <Compile Include="Engine\RFEngineTask.cs" />
+    <Compile Include="Engine\RFTask.cs" />
+    <Compile Include="Graph\RFGraphDefinition.cs" />
+    <Compile Include="Graph\RFGraphTask.cs" />
+    <Compile Include="Helpers\RFDictionary.cs" />
+    <Compile Include="Helpers\RFEnumHelpers.cs" />
+    <Compile Include="Helpers\RFSettings.cs" />
+    <Compile Include="Processing\IRFEventSink.cs" />
+    <Compile Include="Processing\IRFInstructionSink.cs" />
+    <Compile Include="Processing\IRFProcessingContext.cs" />
+    <Compile Include="Processing\RFGraphProcessorDomain.cs" />
+    <Compile Include="Processing\RFGraphProcessorStatus.cs" />
+    <Compile Include="Processing\RFGraphProcessorTrigger.cs" />
+    <Compile Include="Processing\RFManualTriggerKey.cs" />
+    <Compile Include="Processing\RFRangeInput.cs" />
+    <Compile Include="Processing\RFStateKey.cs" />
+    <Compile Include="Queue\IRFDispatchStore.cs" />
+    <Compile Include="Queue\IRFEngineTrigger.cs" />
+    <Compile Include="Graph\RFGraphMap.cs" />
+    <Compile Include="Graph\RFGraphInstance.cs" />
+    <Compile Include="Graph\RFGraphProcessInstruction.cs" />
+    <Compile Include="Graph\RFGraphIOMapping.cs" />
+    <Compile Include="Graph\RFGraphProcessDefinition.cs" />
+    <Compile Include="Graph\RFGraphReactor.cs" />
+    <Compile Include="Queue\IRFDispatchQueue.cs" />
+    <Compile Include="Queue\RFBufferingSink.cs" />
+    <Compile Include="Queue\RFDispatchStoreSQL.cs" />
+    <Compile Include="Queue\RFEventSinkMSMQ.cs" />
+    <Compile Include="Queue\RFFormatterMSMQ.cs" />
+    <Compile Include="Queue\RFWorkDoneMonitorMSMQ.cs" />
+    <Compile Include="Queue\RFRequestTracker.cs" />
+    <Compile Include="Queue\RFSingleCommandTrigger.cs" />
+    <Compile Include="Queue\RFCatalogUpdateTrigger.cs" />
+    <Compile Include="Graph\RFSubGraph.cs" />
+    <Compile Include="Graph\RFGraphStats.cs" />
+    <Compile Include="Engine\RFEngineStats.cs" />
+    <Compile Include="Graph\RFGraphProcess.cs" />
+    <Compile Include="Data\RFXMLSerializer.cs" />
+    <Compile Include="Data\RFCatalogKey.cs" />
+    <Compile Include="Data\RFSQLCatalog.cs" />
+    <Compile Include="Engine\RFEventReactor.cs" />
+    <Compile Include="Engine\RFEngineProcess.cs" />
+    <Compile Include="Engine\RFKeyDomain.cs" />
+    <Compile Include="Graph\RFGraphTrigger.cs" />
+    <Compile Include="Engine\RFStatusKey.cs" />
+    <Compile Include="Error\RFLogicException.cs" />
+    <Compile Include="Error\RFSystemException.cs" />
+    <Compile Include="Helpers\BiDictionary.cs" />
+    <Compile Include="Helpers\RFGenericHelpers.cs" />
+    <Compile Include="Helpers\RFNumeric.cs" />
+    <Compile Include="Helpers\RFStringHelpers.cs" />
+    <Compile Include="Graph\RFGraphMapper.cs" />
+    <Compile Include="Queue\RFGraphDispatchQueue.cs" />
+    <Compile Include="Queue\RFDispatchQueueSink.cs" />
+    <Compile Include="Queue\RFWorkerThreadMSMQ.cs" />
+    <Compile Include="Queue\RFWorkQueueItem.cs" />
+    <Compile Include="Queue\RFDispatchQueueMonitorInProc.cs" />
+    <Compile Include="Queue\RFDispatchQueueMonitorMSMQ.cs" />
+    <Compile Include="Queue\RFDispatchQueueMonitorBase.cs" />
+    <Compile Include="Templates\RFRazor.cs" />
+    <Compile Include="UserLog\RFProcessLog.cs" />
+    <Compile Include="UserLog\RFUserLog.cs" />
+    <Compile Include="Helpers\RFFileHelpers.cs" />
+    <Compile Include="Helpers\RFRegexHelpers.cs" />
+    <Compile Include="DataTypes\RFEnum.cs" />
+    <Compile Include="DataTypes\RFDate.cs" />
+    <Compile Include="Helpers\RFConversions.cs" />
+    <Compile Include="Helpers\RFRounding.cs" />
+    <Compile Include="Helpers\RFStreamHelpers.cs" />
+    <Compile Include="Helpers\RFUser.cs" />
+    <Compile Include="Queue\RFInstruction.cs" />
+    <Compile Include="Component\RFEnvironments.cs" />
+    <Compile Include="Data\RFMetadata.cs" />
+    <Compile Include="Data\RFCatalog.cs" />
+    <Compile Include="Engine\RFEngineDefinition.cs" />
+    <Compile Include="Engine\RFSimpleEngine.cs" />
+    <Compile Include="Logging\RFLog4NetLog.cs" />
+    <Compile Include="Logging\RFLog.cs" />
+    <Compile Include="Logging\SmtpAsyncAppender.cs" />
+    <Compile Include="Processing\RFProcessingAttributes.cs" />
+    <Compile Include="Engine\RFEngineProcessor.cs" />
+    <Compile Include="Processing\RFNullProcessor.cs" />
+    <Compile Include="Processing\RFProcessingContext.cs" />
+    <Compile Include="Processing\RFProcessingTracker.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RFCore.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queue\RFEvent.cs" />
+    <Compile Include="Processing\RFGraphProcessor.cs" />
+    <Compile Include="Queue\RFInterval.cs" />
+    <Compile Include="Scheduler\RFSchedulerSchedule.cs" />
+    <Compile Include="Scheduler\RFSchedulerRange.cs" />
+    <Compile Include="Scheduler\RFScheduler.cs" />
+    <Compile Include="Helpers\RFReflectionHelpers.cs" />
+    <Compile Include="Security\RFRSA.cs" />
+    <Compile Include="UserRole\RFUserRole.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\BuildDate.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\BuildNumber.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)\Resources
+UpdateBuild.bat
+</PreBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.2.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

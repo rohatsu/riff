@@ -1,0 +1,18 @@
+﻿@using System.Linq
+@inherits RazorEngine.Templating.TemplateBase<RIFF.Framework.RFImageListEmailModel>
+<html>
+<body style="margin: 0; padding: 0;">
+    @if (!string.IsNullOrWhiteSpace(Model.HeaderHTML))
+    {
+        @: @Raw(Model.HeaderHTML)
+    }
+    @foreach (System.Drawing.Image image in Model.Images)
+    {
+        <img src="cid:@image.Tag.ToString()" alt="@image.Tag.ToString()" width="@image.Width" height="@image.Height" style="width: @(image.Width)px; height: @(image.Height)px" /><br />
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.FooterHTML))
+    {
+        @: @Raw(Model.FooterHTML)
+    }
+</body>
+</html>

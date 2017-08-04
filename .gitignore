@@ -1,0 +1,15 @@
+packages/
+.vs/
+RIFF.Console/bin/
+RIFF.Console/obj/
+RIFF.Core/bin/
+RIFF.Core/obj/
+RIFF.Framework/obj/
+RIFF.Framework/bin/
+RIFF.Interfaces/obj/
+RIFF.Interfaces/bin/
+RIFF.Service/bin/
+RIFF.Service/obj/
+RIFF.Tests/bin/
+RIFF.Tests/obj/
+*.user
