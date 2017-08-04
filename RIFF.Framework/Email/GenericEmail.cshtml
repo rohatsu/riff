@@ -1,0 +1,7 @@
+﻿@inherits RazorEngine.Templating.TemplateBase<RIFF.Framework.RFGenericEmail>
+@{
+    Layout = typeof(RIFF.Framework._EmailLayout).FullName;
+}
+<p style="font-family: Calibri; font-size: 11pt; color: #444; margin: 0; padding: 0;">
+    @Raw(Model.Body)
+</p>

@@ -1,0 +1,11 @@
+﻿@inherits RazorEngine.Templating.TemplateBase<RIFF.Framework.RFEntryNotificationEmail>
+@{
+    Layout = typeof(RIFF.Framework._EmailLayout).FullName;
+}
+<p style="font-family: Calibri; font-size: 11pt; color: #444;">
+    @Model.Message
+</p>
+@if (!string.IsNullOrWhiteSpace(Model.Url))
+{
+    <a style="font-family: Calibri; font-size: 11pt; color: #444;" href="@Raw(Model.Url)">@Model.Url</a>
+}
