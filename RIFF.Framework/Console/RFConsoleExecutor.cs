@@ -32,7 +32,8 @@ namespace RIFF.Framework
         {
             if (!string.IsNullOrWhiteSpace(input))
             {
-                var tokens = input.Split(',');
+                var tokens = new RIFF.Interfaces.Formats.CSV.CSVParser(input, ' ').Where(t => !string.IsNullOrWhiteSpace(t)).ToArray();
+
                 switch (tokens[0])
                 {
                     case "importupdates":

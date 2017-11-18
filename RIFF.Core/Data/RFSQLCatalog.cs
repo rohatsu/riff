@@ -636,33 +636,6 @@ namespace RIFF.Core
                 {
                     connection.Open();
 
-                    /*
-
-                    var viewName = latestOnly ? "[KeysLatestView]" : "[KeysView]";
-
-                    var getKeysSQL = String.Format("SELECT TOP {0} [CatalogKeyID], [KeyType], [ContentType], [Metadata], [Version], [UpdateTime], [SerializedKey], [IsValid], [DataSize], [GraphInstanceName], [GraphInstanceDate] FROM [RIFF].{1} WITH(NOLOCK)", limitResults, viewName);
-                    var criteria = new List<string>();
-                    if (!retrieveAllKeys)
-                    {
-                        criteria.Add("[KeyType] = @KeyType");
-                    }
-                    if (startTime.HasValue)
-                    {
-                        criteria.Add("[UpdateTime] >= @StartTime");
-                    }
-                    if (endTime.HasValue)
-                    {
-                        criteria.Add("[UpdateTime] <= @EndTime");
-                    }
-                    if (valueDate.HasValue)
-                    {
-                        criteria.Add("([GraphInstanceDate] IS NULL OR [GraphInstanceDate] <= @ValueDate)");
-                    }
-                    if (criteria.Count > 0)
-                    {
-                        getKeysSQL = getKeysSQL + " WHERE " + String.Join(" AND ", criteria);
-                    }
-                    getKeysSQL = getKeysSQL + " ORDER BY [UpdateTime] DESC";*/
                     using (var getCommand = CreateCommand("[RIFF].[SearchKeys]", connection))
                     {
                         getCommand.CommandType = CommandType.StoredProcedure;

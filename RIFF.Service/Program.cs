@@ -30,21 +30,23 @@ namespace RIFF.Service
                             return;
                         }
                     default:
-                        Console.WriteLine("Unrecognized parameter, use /install");
-                        return;
+                        break;
                 }
             }
-            else if (!Environment.UserInteractive)
+
+            if (!Environment.UserInteractive)
             {
-                ServiceBase.Run(new RFServiceHost());
+                ServiceBase.Run(new RFServiceHost(args));
             }
             else
             {
                 Console.WriteLine("Starting local instance... press any key to exit.");
+                log4net.GlobalContext.Properties["LogName"] = "Service";
                 XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
-                var service = new RFServiceHost();
+                var service = new RFServiceHost(args);
                 service.StartEnvironment();
                 Console.ReadLine();
+                service.Stop();
                 Environment.Exit(0);
             }
         }

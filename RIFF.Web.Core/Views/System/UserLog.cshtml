@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Activity Log";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div class="dx-fieldset" style="width: 300px;">
+    <div class="dx-field">
+        <div class="dx-field-label">Log Date</div>
+        <div class="dx-field-value" id="logdate"></div>
+    </div>
+</div>
+<div id="gridContainer" style="width:1550px; margin: 0 auto; height: 750px;"></div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var initializeGrid = function (data) {
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: [
+                    { dataField: 'Timestamp', caption: 'Time', width: "150px", dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", alignment: "center", sortIndex: 0, sortOrder: 'desc' },
+                    { dataField: 'Area', caption: 'Area', width: "150px" },
+                    { dataField: 'Action', caption: 'Action', width: "100px" },
+                    { dataField: 'Description', caption: 'Description', width: "700px" },
+                    { dataField: 'Username', caption: 'User', width: "130px" },
+                    { dataField: 'Processor', caption: 'Process', width: "150px" },
+                    { dataField: 'ValueDate', caption: 'Value Date', width: "100px", dataType: 'date', format: 'dd/MM/yyyy', alignment: "center" },
+                    { dataField: 'IsUserAction', caption: 'Action?', dataType: 'boolean', alignment: "center" }
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: false },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                //height: "100%",
+                // paging: { pageSize: 15 },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' },
+                onRowPrepared: function (rowInfo) {
+                    if (rowInfo.rowType == 'data' && rowInfo.data.IsWarning)
+                        rowInfo.rowElement.css('background', '#ffff80');
+                }
+            });
+        }
+
+        var refreshGrid = function()
+        {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetUserLog", "System")", {
+                logDate: RIFFWebCore.Helpers.getYMD($('#logdate').dxDateBox('instance').option("value")),
+            }, initializeGrid);
+        }
+
+        var RFinitialize = function () {
+            $('#logdate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@RIFF.Core.RFDate.Today().Year, @RIFF.Core.RFDate.Today().Month - 1, @RIFF.Core.RFDate.Today().Day),
+                onValueChanged: function (e) { refreshGrid(); }
+            });
+            refreshGrid();
+        };
+    </script>
+}

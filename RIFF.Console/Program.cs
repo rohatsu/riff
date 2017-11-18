@@ -3,14 +3,16 @@ using log4net.Config;
 using RIFF.Core;
 using RIFF.Framework;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace RIFF
 {
-    internal static class Program
+    public static class ConsoleApp
     {
-        private static void Main(string[] args)
+        public static void Start(string[] args)
         {
+            log4net.GlobalContext.Properties["LogName"] = "Console";
             XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
             var engine = RIFFSection.GetDefaultEngine();
             var config = engine.BuildEngineConfiguration();
@@ -27,21 +29,34 @@ namespace RIFF
             var executor = new RFConsoleExecutor(config, context, engine, engineConsole);
             Console.WriteLine(">>> Loaded engine {0} from {1} in environment {2}", engine?.EngineName, engine?.Assembly, engine.Environment);
 
-            do
+            if (args.Length > 0)
             {
-                try
+                // batch mode
+                executor.ExecuteCommand(String.Join(" ", args));
+            }
+            else
+            {
+                // interactive mode
+                do
                 {
-                    System.Console.Write("> ");
-                    var input = System.Console.ReadLine();
-                    executor.ExecuteCommand(input);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("EXCEPTION: {0}", ex.Message);
-                }
-            } while (!executor._isExiting);
-
+                    try
+                    {
+                        System.Console.Write("> ");
+                        var input = System.Console.ReadLine();
+                        executor.ExecuteCommand(input);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("EXCEPTION: {0}", ex.Message);
+                    }
+                } while (!executor._isExiting);
+            }
             environment.Stop();
+        }
+
+        private static void Main(string[] args)
+        {
+            Start(args);
         }
 
         private static string ReadLine()

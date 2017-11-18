@@ -137,7 +137,8 @@ namespace RIFF.Framework
                                                         if (ProcessFile(new RFFileAvailableEvent
                                                         {
                                                             FileKey = candidateFile.FileKey,
-                                                            FileAttributes = newAttrs
+                                                            FileAttributes = newAttrs,
+                                                            SourceSite = availableFile.SourceSite
                                                         }, file.Item2, candidateFile, seenFiles))
                                                         {
                                                             newFiles++;
@@ -299,7 +300,8 @@ namespace RIFF.Framework
                     FileSize = data.Length,
                     FullPath = availableFile.FileAttributes.FullPath,
                     ModifiedDate = availableFile.FileAttributes.ModifiedDate
-                }
+                },
+                SourceSite = availableFile.SourceSite
             };
             Log.Info("Storing new file {0} to {1}", finalName, mConfig.DestinationSite);
             mConfig.DestinationSite.PutFile(decryptedFile, monitoredFile, data);

@@ -19,8 +19,8 @@ namespace RIFF.Framework
                 processor: () => new RFLogMaintainer(new RFLogMaintainer.Config
                 {
                     ConnectionString = connectionString,
-                    LogArchiveDirectory = RFSettings.GetAppSetting("RFMaintainers.LogArchiveDirectory"),
-                    LogDirectories = (RFSettings.GetAppSetting("RFMaintainers.LogDirectories") ?? "").Split(';'),
+                    LogArchiveDirectory = RFSettings.GetAppSetting("RFMaintainers.LogArchiveDirectory", null),
+                    LogDirectories = (RFSettings.GetAppSetting("RFMaintainers.LogDirectories", "")).Split(';'),
                     SystemLogRetentionDays = RFSettings.GetAppSetting("RFMaintainers.SystemLogRetentionDays", 7),
                     MaintainLogFiles = RFSettings.GetAppSetting("RFMaintainers.MaintainLogFiles", false),
                     MaintainSystemLog = RFSettings.GetAppSetting("RFMaintainers.MaintainSystemLog", false),
@@ -43,16 +43,16 @@ namespace RIFF.Framework
                 {
                     ConnectionString = connectionString,
                     MaintainDatabase = RFSettings.GetAppSetting("RFMaintainers.MaintainDatabase", false),
-                    BackupDirectory = RFSettings.GetAppSetting("RFMaintainers.BackupDirectory"),
+                    BackupDirectory = RFSettings.GetAppSetting("RFMaintainers.BackupDirectory", null),
                     WeeklyRotation = RFSettings.GetAppSetting("RFMaintainers.WeeklyRotation", false),
-                    BackupPassword = RFSettings.GetAppSetting("RFMaintainers.BackupPassword"),
-                    WorkingDirectoryLocal = RFSettings.GetAppSetting("RFMaintainers.WorkingDirectoryLocal"),
-                    WorkingDirectoryUNC = RFSettings.GetAppSetting("RFMaintainers.WorkingDirectoryUNC"),
+                    BackupPassword = RFSettings.GetAppSetting("RFMaintainers.BackupPassword", null),
+                    WorkingDirectoryLocal = RFSettings.GetAppSetting("RFMaintainers.WorkingDirectoryLocal", null),
+                    WorkingDirectoryUNC = RFSettings.GetAppSetting("RFMaintainers.WorkingDirectoryUNC", null),
                     OptimizeDatabase = RFSettings.GetAppSetting("RFMaintainers.OptimizeDatabase", false)
                 }));
 
             var maintenanceTime = new TimeSpan(0, 15, 0);
-            string maintenanceTimeConfig = RFSettings.GetAppSetting("RFMaintainers.MaintenanceTime");
+            string maintenanceTimeConfig = RFSettings.GetAppSetting("RFMaintainers.MaintenanceTime", null);
             if (!string.IsNullOrWhiteSpace(maintenanceTimeConfig))
             {
                 maintenanceTime = TimeSpan.ParseExact(maintenanceTimeConfig, @"hh\:mm", null);

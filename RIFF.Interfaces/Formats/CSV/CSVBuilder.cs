@@ -16,38 +16,46 @@ namespace RIFF.Interfaces.Formats.CSV
             if (dataTable.Columns.Count == 0)
                 return null;
 
-            foreach (DataColumn col in dataTable.Columns)
+            int rowNo = 0;
+
+            if (!options.mSkipHeaders)
             {
-                string caption = col.Caption;
-                if (col == null || string.IsNullOrWhiteSpace(caption))
-                    sbData.Append(",");
-                else
+                var lineData = new StringBuilder();
+                foreach (DataColumn col in dataTable.Columns)
                 {
-                    if (options.mEscapeText)
-                    {
-                        string normalizedName = "\"" + caption.Replace("\"", "\"\"") + "\",";
-                        if (normalizedName.StartsWith("-", StringComparison.Ordinal) || normalizedName.StartsWith("+", StringComparison.Ordinal))
-                        {
-                            normalizedName = "'" + normalizedName;
-                        }
-                        sbData.Append(normalizedName);
-                    }
+                    string caption = col.Caption;
+                    if (col == null || string.IsNullOrWhiteSpace(caption))
+                        lineData.Append(",");
                     else
                     {
-                        sbData.Append(caption + ",");
+                        if (options.mEscapeText)
+                        {
+                            string normalizedName = "\"" + caption.Replace("\"", "\"\"") + "\",";
+                            if (normalizedName.StartsWith("-", StringComparison.Ordinal) || normalizedName.StartsWith("+", StringComparison.Ordinal))
+                            {
+                                normalizedName = "'" + normalizedName;
+                            }
+                            lineData.Append(normalizedName);
+                        }
+                        else
+                        {
+                            lineData.Append(caption + ",");
+                        }
                     }
                 }
+                lineData.Replace(",", "", lineData.Length - 1, 1);
+                sbData.AppendLine(lineData.ToString());
+                rowNo++;
             }
-
-            sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
 
             foreach (DataRow dr in dataTable.Rows)
             {
+                var lineData = new StringBuilder();
                 foreach (DataColumn col in dataTable.Columns)
                 {
                     var column = dr[col];
                     if (column == null)
-                        sbData.Append(",");
+                        lineData.Append(",");
                     else
                     {
                         if (column is DateTime)
@@ -55,27 +63,36 @@ namespace RIFF.Interfaces.Formats.CSV
                             var value = (DateTime)column;
                             if (options.mEscapeText)
                             {
-                                sbData.Append("\"" + value.ToString("yyyy-MM-dd") + "\",");
+                                lineData.Append("\"" + value.ToString("yyyy-MM-dd") + "\",");
                             }
                             else
                             {
-                                sbData.Append(value.ToString("yyyy-MM-dd") + ",");
+                                lineData.Append(value.ToString("yyyy-MM-dd") + ",");
                             }
                         }
                         else
                         {
                             if (options.mEscapeText)
                             {
-                                sbData.Append("\"" + column.ToString().Replace("\"", "\"\"") + "\",");
+                                lineData.Append("\"" + column.ToString().Replace("\"", "\"\"") + "\",");
                             }
                             else
                             {
-                                sbData.Append(column + ",");
+                                lineData.Append(column + ",");
                             }
                         }
                     }
                 }
-                sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
+                lineData.Replace(",", "", lineData.Length - 1, 1);
+                if (options.mTrimRows > rowNo)
+                {
+                    sbData.AppendLine(lineData.ToString().TrimEnd(','));
+                }
+                else
+                {
+                    sbData.AppendLine(lineData.ToString());
+                }
+                rowNo++;
             }
 
             return sbData.ToString();
@@ -85,5 +102,7 @@ namespace RIFF.Interfaces.Formats.CSV
     public class CSVOptions
     {
         public bool mEscapeText = true;
+        public bool mSkipHeaders = false;
+        public int mTrimRows = 0;
     }
 }

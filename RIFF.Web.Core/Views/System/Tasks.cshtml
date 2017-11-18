@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Tasks";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div class="dx-fieldset" style="width: 300px;">
+    <div class="dx-field">
+        <div class="dx-field-label">Graph Date</div>
+        <div class="dx-field-value" id="instancedate"></div>
+    </div>
+    <div class="dx-field">
+        <div class="dx-field-label">Graph Instance</div>
+        <div class="dx-field-value" id="instancename"></div>
+    </div>
+</div>
+
+<div id="gridContainer" style="width:1550px; margin: 0 auto; height: 750px;"></div>
+@*
+<div id="uploaddialog" style="display: none;">
+    @using (Html.BeginForm("SubmitDomain", "Process", new { area = "" }, FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+            {
+        <div class="dx-fieldset" style="width: 300px;">
+            <div class="dx-field">
+                <div class="dx-field-label" style="line-height: 30px;">Upload Domain</div>
+                <div class="dx-field-value"><div id="uploadfile"></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="valueDate" value="@Model.ValueDate.ToJavascript()" />
+    }
+</div>
+    *@
+@section RIFFPageScripts {
+    <script type="text/javascript">
+
+        var initializeGrid = function (data) {
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: [
+                    { dataField: 'GraphName', caption: 'Graph', width: "80px", dataType: 'string', sortOrder: 'asc', sortIndex: 1 },
+                    { dataField: 'TaskName', caption: 'Name', width: "250px", dataType: 'string', sortOrder: 'asc', sortIndex: 2 },
+                    { dataField: 'Description', caption: 'Description', width: "350px", dataType: 'string' },
+
+                    { dataField: 'Schedule', caption: 'Schedule / Trigger', width: "400px"/*, alignment: "center"*/, dataType: 'string' },
+                    //{ dataField: 'SchedulerRange', caption: 'Range', width: "175px", alignment: "center"  },
+                    //{ dataField: 'Trigger', caption: 'Trigger', width: "100px" },
+
+                    { dataField: 'IsSystem', caption: 'Sys?', dataType: 'boolean', width: "80px", visible: false, sortOrder: 'asc', sortIndex: 0 },
+
+                    { dataField: 'Status', caption: 'Status', width: "80px", dataType: 'string', alignment: "center" },
+                    { dataField: 'LastRun', caption: 'Last Run', width: "150px", dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", alignment: "center" },
+                    {
+                        //                        dataField: 'FullName',
+                        caption: 'Execute',
+                        width: "85px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Run')
+                                .attr('href', '@Url.Action("RunProcess", "Process")?isGraph=' + options.data.IsGraph +
+                                    '&processName=' + escape(options.data.FullName) +
+                                    '&instanceDate=' + RIFFWebCore.Helpers.getYMD($('#instancedate').dxDateBox('instance').option("value")) +
+                                    '&instanceName=' + escape($('#instancename').dxTextBox('instance').option("value")) +
+                                    '&returnUrl=' + escape('@Html.Raw(Url.Action("Tasks"))'))
+                                .appendTo(container);
+                        }
+                    },
+                    { dataField: 'Message', caption: 'Message', width: "500px", dataType: 'string' },
+                    { dataField: 'LastDuration', caption: '[ms]', width: "75px", format: "fixedPoint", dataType: 'number' },
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                onCellPrepared: function (e) {
+                    if (e !== undefined && e.rowType === 'data' && e.column.caption === 'Status') {
+                        if (e.data.Status === 'Finished' || e.data.Status === 'OK')
+                            e.cellElement.addClass('greencell');
+                        else if (e.data.Status === 'Started' || e.data.Status === 'Ignored')
+                            e.cellElement.addClass('yellowcell');
+                        else if (e.data.Status === 'Error')
+                            e.cellElement.addClass('redcell');
+                    }
+                },
+                groupPanel: { visible: false, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                showRowLines: true,
+                rowAlternationEnabled: false,
+                //height: "100%",
+                // paging: { pageSize: 15 },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: false },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var refreshGrid = function()
+        {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetTasks", "System")", {
+                instanceName: $('#instancename').dxTextBox('instance').option("value"),
+                instanceDate: RIFFWebCore.Helpers.getYMD($('#instancedate').dxDateBox('instance').option("value")),
+            }, initializeGrid);
+        }
+
+        var RFinitialize = function () {
+           $('#instancedate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@(RIFF.Core.RFDate.Today().Year), @(RIFF.Core.RFDate.Today().Month) - 1, @(RIFF.Core.RFDate.Today().Day)),
+                onValueChanged: function (e) { refreshGrid(); }
+            });
+            $('#instancename').dxTextBox({
+                placeholder: 'Graph Instance Name',
+                value: '@RIFF.Core.RFGraphInstance.DEFAULT_INSTANCE'
+            });
+            refreshGrid();
+        };
+    </script>
+}

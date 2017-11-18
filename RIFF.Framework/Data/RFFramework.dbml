@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="RIFF_Guard" Class="RFFrameworkDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="RIFF.MirroredFile" Member="MirroredFiles">
+    <Type Name="MirroredFile">
+      <Column Name="MirroredFileID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SourceSite" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FileSize" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FileName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="SourcePath" Type="System.String" DbType="VarChar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="ModifiedTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ReceivedTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IsExtracted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MirrorPath" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="NamedFileKey" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="Processed" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Message" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="ValueDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="NumRows" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

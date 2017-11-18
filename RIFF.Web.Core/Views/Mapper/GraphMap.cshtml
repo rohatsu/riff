@@ -1,0 +1,336 @@
+﻿@model RIFF.Web.Core.Models.Mapper.GraphMapModel
+@{
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+    ViewBag.Title = "Graph Browser";
+    ViewBag.SuppressTitle = true;
+}
+@*
+<span style="color: #444488">Processes <input type="checkbox" name="processes" value="Processes" id="processes" checked></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: #008800">Keys <input type="checkbox" name="keys" value="Keys" id="keys" checked></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: #999999">Properties <input type="checkbox" name="properties" value="Properties" id="properties"></span>
+    *@
+
+<div id="graphlist"></div>
+<div id="cy" style="width: 100%; height: 100px; margin-top: 0px;"></div>
+
+@section RIFFPageScripts {
+    <script src="@Url.Content("~/Scripts/cytoscape.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/cytoscape-cose-bilkent.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.qtip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/cytoscape-qtip.js")"></script>
+    <link href="@Url.Content("~/Content/jquery.qtip.min.css")" type="text/css" rel="stylesheet" />
+
+        <script type="text/javascript">
+        var cy;
+
+        var graphs = {
+            @foreach(var g in Model.Graphs)
+            {
+                <text>"@g.Key" : [ @Html.Raw(g.Value) ],</text>
+            }
+        };
+
+        var graphName;
+
+        $('#graphlist').dxSelectBox({
+            width: "300px",
+            dataSource: [ @Html.Raw(string.Join(",", Model.GraphsList.Select(k => String.Format("'{0}'", k))))],
+            value: null,
+            onValueChanged: function (data) {
+                graphName = data.value;
+                if(graphName)
+                {
+                    showGraphMap();
+                }
+            }
+        });
+
+        var showGraphMap = function () {
+
+            $('#cy').height($(window).height() - $('#cy').offset().top - 3);
+
+            RIFFWebCore.RIFFPage.showLoadPanel();
+
+            cy = cytoscape({
+                container: $('#cy'),
+
+                elements: graphs[graphName],
+
+                style: [ // the stylesheet for the graph
+                  {
+                      selector: 'node',
+                      style: {
+                          'label': 'data(label)',
+                          'text-wrap': 'wrap',
+                          'text-max-width': '50px',
+                          'width': 30,
+                          'height': 30,
+                          'font-size': '6px',
+                          'font-family': 'Helvetica Neue, Segoe UI, Helvetica, Verdana, sans-serif',
+                          'text-halign': 'center',
+                          'text-valign': 'center'
+                      }
+                  },
+                  {
+                      selector: 'node.transparent',
+                      style: {
+                          'background-opacity': 0.25,
+                          'text-opacity': 0.6,
+                      }
+                  },
+                  {
+                      selector: 'edge.transparent',
+                      style: {
+                          'opacity': 0.3
+                      }
+                  },
+                  {
+                      selector: '.highlighted',
+                      style: {
+                    //      'font-weight': 'bold',
+                      }
+                  },
+                  {
+                      selector: 'edge',
+                      style: {
+                          'width': 1,
+                          'line-color': '#ccc',
+                          'target-arrow-color': '#ccc',
+                      }
+                  },
+                  {
+                      selector: '.edge_input',
+                      style: {
+                          'target-arrow-shape': 'triangle'
+                      }
+                  },
+                  {
+                      selector: '.edge_output',
+                      style: {
+                          'target-arrow-shape': 'triangle'
+                      }
+                  },
+                  {
+                      selector: '.edge_state',
+                      style: {
+                          'line-style': 'dashed',
+                      }
+                  },
+                  {
+                      selector: '.edge_cross',
+                      style: {
+                          'line-style': 'dotted',
+                      }
+                  },
+                  {
+                      selector: '.process',
+                      style: {
+                          'shape': 'roundrectangle',
+                      }
+                  },
+                  {
+                      selector: '.graph0',
+                      style: {
+                          'background-color': '#999999',
+                      }
+                  },
+                  {
+                      selector: '.graph1',
+                      style: {
+                          'background-color': '#66ff66',
+                      }
+                  },
+                  {
+                      selector: '.graph2',
+                      style: {
+                          'background-color': '#ff6666',
+                      }
+                  },
+                  {
+                      selector: '.graph3',
+                      style: {
+                          'background-color': '#6666ff',
+                      }
+                  },
+                  {
+                      selector: '.graph4',
+                      style: {
+                          'background-color': '#ff66ff',
+                      }
+                  },
+                  {
+                      selector: '.graph5',
+                      style: {
+                          'background-color': '#ffff66',
+                      }
+                  },
+                  {
+                      selector: '.graph6',
+                      style: {
+                          'background-color': '#999999',
+                      }
+                  },
+                  {
+                      selector: '.graph7',
+                      style: {
+                          'background-color': '#66ff66',
+                      }
+                  },
+                  {
+                      selector: '.graph8',
+                      style: {
+                          'background-color': '#ff6666',
+                      }
+                  },
+                  {
+                      selector: '.graph9',
+                      style: {
+                          'background-color': '#6666ff',
+                      }
+                  },
+                  {
+                      selector: '.graph10',
+                      style: {
+                          'background-color': '#ff66ff',
+                      }
+                  },
+                  {
+                      selector: '.graph11',
+                      style: {
+                          'background-color': '#ffff66',
+                      }
+                  }, {
+                      selector: '.key',
+                      style: {
+                          'shape': 'ellipse',
+                          'background-color': '#dddddd',
+                      }
+                  }
+                ],
+
+                ready: function(event){ /* ... */ },
+
+                // initial viewport state:
+                zoom: 1,
+                pan: { x: 0, y: 0 },
+
+                // interaction options:
+                minZoom: 1e-50,
+                maxZoom: 1e50,
+                zoomingEnabled: true,
+                userZoomingEnabled: true,
+                panningEnabled: true,
+                userPanningEnabled: true,
+                boxSelectionEnabled: false,
+                selectionType: 'single',
+                touchTapThreshold: 8,
+                desktopTapThreshold: 4,
+                autolock: false,
+                autoungrabify: false,
+                autounselectify: false,
+
+                // rendering options:
+                headless: false,
+                styleEnabled: true,
+                hideEdgesOnViewport: false,
+                hideLabelsOnViewport: false,
+                textureOnViewport: false,
+                motionBlur: false,
+                motionBlurOpacity: 0.2,
+                wheelSensitivity: 0.2,
+                pixelRatio: 'auto',
+                initrender: function(event){ /* ... */ },
+                renderer: { /* ... */ },
+
+                layout: {
+                    name: 'cose-bilkent',
+                    ready: function () {
+                        // add cross-graph edges (no subject to layout)
+                        if (graphName == "ALL") {
+                            cy.add([ @Html.Raw(Model.MapCytoscapeCrossGraph)]);
+                        }
+                        RIFFWebCore.RIFFPage.hideLoadPanel();
+                  },
+                  idealEdgeLength: 150,
+                  animate: false
+                },
+                /*
+                layout: {
+                    name: 'cose',
+                    // Called on `layoutready`
+                    ready: function () { },
+                    // Called on `layoutstop`
+                    stop: function () { },
+                    // Whether to animate while running the layout
+                    animate: true,
+                    // The layout animates only after this many milliseconds
+                    // (prevents flashing on fast runs)
+                    animationThreshold: 250,
+                    // Number of iterations between consecutive screen positions update
+                    // (0 -> only updated on the end)
+                    refresh: 20,
+                    // Whether to fit the network view after when done
+                    fit: true,
+                    // Padding on fit
+                    padding: 10,
+                    // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+                    boundingBox: undefined,
+                    // Extra spacing between components in non-compound graphs
+                    componentSpacing: 100,
+                    // Node repulsion (non overlapping) multiplier
+                    nodeRepulsion: function (node) { return 400000; },
+                    // Node repulsion (overlapping) multiplier
+                    nodeOverlap: 10,
+                    // Ideal edge (non nested) length
+                    idealEdgeLength: function (edge) { return 10; },
+                    // Divisor to compute edge forces
+                    edgeElasticity: function (edge) { return 100; },
+                    // Nesting factor (multiplier) to compute ideal edge length for nested edges
+                    nestingFactor: 5,
+                    // Gravity force (constant)
+                    gravity: 80,
+                    // Maximum number of iterations to perform
+                    numIter: 10000,
+                    // Initial temperature (maximum node displacement)
+                    initialTemp: 200,
+                    // Cooling factor (how the temperature is reduced between consecutive iterations
+                    coolingFactor: 0.95,
+                    // Lower temperature threshold (below this point the layout will end)
+                    minTemp: 0.5,
+                    // Whether to use threading to speed up the layout
+                    useMultitasking: true
+                }*/
+
+            });
+
+            cy.on('select', 'node', function (event) {
+                cy.$('node:unselected').addClass('transparent');
+                cy.$('node:unselected').removeClass('highlighted');
+                cy.$('edge:unselected').addClass('transparent');
+
+                var neighb = cy.$('node:selected').closedNeighborhood();
+                neighb.removeClass('transparent');
+                neighb.addClass('highlighted');
+                cy.$('node:selected').connectedEdges().removeClass('transparent');
+            });
+
+            cy.on('mouseover', 'node', function (event) {
+                var node = event.cyTarget;
+                node.qtip({
+                    content: node.data('info'),
+                    show: {
+                        event: event.type,
+                        ready: true
+                    },
+                    hide: {
+                        event: 'mouseout unfocus'
+                    }
+                }, event);
+            });
+        }
+
+        var RFinitialize = function () {
+            //showGraphMap();
+        };
+    </script>
+}

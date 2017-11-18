@@ -11,7 +11,7 @@ namespace RIFF.Framework
 
         public static string Restart(string requestingUser)
         {
-            var serviceName = RFSettings.GetAppSetting("RFMaintainers.ServiceName");
+            var serviceName = RFSettings.GetAppSetting("RFMaintainers.ServiceName", null);
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
                 var serviceTimeout = TimeSpan.FromSeconds(RFSettings.GetAppSetting("RFMaintainers.ServiceTimeoutSeconds", 60));

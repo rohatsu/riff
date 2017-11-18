@@ -3,6 +3,7 @@ using RIFF.Core;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace RIFF.Framework
 {
@@ -20,6 +21,9 @@ namespace RIFF.Framework
 
         [DataMember]
         public RFEnum FileKey { get; set; }
+
+        [DataMember]
+        public RFEnum SourceSite { get; set; }
     }
 
     [DataContract]
@@ -43,6 +47,8 @@ namespace RIFF.Framework
 
         public string ArchivePath { get; set; }
 
+        public bool UseTemporaryName { get; set; }
+
         protected RFFileSite(RFEnum siteKey, string configSection, IRFUserConfig userConfig)
         {
             SiteKey = siteKey;
@@ -59,6 +65,7 @@ namespace RIFF.Framework
                 WriteCooldown = userConfig.GetInt(configSection, siteKey, false, null, "WriteCooldown");
                 ScanArchives = userConfig.GetBool(configSection, siteKey, false, false, "ScanArchives");
                 ArchivePath = userConfig.GetString(configSection, siteKey, false, "ArchivePath");
+                UseTemporaryName = userConfig.GetBool(configSection, siteKey, false, false, "UseTemporaryName");
             }
         }
 
@@ -109,16 +116,26 @@ namespace RIFF.Framework
             return false;
         }
 
-        protected void ProcessCandidate(RFMonitoredFile file, RFFileTrackedAttributes candidate, ref List<RFFileAvailableEvent> foundFiles)
+        protected RFFileAvailableEvent ProcessCandidate(RFMonitoredFile file, RFFileTrackedAttributes candidate, ref List<RFFileAvailableEvent> foundFiles)
         {
             if (!IsStillWrittenTo(candidate))
             {
-                foundFiles.Add(new RFFileAvailableEvent
+                var fae = new RFFileAvailableEvent
                 {
                     FileKey = file.FileKey,
-                    FileAttributes = candidate
-                });
+                    FileAttributes = candidate,
+                    SourceSite = SiteKey
+                };
+                foundFiles.Add(fae);
+                return fae;
             }
+            return null;
+        }
+
+        public static bool FitsMask(string sFileName, string sFileMask)
+        {
+            Regex mask = new Regex("^" + Regex.Escape(sFileMask)/*.Replace(".", "[.]")*/.Replace(@"\*", ".*").Replace(@"\?", ".") + "$", RegexOptions.IgnoreCase);
+            return mask.IsMatch(sFileName);
         }
     }
 }

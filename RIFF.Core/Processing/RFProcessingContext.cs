@@ -13,6 +13,7 @@ namespace RIFF.Core
         public long DataSize { get; set; }
 
         public RFGraphInstance Instance { get; set; }
+
         public bool IsValid { get; set; }
 
         public RFCatalogKey Key { get; set; }
@@ -259,14 +260,13 @@ namespace RIFF.Core
                 materialUpdate = _catalog.SaveItem(entry, overwrite);
                 raiseEvent &= materialUpdate;
             }
-            if (raiseEvent /*|| ProcessingMode == RFProcessingMode.RFSinglePass*/)
+            if (raiseEvent)
             {
                 _events.RaiseEvent(this, new RFCatalogUpdateEvent
                 {
                     Key = entry.Key
                 }, ProcessingKey);
             }
-            //Tracker.Keys.Add(entry.Key);
             return materialUpdate;
         }
 

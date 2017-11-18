@@ -32,7 +32,7 @@ namespace RIFF.Framework
             {
                 if (!string.IsNullOrWhiteSpace(Config.To) && Config.Enabled)
                 {
-                    var sender = RFSettings.GetAppSetting("SmtpSender");
+                    var sender = RFSettings.GetAppSetting("SmtpSender", null);
                     if (string.IsNullOrWhiteSpace(subject))
                     {
                         throw new RFLogicException(this, "E-mail subject cannot be empty.");

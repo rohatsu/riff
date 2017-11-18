@@ -1,6 +1,8 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace RIFF.Core
 {
@@ -41,6 +43,24 @@ namespace RIFF.Core
             {
                 Log.Warning(this, "Error in RFActiveComponent.Stop: {0}", ex.Message);
             }
+
+            try
+            {
+                if (_thread != null && _thread.IsAlive)
+                {
+                    _thread.Abort();
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(this, "Error in Shutdown/Abort: {0}", ex.Message);
+            }
         }
 
         public Thread StartThread()
@@ -67,6 +87,10 @@ namespace RIFF.Core
             {
                 Log.Debug(this, "Aborting RFActiveComponent thread");
             }
+            catch (ThreadAbortException)
+            {
+                Log.Debug(this, "Aborting RFActiveComponent thread");
+            }
             catch (Exception ex)
             {
                 Log.Warning(this, "Error in RFActiveComponent.Run: {0}", ex.Message);
@@ -87,6 +111,96 @@ namespace RIFF.Core
 
         protected virtual void Stop()
         {
+        }
+    }
+
+    public interface IRFBackgroundService
+    {
+        void StartCommand();
+
+        void StopCommand();
+
+        List<RFInstruction> CustomCommand(string command, string param);
+    }
+
+    public abstract class RFBackgroundService : IRFBackgroundService
+    {
+        protected CancellationTokenSource CancellationSource { get; }
+
+        public abstract void Start();
+
+        public abstract void Stop();
+
+        public virtual List<RFInstruction> CustomCommand(string command, string param)
+        {
+            return null;
+        }
+
+        public RFBackgroundService()
+        {
+            CancellationSource = new CancellationTokenSource();
+        }
+
+        public void Shutdown()
+        {
+            CancellationSource.Cancel();
+        }
+
+        public void WaitForCancel()
+        {
+            CancellationSource.Token.WaitHandle.WaitOne();
+        }
+
+        public bool IsExiting()
+        {
+            return CancellationSource.IsCancellationRequested;
+        }
+
+        public void StartCommand()
+        {
+            Start();
+        }
+
+        public void StopCommand()
+        {
+            Shutdown();
+            Stop();
+        }
+    }
+
+    internal class RFBackgroundServiceComponent : RFActiveComponent
+    {
+        private IRFBackgroundService _impl;
+
+        public RFBackgroundServiceComponent(RFComponentContext context, IRFBackgroundService impl) : base(context)
+        {
+            _impl = impl;
+        }
+
+        public List<RFInstruction> Command(string command, string param)
+        {
+            switch (command.ToLower())
+            {
+                case RFServiceEvent.START_COMMAND:
+                    StartThread();
+                    break;
+                case RFServiceEvent.STOP_COMMAND:
+                    Shutdown();
+                    break;
+                default:
+                    return _impl.CustomCommand(command, param);
+            }
+            return null;
+        }
+
+        protected override void Run()
+        {
+            _impl.StartCommand();
+        }
+
+        protected override void Stop()
+        {
+            _impl.StopCommand();
         }
     }
 }

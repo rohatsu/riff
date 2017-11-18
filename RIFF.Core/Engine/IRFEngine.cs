@@ -4,7 +4,7 @@ namespace RIFF.Core
 {
     internal interface IRFEngine
     {
-        void Initialize();
+        void Initialize(IRFProcessingContext serviceContext);
 
         RFProcessingResult Process(RFInstruction i, IRFProcessingContext processingContext);
 

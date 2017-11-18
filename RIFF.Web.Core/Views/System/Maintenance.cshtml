@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Maintenance";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="restartButton"></div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+
+        var RFinitialize = function () {
+            $('#restartButton').dxButton({
+                text: 'Restart',
+                type: 'danger',
+                width: '75px',
+                onClick: function () {
+                    RIFFWebCore.Helpers.areYouSure("restart the system", function () {
+                        RIFFWebCore.Helpers.postUserActionProcessing("@Url.Action("Restart", "System")", null, "System restarted.");
+                    });
+                }
+            });
+        };
+    </script>
+}

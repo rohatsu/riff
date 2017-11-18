@@ -1,0 +1,51 @@
+﻿@model RIFF.Web.Core.Models.Mirror.IndexModel
+@{
+    ViewBag.Title = "Received Files";
+    ViewBag.SuppressTitle = true;
+    ViewBag.MaxWidth = "1600px";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div style="width: 270px; float: left; overflow: auto;">
+    <div style="width: 250px; vertical-align: top; display: inline-block;">
+        <h3 style="margin-bottom: 10px;">Received Files</h3>
+    </div>
+
+    <div style="width: 250px; vertical-align: top; display: inline-block; margin-left: 10px;">
+        <div data-bind="dxTreeView: sourcesGrid.options"></div>
+    </div>
+</div>
+
+<div style="width: auto; float: none; margin-left: 290px; height: 100%; position: relative;">
+    <div style="height: 50%; position: relative;">
+        <div style="height: auto; min-height: 100px; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: 5px;">
+            <div data-bind="dxDataGrid: filesGrid.options" style="height: 100%;"></div>
+        </div>
+    </div>
+
+    <div style="height: 50%; position: relative;">
+        <div style="height: auto; min-height: 100px; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: 5px;">
+            <div style="height: 30px; width: 100%; clear: both; position: absolute; top: 10px; left: 0px;">
+                <div style="width: 500px; display: inline-block; margin-left: 0px; height: 30px;" class="dx-field">
+                    <div class="dx-field-label" style="width: 100px;">Preview Sheet</div>
+                    <div data-bind="dxSelectBox: sectionSelect.options" style="display: inline-block; width: 300px;"></div>
+                </div>
+            </div>
+
+            <div style="height: 100%; width: 100%; padding-top: 45px; box-sizing: border-box;">
+                <div data-bind="dxDataGrid: previewGrid.options" style="height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var codeBehind = new RIFF.Web.System.MirrorPage({
+            urlGetFiles: '@Html.Raw(Url.Action("GetFiles", "Mirror"))',
+            urlGetFile: '@Html.Raw(Url.Action("GetFile", "Mirror"))',
+            urlGetPreview: '@Html.Raw(Url.Action("GetPreview", "Mirror"))',
+            dataSources: @Html.Raw(Model.Sources)
+        });
+    </script>
+}

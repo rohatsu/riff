@@ -47,12 +47,16 @@ namespace RIFF.Core
         [DataMember]
         public List<IRFEngineTrigger> Triggers { get; private set; }
 
+        [DataMember]
+        public Dictionary<string, Func<IRFProcessingContext, IRFBackgroundService>> Services { get; private set; }
+
         protected RFEngineDefinition(string engineName, RFKeyDomain keyDomain, int intervalSeconds, TimeSpan maxRuntime)
         {
             KeyDomain = keyDomain;
             EngineName = engineName;
             Processes = new Dictionary<string, RFEngineProcessDefinition>();
             Triggers = new List<IRFEngineTrigger>();
+            Services = new Dictionary<string, Func<IRFProcessingContext, IRFBackgroundService>>();
             Graphs = new Dictionary<string, RFGraphDefinition>();
             Keys = new Dictionary<string, string>();
             Tasks = new List<RFEngineTaskDefinition>();
@@ -298,5 +302,14 @@ namespace RIFF.Core
             Keys.Add(RFXMLSerializer.SerializeContract(key), description);
             return key;
         }*/
+
+        public void AddService(string serviceName, Func<IRFProcessingContext, IRFBackgroundService> service)
+        {
+            if(Services.ContainsKey(serviceName))
+            {
+                throw new Exception(String.Format("Already registered service {0}", serviceName));
+            }
+            Services.Add(serviceName, service);
+        }
     }
 }

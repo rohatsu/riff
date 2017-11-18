@@ -21,5 +21,14 @@ namespace RIFF.Core
 
             return System.Text.RegularExpressions.Regex.Replace(name, invalidRegStr, "_");
         }
+
+        public static string GetContentType(string fileName)
+        {
+            if (fileName.NotBlank() && fileName.Contains("."))
+            {
+                return MimeTypes.MimeTypeMap.GetMimeType(System.IO.Path.GetExtension(fileName).ToLower());
+            }
+            return MimeTypes.MimeTypeMap.GetMimeType("");
+        }
     }
 }

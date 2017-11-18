@@ -21,7 +21,7 @@ namespace RIFF.Framework
                 {
                     ConnectionString = connectionString,
                     PublishToDashboard = RFSettings.GetAppSetting("RFMonitors.PublishToDashboard", false),
-                    DashboardURL = RFSettings.GetAppSetting("RFMonitors.DashboardURL"),
+                    DashboardURL = RFSettings.GetAppSetting("RFMonitors.DashboardURL", null),
                     Environment = environment,
                     StateKey = RFStateKey.CreateKey(engineConfig.KeyDomain, engineConfig.EngineName, "System Monitor", null)
                 }));

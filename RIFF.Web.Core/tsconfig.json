@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "target": "es5",
+    "outFile": "Scripts/riff/RIFF.js"
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}

@@ -26,6 +26,8 @@ namespace RIFF.Framework
 
         public bool RemoveExpired { get; set; }
 
+        public string ContentPasswords { get; set; }
+
         [IgnoreDataMember]
         protected static readonly string CONFIG_SECTION = "Input Files";
 
@@ -43,7 +45,8 @@ namespace RIFF.Framework
                     NameTransform = nameTransform,
                     Recursive = config.GetBool(CONFIG_SECTION, fileKey, false, false, "RecursiveSearch"),
                     RemoveExpired = config.GetBool(CONFIG_SECTION, fileKey, false, false, "RemoveExpired"),
-                    LatestOnly = config.GetBool(CONFIG_SECTION, fileKey, false, false, "LatestOnly")
+                    LatestOnly = config.GetBool(CONFIG_SECTION, fileKey, false, false, "LatestOnly"),
+                    ContentPasswords = config.GetString(CONFIG_SECTION, fileKey, false, "ContentPasswords"),
                 };
                 if (string.IsNullOrWhiteSpace(m.FileNameWildcard) && string.IsNullOrWhiteSpace(m.FileNameRegex) && throwIfFail)
                 {

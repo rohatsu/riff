@@ -1,0 +1,362 @@
+﻿@{
+    ViewBag.Title = "Access";
+    ViewBag.SuppressTitle = true;
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="tabs"></div>
+@RIFF.Web.Core.App_Code.RazorHelpers.TabsBase()
+
+<div id="tab1" class="tab-content">
+    <table style="width: 1550px; table-layout: fixed;">
+        <tr>
+            <td style="width: 775px; vertical-align: top;">
+                <h3>Roles</h3>
+                <div id="rolesContainer" style="height: 750px;">
+                </div>
+            </td>
+            <td style="width: 775px; vertical-align: top;">
+                <h3>Effective Permissions</h3>
+                <div id="permissionsContainer" style="height: 750px;">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="tab2" class="tab-content" style="display: none;">
+    <table style="width: 1500px; table-layout: fixed; margin-top: 13px;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <div id="keysbox" class="box">
+                    <div data-options="dxItem: { ratio: 0.25 }">
+                        <div class="dx-field-label" style="width: 90%; text-align: right;">Vault Password:</div>
+                    </div>
+                    <div data-options="dxItem: { ratio: 0.35 }">
+                        <div class="dx-field-value" id="p" style="width: 90%;"></div>
+                    </div>
+                    <div data-options="dxItem: { ratio: 0.25 }">
+                        <div id="vault_load" style="width: 90%;"></div>
+                    </div>
+                    <div data-options="dxItem: { ratio: 0.25 }">
+                        <div id="reset_password" style="width: 90%;"></div>
+                    </div>
+                    <div data-options="dxItem: { ratio: 0.25 }">
+                        <div id="reset_master" style="width: 90%;"></div>
+                    </div>
+                    <div data-options="dxItem: { ratio: 0.25 }">
+                        <div id="backup_master" style="width: 90%;"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 1500px; vertical-align: top;">
+                <div id="keysContainer" style="height: 750px;">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="changepassworddialog" style="display: none;">
+    <div class="dx-fieldset" style="width: 350px;">
+        <div class="dx-field">
+            <div class="dx-field-label">New Password:</div>
+            <div class="dx-field-value" id="newpassword1"></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">Repeat New Password:</div>
+            <div class="dx-field-value" id="newpassword2"></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label"><div id="submitpassword" style="margin-top: 10px;"></div></div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("BackupMasterKey", "Role", FormMethod.Post, new { id = "backupform" }))
+{
+    <input name="p" type="hidden" id="backup_p" />
+}
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+
+        var setRequiresApply = function () {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetPermissions", "Role")", null, initializePermissions);
+        }
+
+        var initializeRoles = function (data) {
+
+            $("#rolesContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.Roles,
+                columns: [
+                    { dataField: 'RoleName', caption: 'Role Name', width: "200px", sortIndex: 0, sortOrder: 'asc' },
+                    { dataField: 'NumMembers', caption: '# Members', width: "200px" },
+                    { dataField: 'NumPermissions', caption: '# Permissions', width: "200px" }
+                ],
+                masterDetail: {
+                    enabled: true,
+                    template: function (container, info) {
+                        $('<h3>Members</h3>').appendTo(container);
+                        $('<div>').dxDataGrid({
+                            hoverStateEnabled: true,
+                            columnAutoWidth: true,
+                            dataSource: info.row.data.Members,
+                            columns: [
+                                { dataField: 'Username', caption: 'User Login' },
+                                { dataField: 'RoleName', caption: 'Role', visible: false }
+                            ],
+                            editing: {
+                                allowUpdating: false,
+                                mode: 'row',
+                                allowAdding: true,
+                                allowDeleting: true
+                            },
+                            onRowRemoved: function (e) {
+                                RIFFWebCore.Helpers.postUserAction("@Url.Action("RemoveMember", "Role")", e.data, "Role membership removed.",
+                                    setRequiresApply);
+                            },
+                            onRowInserted: function (e) {
+                                RIFFWebCore.Helpers.postUserAction("@Url.Action("AddMember", "Role")", e.data, "Role membership added.",
+                                    setRequiresApply);
+                            },
+                            onInitNewRow: function (e) {
+                                e.data.RoleName = info.row.data.RoleName;
+                            },
+                            loadPanel: {
+                                enabled: false
+                            }
+                        }).appendTo(container);
+                        $('<br /><h3>Permissions</h3>').appendTo(container);
+                        $('<div>').dxDataGrid({
+                            hoverStateEnabled: true,
+                            columnAutoWidth: true,
+                            dataSource: info.row.data.Permissions,
+                            columns: [
+                                { dataField: 'Area', caption: 'Area' },
+                                { dataField: 'Controller', caption: 'Controller' },
+                                { dataField: 'Permission', caption: 'Permission' },
+                                { dataField: 'IsAllowed', caption: 'Enabled', datatype: 'boolean' }
+                            ],
+                            loadPanel: {
+                                enabled: false
+                            }
+                        }).appendTo(container);
+                    }
+                },
+                columnChooser: { enabled: false },
+                allowColumnReordering: true,
+                allowColumnResizing: true,
+                sorting: { mode: 'single' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: false },
+                rowAlternationEnabled: true,
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: false },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+
+            setRequiresApply();
+        }
+
+        var initializePermissions = function (data) {
+
+            $("#permissionsContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.Permissions,
+                columns: [
+                    { dataField: 'UserName', caption: 'User Login', width: "120px", sortIndex: 0, sortOrder: 'asc' },
+                    { dataField: 'RoleName', caption: 'Role Name', width: "120px", sortIndex: 1, sortOrder: 'asc' },
+                    { dataField: 'Area', caption: 'Area', width: "75px" },
+                    { dataField: 'Controller', caption: 'Controller', width: "160px" },
+                    { dataField: 'Permission', caption: 'Permission', width: "100px" },
+                    { dataField: 'IsAllowed', caption: 'Enabled', width: "100px", datatype: 'boolean' }
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: true,
+                allowColumnResizing: true,
+                sorting: { mode: 'single' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: false },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var initializeKeys = function (data) {
+
+            $("#keysContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.Keys,
+                columns: [
+                    { dataField: 'Vault', caption: 'Key Vault Name', width: "160px", sortIndex: 0, sortOrder: 'asc' },
+                    { dataField: 'KeyID', caption: 'Key ID', width: "160px", sortIndex: 1, sortOrder: 'desc' },
+                    { dataField: 'SecuredByKeyID', caption: 'Secured By Key', width: "160px" },
+                    { dataField: 'SecuredByUsername', caption: 'Secured By Password', width: "160px" },
+                    { dataField: 'CipherStream', caption: 'Encrypted Representation', width: "600px", allowFiltering: false },
+                    { dataField: 'Accessible', caption: 'Accessible', width: "160px", datatype: 'boolean' }
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: true,
+                allowColumnResizing: true,
+                sorting: { mode: 'single' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: false },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var doLogin = function (e) {
+            var p = getPassword();
+
+            if (!p) {
+                RIFFWebCore.Helpers.alert("Please input your current Vault Password first.");
+                return;
+            }
+
+            RIFFWebCore.Helpers.postUserActionCallback('@Url.Action("GetKeys")', { p: p },
+                function (data) {
+                    initializeKeys(data);
+                });
+        }
+
+        var getPassword = function () {
+            return $('#p').dxTextBox("instance").option("value");
+        }
+
+        var changePassword = function () {
+            var p = getPassword();
+
+            if (!p) {
+                RIFFWebCore.Helpers.alert("Please input your current Vault Password first.");
+                return;
+            }
+            $('#changepassworddialog').dxPopup({
+                showTitle: true,
+                title: 'Change password',
+                width: 400,
+                height: 180,
+                visible: true
+            });
+
+            $('#newpassword1').dxTextBox({ mode: 'password', value: '' });
+            $('#newpassword2').dxTextBox({ mode: 'password', value: '' });
+            $('#submitpassword').dxButton({ text: 'Change', onClick: doChangePassword });
+        }
+
+        var resetMaster = function () {
+            var p = getPassword();
+
+            if (!p) {
+                RIFFWebCore.Helpers.alert("Please input your current Vault Password first.");
+                return;
+            }
+
+            RIFFWebCore.Helpers.areYouSure("randomize the Master Key (this will remove everyone else's access to it)", function () {
+                RIFFWebCore.Helpers.postUserActionCallback("@Url.Action("ResetMaster")", { p: getPassword() }, doLogin);
+            });
+        }
+
+        var backupMaster = function () {
+            var p = getPassword();
+
+            if (!p) {
+                RIFFWebCore.Helpers.alert("Please input your current Vault Password first.");
+                return;
+            }
+
+            $('#backup_p').val(getPassword());
+            $('#backupform').submit();
+        }
+
+        var doChangePassword = function () {
+            var p1 = $('#newpassword1').dxTextBox('instance').option('value');
+            var p2 = $('#newpassword2').dxTextBox('instance').option('value');
+            if (!p1 || !p2) {
+                RIFFWebCore.Helpers.alert('Please enter the password twice.')
+                return;
+            }
+            if (p1 !== p2) {
+                RIFFWebCore.Helpers.alert('Passwords must match.')
+                return;
+            }
+            RIFFWebCore.Helpers.postUserAction("@Url.Action("ChangePassword")", { old_p: getPassword(), new_p: p1 }, "Password changed.", function () {
+                $('#p').dxTextBox('instance').option('value', p1);
+
+                $('#changepassworddialog').dxPopup("instance").toggle(false);
+                doLogin();
+            });
+        }
+
+        var RFinitialize = function () {
+            $('#tabs').dxTabs({
+                dataSource:
+                    [
+                        { text: "Roles", content: "#tab1" },
+                        { text: "Keys", content: "#tab2" },
+                    ],
+                width: "30%",
+                selectedIndex: 0,
+                onItemClick: function (e) {
+                    $(".tab-content").hide();
+                    $(e.itemData.content).show();
+                    if (e.itemData.content === "#tab2") {
+                        $('#p').dxTextBox('instance').focus();
+                    }
+                }
+            });
+
+            $('#keysbox').dxBox({
+                direction: 'row',
+                height: '30px',
+                width: '900px'
+            });
+
+            $('#p').dxTextBox({ mode: 'password', placeholder: '', valueChangeEvent: 'change keydown', onEnterKey: doLogin });
+
+            $('#vault_load').dxButton({ text: 'Load Vault', onClick: doLogin });
+            $('#reset_password').dxButton({ text: 'Change Password', onClick: changePassword });
+            $('#reset_master').dxButton({ text: 'Reset Master Key', onClick: resetMaster });
+            $('#backup_master').dxButton({ text: 'Backup Master Key', onClick: backupMaster });
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetRoles", "Role")", null, initializeRoles);
+        };
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html style="overflow-y: scroll;">
+@{
+    var userName = RIFF.Core.RFUser.GetUserName(User);
+    var presentationMode = RIFF.Web.Core.App_Start.RIFFStart.IsPresentationMode(userName);
+    var menu = RIFF.Web.Core.App_Start.RIFFStart.GetMenu(User.Identity.Name, presentationMode);
+    ViewBag.PresentationMode = presentationMode;
+}
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - @menu.Name</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="@Url.Content("~/Images/favicon-32x32.png")">
+    <link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/Images/favicon-16x16.png")">
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/print.css")" media="print" />
+    @Styles.Render("~/Content/core")
+    @Styles.Render("~/Content/custom")
+</head>
+
+<body class="dx-theme-generic-typography" id="riffbody">
+    <div style="overflow-x: auto; overflow-y: hidden; width: 100%; clear: both; height: 39px; min-width: 1550px; top: 0px; left: 0px; position: absolute;" class="noprint" id="rifftopheader">
+        <div id="header" style="float:left; cursor:pointer; padding: 5px;" onclick="javascript: window.location.assign('@Url.Action("Index", "Home", new { area = "" })');">
+            <img src="@Url.Content("~/Images/riff_logo_29px.png")" />
+            <span style="margin: 0 0 0 3px; color: #4B6377; font-size: 20px; font-weight: normal; vertical-align: top;">@menu.Name</span>
+        </div>
+        <div id="menuwrapper" style="float:left; padding-top: 7px; padding-left: 40px;">
+            <div id="riffMenu"></div>
+        </div>
+        <div id="helpWrapper" style="float:left; padding-top: 7px; padding-left: 20px;">
+            <div id="riffHelp"></div>
+        </div>
+        <div id="userbox" style="float:right; color: #60809a;">
+            <span id="presentationmode" class="dx-icon-photo icon" style="font-size: 17px; cursor: pointer; margin-right: 10px; color: #fafafa;" title="Presentation mode on/off"></span>
+            <span class="dx-icon-repeat icon" style="font-size: 17px; cursor: pointer; margin-right: 10px; color:#60809a;" title="Clone window" onclick="javascript: window.open(window.location.href, '_blank');"></span>
+            <span style="color: #34346b;" title="@(User?.Identity?.Name ?? String.Empty)">@userName</span>
+        </div>
+        <div style="float: right; margin-top: 8px; margin-right: 4px;">
+            <div id="statusindicator_err" style="display: none; margin-top: 4px; color: #f97d7d; cursor: pointer;" title=""
+                 onclick="javascript: window.open('@Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))');">
+                <span class="dx-icon-clear icon"></span>
+            </div>
+            <div id="statusindicator_warn" style="display: none; margin-top: 4px; color: #f2cc63; cursor: pointer;" title=""
+                 onclick="javascript: window.open('@Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))');">
+                <span class="dx-icon-clear icon"></span>
+            </div>
+            <div id="statusindicator_ok" style="display: none; margin-top: 4px; color: #56b156;" title="No Errors"><span class="dx-icon-check icon"></span></div>
+        </div>
+        <div style="float: right; margin-top: 8px; margin-right: 10px;">
+            <div id="workindicator"></div>
+        </div>
+    </div>
+
+    <div class="container" id="riffbodywrapper" style="visibility: hidden; width: 100%; height: 100%; padding-top: 45px; box-sizing: border-box;">
+        @RenderBody()
+    </div>
+
+    <div style="position: fixed; bottom: 0; right: 0; color: #cad5de; padding: 4px; height: 16px;" class="noprint">
+        <a href="https://www.rohatsu.com" title="Powered by RIFF Framework @(RIFF.Core.RFCore.sShortVersion)" style="color: #cad5de; text-decoration: none; background-color: rgba(255,255,255,0.6);"><img width="16" height="16" title="Powered by RIFF Framework @(RIFF.Core.RFCore.sShortVersion)" alt="(c) rohatsu software studios" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAWywAAFssBpeGAYAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC41ZYUyZQAAAOJJREFUOE+9kUsLgkAUhfv/fyMqCop2EYYkLUJ7SS/BrNBeZkVGKQXVdHQmmaJFLupwhHvPzMfcGRPJshzLfwOyYqska53Rane8auYuWs6J7ao6NpaudyGud0eSSAsNVISTuT5ioSCpxsJlUagbISFQabDgqcXW7083rOHEAHyKNmMZJ3t/Vg1bn+9ZTwimYkDm9RAs5CUVOXV9YNHcck6fAXqHyJlKk+ZtfYk2AHBvGlG9AXBv4iDHM6L+CijWupgTz4P6K4B3AKQEhe0N9QMAIx384L9QD80tv+PNARDDZfkBwCZv6opEblwAAAAASUVORK5CYII=" /></a>
+    </div>
+
+    @Scripts.Render("~/bundles/core")
+    @Scripts.Render("~/bundles/custom")
+    @RenderSection("scripts", required: false)
+    @RenderSection("PageScripts", required: false)
+
+    <script type="text/javascript">
+        var RFlayout;
+
+        $(function () {
+            RFlayout = new RIFF.Web.Core.LayoutBase({
+                urlSetPresentationMode: '@Url.Action("SetPresentationMode", "Process", new { area = "" })',
+                isPresentationMode: @(presentationMode ? "true" : "false"),
+                urlHelp: '@(ViewBag.HelpUrl)',
+                urlSystemStatus: '@Url.Action("GetSystemStatus", "Process", new { area = "" })',
+                @if (ViewBag.SuppressMenu == null)
+                {
+                    <text>
+                menuItems: [
+                    @foreach(var menuItem in menu.Items)
+                        {
+                            @: @RenderMenu(menuItem)
+                            }
+                ],
+                </text>
+                    }
+                suppressMenu: @(ViewBag.SuppressMenu == null ? "false" : "true"),
+            });
+
+            RFlayout.start();
+        });
+    </script>
+</body>
+</html>
+
+@helper RenderMenu(RIFF.Web.Core.Helpers.RFMenuItem menuItem)
+{
+    @: {
+    @: text: "@Html.Raw(menuItem.Text)", icon: "@Html.Raw(menuItem.Icon)", disabled: @Html.Raw(menuItem.Disabled.ToString().ToLower()),
+    if (!string.IsNullOrWhiteSpace(menuItem.Action))
+    {
+        @: url: "@Url.Action(menuItem.Action, menuItem.Controller, new { area = menuItem.Area })",
+    }
+    else if (!string.IsNullOrWhiteSpace(menuItem.Url))
+    {
+        @: url: "@Html.Raw(menuItem.Url)",
+    }
+    if (menuItem.SubMenu != null)
+    {
+        @: items: [
+        foreach (var subMenu in menuItem.SubMenu)
+        {
+            @: @RenderMenu(subMenu)
+        }
+        @: ]
+    }
+    @: },
+}

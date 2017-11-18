@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Input Report";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div>
+    <div id="applyButton"></div>
+</div>
+
+@using (Html.BeginForm("UpdateInputReport", "System", new { area = "" }, FormMethod.Post, new { id = "updateform", enctype = "multipart/form-data" }))
+{
+<input type="hidden" name="keyReference" value="@ViewBag.KeyReference" />
+<input type="hidden" name="updates" value="" id="updates" />
+}
+
+<div id="gridContainer" style="min-height:750px; width: 100%; margin: 0 auto"></div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var updates = [];
+
+        var initializeGrid = function (data) {
+            /*$("#gridContainer").dxPivotGrid({
+                dataSource: data,
+            });*/
+
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columnChooser: { enabled: true },
+                allowColumnReordering: true,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: false },
+                columnAutoWidth: true,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                //paging: { pageSize: 15 },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                editing: {
+                    mode: "cell",
+                    allowUpdating: true
+                },
+                onRowUpdated: function (e) {
+                    updates.push({ rowNum: e.key.RFRowNo, data: e.data });
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        };
+
+        var RFinitialize = function () {
+
+            $('#applyButton').dxButton({
+                text: 'Apply Changes', onClick: function () {
+                    $('#updates').val(JSON.stringify(updates));
+                    $('#updateform').submit();
+                }
+            });
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetInputReport", "System", new { keyReference = ViewBag.KeyReference })", null, initializeGrid);
+        };
+    </script>
+}

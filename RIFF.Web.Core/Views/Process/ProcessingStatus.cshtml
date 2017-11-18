@@ -1,0 +1,214 @@
+﻿@model RIFF.Web.Core.Models.IO.ProcessingModel
+@{
+    ViewBag.Title = "Processing";
+    ViewBag.SuppressTitle = true;
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="popup_container">
+    <div style="float: right; overflow: auto; margin: 0; padding: 20px; position: absolute; right: 20px;">
+        <div id="processing_indicator"></div>
+        <div id="continuebutton" style="height: 50px; width: 250px; z-index: 9500;"></div>
+    </div>
+
+    <div style="float: left; overflow: auto;">
+
+        @if (!string.IsNullOrWhiteSpace(Model.FileName))
+        {
+            <div class="form processingstatusform" style="width: 900px; margin-bottom: 25px;" id="fileform">
+                <div class="dx-fieldset">
+                    <div class="dx-fieldset-header" style="">Submitted File</div>
+                    <div class="dx-field">
+                        <div class="dx-field-label" style="padding-left: 10px;">File Name</div>
+                        <div class="dx-field-value-static" style="">@Model.FileName</div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label" style="padding-left: 10px;">File Size</div>
+                        <div class="dx-field-value-static" style="">@Model.FileSize.ToString("#,##0")</div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label" style="padding-left: 10px;">File Key</div>
+                        <div class="dx-field-value-static" style="">@Model.FileKey</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="form processingstatusform" style="width: 900px;">
+            <div class="dx-fieldset">
+                    <div class="dx-fieldset-header" style="">Progress</div>
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px;">Status</div>
+                    <div class="dx-field-value-static" id="processing_status" style="">Initializing...</div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px;">Time Elapsed</div>
+                    <div class="dx-field-value-static" id="processing_time" style="">-</div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px;">Cycles</div>
+                    <div class="dx-field-value-static" id="progress_chart" style="max-height: 150px; line-height: 12px; overflow-y: auto; padding-top: 9px;"></div>
+                </div>
+                @*            <div class="dx-field">
+                        <div class="dx-field-label">Progress</div>
+                        <div class="dx-field-value-static" id="progress_pct">0 %</div>
+                    </div>*@
+                <div class="dx-field" style="display: none;">
+                    <div class="dx-field-label" style="padding-left: 10px;"># Cycles</div>
+                    <div class="dx-field-value-static" id="finished_cycles">0</div>
+                </div>
+                @*
+                    <div class="dx-field">
+                        <div class="dx-field-label"># In Progress Cycles</div>
+                        <div class="dx-field-value-static" id="processing_cycles">0</div>
+                    </div>
+                    <div class="dx-field">
+                        <div class="dx-field-label"># Remaining Cycles</div>
+                        <div class="dx-field-value-static" id="remaining_cycles">0</div>
+                    </div>*@
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px;">Last Process</div>
+                    <div class="dx-field-value-static" id="processing_process" style="font-weight: normal;">-</div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px;"># Updated Keys</div>
+                    <div class="dx-field-value-static" id="processing_keys">0</div>
+                </div>
+                <div class="dx-field" style="display: none;">
+                    <div class="dx-field-label" style="padding-left: 10px;">Processing Key</div>
+                    <div class="dx-field-value-static">@Model.ProcessingKey</div>
+                </div>
+            </div>
+        </div>
+        <div class="form processingstatusform" style="width: 1210px;">
+            <div class="dx-fieldset" style="width: 1200px;">
+                <div class="dx-field">
+                    <div class="dx-field-label" style="padding-left: 10px; width: 200px;">
+                        Messages
+                    </div>
+                    <div class="dx-field-value-static" id="processing_messages" style="width: 975px; height: @(!string.IsNullOrWhiteSpace(Model.FileName) ? "285px" : "420px"); overflow-y:scroll;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section RIFFPageScripts {
+    @* ReSharper disable once Mvc.ActionNotResolved *@
+    @* ReSharper disable once Mvc.ControllerNotResolved, Mvc.ActionNotResolved *@
+    <script type="text/javascript">
+
+        var RFinitialize = function () {
+            $('#popup_container').dxPopup({
+                showTitle: true,
+                title: 'Processing...',
+                width: 1250,
+                height: 700,
+                visible: true,
+                showCloseButton: false
+            });
+
+            $('#processing_indicator').dxLoadIndicator({
+                height: 60,
+                width: 60,
+                visible: true
+            });
+
+            $('#continuebutton').dxButton({
+                text: 'Continue',
+                type: 'success',
+                visible: false,
+                onClick: function () {
+                    @if(!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                    {
+                        @: window.location.assign("@Html.Raw(Model.ReturnUrl)");
+                                                                                                                                                                                                                                                                                                                                                    }
+                    else if(!string.IsNullOrWhiteSpace(Model.ReturnAction))
+                    {
+                        @: window.location.assign("@Html.Raw(Url.Action(Model.ReturnAction, Model.ReturnController, Model.ReturnValues))");
+                                                                                                                                                                                                                                                                                                                                                    }
+                    else
+                    {
+                        @: window.location.assign("@Html.Raw(Url.Action("Index", "Home"))");
+                                                                                                                                                                                                                                                                                        }
+                }
+            });
+
+            setTimeout(refreshStatus, 500);
+        };
+
+        var refreshStatus = function () {
+            @if(Model.ProcessingKey == "test2")
+            {
+                @: return;
+                        }
+            $.getJSON("@Url.Action("RefreshProcessingStatus", "Process", new { processKey = Model.ProcessingKey })", function (response) {
+                if (response.ErrorMessage) {
+                    DevExpress.ui.notify("Error: " + response.ErrorMessage, "error", 5000);
+                    $('#processing_status').text("ERROR")
+                    $('#processing_status').css("font-weight", "bold");
+                    $('#processing_status').css("color", "#E10000");
+                    $("#processing_indicator").dxLoadIndicator("instance").option("visible", false);
+                    $('#continuebutton').dxButton('instance').option('visible', true);
+                    RIFFWebCore.RIFFPage.refreshSystemStatus();
+                } else {
+                    if (response.IsValid) {
+                        $('#processing_process').text(response.CurrentProcess);
+                        $('#finished_cycles').text(response.FinishedCycles);
+                        $('#progress_chart').html('');
+                        var f;
+                        for(f = 0; f < response.FinishedCycles; f++) {
+                            $('<div style="display: inline-block; margin-right: 2px; width: 10px; height: 10px; background-color: #768a9c;">&nbsp;</div>').appendTo($('#progress_chart'));
+                        }
+                        for (p = 0; p < response.ProcessingCycles; p++) {
+                            $('<div style="display: inline-block; margin-right: 2px; width: 10px; height: 10px; background-color: #becdda;">&nbsp;</div>').appendTo($('#progress_chart'));
+                        }
+                        for (r = 0; r < response.RemainingCycles; r++) {
+                            $('<div style="display: inline-block; margin-right: 2px; width: 10px; height: 10px; background-color: #e1ecf5;">&nbsp;</div>').appendTo($('#progress_chart'));
+                        }
+                        $('#processing_time').text(response.Time);
+                        $('#processing_keys').text(response.Keys);
+                        if (response.Messages !== null) {
+                            $('#processing_messages').html(response.Messages.join("<br />"));
+                        }
+                        var mh = 420 + 16 - $('#progress_chart').height();
+                        if ($('#fileform').is(":visible"))
+                        {
+                            mh = mh - $('#fileform').height() - 15;
+                        }
+                        $('#processing_messages').css('height', mh + 'px');
+                        if (response.IsComplete) {
+                            $('#processing_status').text("COMPLETE")
+                            $('#processing_status').css("font-weight", "bold");
+                            $('#processing_status').css("color", "#118FC3");
+                            $("#processing_indicator").dxLoadIndicator("instance").option("visible", false);
+
+                            if (response.IsError) {
+                                $('#processing_status').text("ERROR")
+                                $('#processing_status').css("font-weight", "bold");
+                                $('#processing_status').css("color", "#E10000");
+                                $('#continuebutton').dxButton('instance').option('type', 'danger');
+                                $('#continuebutton').dxButton('instance').option('visible', true);
+                                DevExpress.ui.notify("Processing complete.", "error", 2000);
+                                RIFFWebCore.RIFFPage.refreshSystemStatus();
+                            }
+                            else
+                            {
+                                $('#continuebutton').dxButton('instance').option('visible', true);
+                                DevExpress.ui.notify("Processing complete.", "success", 2000);
+                                RIFFWebCore.RIFFPage.refreshSystemStatus();
+                            }
+                        } else {
+                            $('#processing_status').text("In progress...")
+                            setTimeout(refreshStatus, 500);
+                        }
+                    }
+                    else {
+                        console.log(response.Error);
+                        setTimeout(refreshStatus, 500);
+                    }
+                }
+            });
+        };
+    </script>
+}

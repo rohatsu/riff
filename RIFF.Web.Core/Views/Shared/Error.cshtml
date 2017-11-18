@@ -1,0 +1,38 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    ViewBag.Title = "RIFF Error";
+    Layout = "~/Views/Core/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+</head>
+<body>
+    <div class="dx-theme-generic-typography" style="width: 75%; margin: 0 auto; min-width: 400px;">
+        <hgroup>
+            <h1>Error</h1>
+        </hgroup>
+        @if (Model.Exception != null)
+        {
+            <div>
+                <blockquote>
+                    <h4>Technical information</h4>
+                    @if (Model.Exception != null)
+                {
+                        <div>
+                            @Model.Exception.Message
+                        </div>
+                    }
+                </blockquote>
+            </div>
+        }
+        <br />
+        <p>
+            <a href="@Url.Action("Index", "Home", new { area = "" })">Continue</a>
+        </p>
+    </div>
+</body>
+</html>

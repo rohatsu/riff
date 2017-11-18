@@ -1,0 +1,256 @@
+﻿body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    min-height: 100%;
+    position: relative;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    position: absolute;
+    top: 40px;
+    left: 200px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists
+   will truncate terms that are too long to fit in the left column
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    /*max-width: 280px;*/
+}
+
+.smallform {
+    max-width: 280px;
+}
+
+.menucss {
+    font-size: 14px;
+
+    div.dx-state-hover {
+        background-color: #edf4fa;
+    }
+}
+
+ul.dx-menu-items-container {
+    width: 100%;
+}
+
+#riffMenu {
+    .dx-menu-item-wrapper {
+        padding-right: 20px;
+    }
+}
+
+div.dx-submenu {
+    width: 200px;
+}
+
+#userbox {
+    padding: 11px;
+    font-size: 12px;
+}
+
+div.processingstatusform > .dx-fieldset {
+    width: 900px;
+}
+
+div.processingstatusform > .dx-fieldset > .dx-field > .dx-field-label {
+    width: 25%;
+}
+
+div.processingstatusform > .dx-fieldset > .dx-field > .dx-field-value-static {
+    width: 75%;
+}
+
+h3 {
+    margin-top: 12px;
+}
+
+.CodeMirror {
+    padding: 5px;
+    border: 1px solid #cad5de;
+    height: auto;
+}
+
+.cm-s-default span.cm-tag {
+    color: #aaa;
+}
+
+span.msgok {
+}
+
+span.msgwarn {
+    background-color: #ffff00;
+}
+
+span.msggray {
+    background-color: white;
+    color: #aaa;
+}
+
+.dx-overlay-shader {
+    background-color: rgba(220,220,220,.5);
+}
+
+.riff_editable_column[role=columnheader] {
+    background-color: #f1ffe0;
+}
+
+#changeview_tabs .dx-tab {
+    padding: 0 !important;
+}
+
+#displaytype_tabs .dx-tab {
+    padding: 0 !important;
+}
+
+.nointeraction {
+    pointer-events: none;
+    cursor: default;
+}
+
+.dx-state-disabled.dx-widget,
+.dx-state-disabled .dx-widget {
+    opacity: 0.75 !important;
+}
+
+.dx-state-disabled.dx-button .dx-button-text,
+.dx-state-disabled .dx-button .dx-button-text {
+    opacity: 0.75 !important;
+}
+
+.dx-state-disabled.dx-popup-title .dx-closebutton .dx-button-text,
+.dx-state-disabled .dx-popup-title .dx-closebutton .dx-button-text {
+    opacity: 0.75 !important;
+}
+
+div.tabsbase {
+    width: 100%;
+    margin-top: -1px;
+    margin-left: -7px;
+    border-top: 1px solid rgb(213, 221, 227);
+}
+
+td.hoverable:hover {
+    background-color: #edf4fa !important;
+}
+
+th.hoverable:hover {
+    background-color: #e4f0f7 !important;
+}
+
+tr.hoverable:hover {
+    background-color: #edf4fa !important;
+
+    td.hoverable {
+        background-color: #edf4fa !important;
+    }
+}
+
+div.maximized {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.dx-datagrid-group-closed {
+    color: #a4aaaf;
+}
+
+.dx-datagrid-group-opened {
+    color: #a4aaaf;
+}
+
+.greencell {
+    background-color: #eaffea;
+}
+
+.yellowcell {
+    background-color: #feffe0;
+}
+
+.redcell {
+    background-color: #fff7f7;
+}
+
+// column header centering fix
+// https://www.devexpress.com/Support/Center/Question/Details/T474801
+
+.dx-header-row .dx-sort-indicator.dx-header-filter-indicator.dx-text-content-alignment-left.dx-text-content-alignment-right {
+    max-width: calc(100% - 31px);
+}
+
+.dx-datagrid .dx-column-indicators.dx-visibility-hidden {
+    display: none;
+}
+
+.dx-header-row .dx-header-filter-indicator.dx-text-content-alignment-left.dx-text-content-alignment-right {
+    max-width: calc(100% - 17px);
+}
+
+.positive {
+    color: #2020a0 !important;
+}
+
+.negative {
+    color: #a02020 !important;
+}
+
+tr.dxr-noneditable {
+    .dx-link-edit {
+        display: none;
+    }
+
+    .dx-link-delete {
+        display: none;
+    }
+}
+
+tr.dx-state-hover {
+    td.dxr-totalcolumn {
+        background-color: #edf4fa;
+    }
+}
+
+
+tr:not(.dx-state-hover) {
+    td.dxr-totalcolumn {
+        background-color: #fcfdfe;//rgba(247, 249, 252, 0.5);
+    }
+}
+
+.flex-container {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+}
+
+#rifftopheader {
+    background-color: #f7f9fc;
+    border-bottom: 1px solid #C3D2DA;
+    border-top: 5px solid #C3D2DA;
+}
+
+#riffpagewrapper {
+    background-color: white;
+}
+
+#riffbodywrapper {
+    background-color: white;
+}
+
+.dx-theme-generic-typography {
+    background-color: transparent;
+}

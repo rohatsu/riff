@@ -1,0 +1,143 @@
+﻿@{
+    ViewBag.Title = "Processed Input Files";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div class="dx-fieldset" style="width: 300px;">
+    <div class="dx-field">
+        <div class="dx-field-label">Received Date</div>
+        <div class="dx-field-value" id="receiveddate"></div>
+    </div>
+</div>
+
+<div id="gridContainer" style="min-height:500px; width:1200px; margin: 0 auto"></div>
+
+<h3>Submit File</h3>
+@using (Html.BeginForm("SubmitFile", "Process", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+    <div class="dx-fieldset" style="width: 600px;">
+        <div class="dx-field">
+            <div class="dx-field-label" style="width: 40%;">File Key:</div>
+            <div class="dx-field-value" style="width: 60%;"><div id="uploadkey"></div></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label" style="width: 40%;">Value Date (blank for auto):</div>
+            <div class="dx-field-value" style="width: 60%;"><div id="valuedate"></div></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label" style="width: 40%;">&nbsp;</div>
+            <div class="dx-field-value" style="width: 60%;"><div id="uploadfile"></div></div>
+        </div>
+    </div>
+        <input type="hidden" name="filekey" id="filekey" />
+        <input type="hidden" name="valueDate" id="valuedate_input" />
+        <div id="uploadbutton"></div>
+}
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var getValueDate = function () {
+            return RIFFWebCore.Helpers.getYMD($('#valuedate').dxDateBox('instance').option("value"));
+        }
+
+        var initializeGrid = function (data) {
+
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: [
+                    { dataField: 'UpdateDate', caption: 'Date', dataType: 'date', format: "dd/MM/yyyy", sortIndex: 0, sortOrder: 'desc', width: "75px", alignment: "center" },
+                    { dataField: 'UpdateTime', caption: 'Time', dataType: 'date', format: "HH:mm:ss", sortIndex: 1, sortOrder: 'desc', width: "75px", allowFiltering: false, alignment: "center" },
+                    { dataField: 'FileKey', caption: 'File Key', width: "300px" },
+                    { dataField: 'FileName', caption: 'File Name', width: "400px" },
+                    { dataField: 'FileSize', caption: 'File Size', width: "100px", format: "fixedPoint" },
+                    { dataField: 'ModifiedTime', caption: 'Created', dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", width: "150px", allowFiltering: false, alignment: "center" },
+                    { dataField: 'UniqueKey', visible: false },
+                    {
+                        dataField: 'Key',
+                        caption: 'Download',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Download')
+                                .attr('href', '@Url.Action("GetInputFile", "System")?uniqueKey=' + options.data.UniqueKey)
+                                .appendTo(container);
+                        }
+                    }
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                //paging: { pageSize: 15 },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var refreshGrid = function()
+        {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetInputFiles", "System")", {
+                receivedDate: RIFFWebCore.Helpers.getYMD($('#receiveddate').dxDateBox('instance').option("value")),
+            }, initializeGrid);
+        }
+
+        var RFinitialize = function () {
+            $('#uploadfile').dxFileUploader({ name: 'filedata', multiple: false });
+
+            //$('#uploadkey').dxTextBox({ name: 'filekey', width: "300px" });
+            $('#uploadkey').dxSelectBox({
+                width: "300px",
+                dataSource: [ @Html.Raw(string.Join(",", RIFF.Web.Core.App_Start.RIFFStart.Config.GetInputFileKeys().Select(k => String.Format("'{0}'", k))))],
+                value: null,
+                onValueChanged: function (data) {
+                    $('#filekey').val(data.value);
+                }
+            });
+
+            $('#uploadbutton').dxButton({
+                text: 'Submit', onClick: function () {
+                    $('#valuedate_input').val(getValueDate());
+                    //$('#filekey').val($('#uploadkey').dxTextBox('instance').option("value"));
+                    $('#uploadform').submit();
+                }
+            });
+            $('#valuedate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@(RIFF.Core.RFDate.Today().Year), @(RIFF.Core.RFDate.Today().Month) - 1, @(RIFF.Core.RFDate.Today().Day)),
+                width: "300px"
+            });
+
+            $('#receiveddate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@(RIFF.Core.RFDate.Today().Year), @(RIFF.Core.RFDate.Today().Month) - 1, @(RIFF.Core.RFDate.Today().Day)),
+                onValueChanged: function (e) { refreshGrid(); }
+            });
+
+            @*
+            //RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetInputFiles", "System", new { receivedDate = ViewBag.ReceivedDate })", null, initializeGrid);
+                *@
+            refreshGrid();
+        };
+    </script>
+}

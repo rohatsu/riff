@@ -1,0 +1,150 @@
+﻿@{
+    ViewBag.Title = "Input Reports";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div class="dx-fieldset" style="width: 300px;">
+    <div class="dx-field">
+        <div class="dx-field-label">Value Date</div>
+        <div class="dx-field-value" id="valuedate"></div>
+    </div>
+</div>
+
+<div id="gridContainer" style="min-height:500px; width:1100px; margin: 0 auto"></div>
+@*
+<h3>Submit File</h3>
+@using (Html.BeginForm("SubmitFile", "Process", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+{
+    <div class="dx-fieldset" style="width: 600px;">
+        <div class="dx-field">
+            <div class="dx-field-label" style="width: 20%;">File Key:</div>
+            <div class="dx-field-value" style="width: 80%;"><div id="uploadkey"></div></div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label" style="width: 20%;">&nbsp;</div>
+            <div class="dx-field-value" style="width: 80%;"><div id="uploadfile"></div></div>
+        </div>
+    </div>
+        <input type="hidden" name="fileKey" id="filekey" />
+        <div id="uploadbutton"></div>
+}
+    *@
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var initializeGrid = function (data) {
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: [
+                    { dataField: 'UpdateDate', caption: 'Date', dataType: 'date', format: "dd/MM/yyyy", sortIndex: 0, sortOrder: 'desc', width: "75px", alignment: "center" },
+                    { dataField: 'UpdateTime', caption: 'Time', dataType: 'date', format: "HH:mm:ss", sortIndex: 1, sortOrder: 'desc', width: "75px", allowFiltering: false, alignment: "center" },
+                    { dataField: 'ReportCode', caption: 'Code', width: "480px" },
+                    { dataField: 'ReportDescription', caption: 'Description', width: "350px", visible: false },
+                    { dataField: 'ValueDate', caption: 'Value Date', dataType: 'date', format: "dd/MM/yyyy", width: "75px", allowFiltering: false, alignment: "center" },
+                    { dataField: 'NumRows', caption: '# Rows', width: "100px", format: "fixedPoint" },
+                    { dataField: 'SourceUniqueKey', visible: false },
+                    {
+                        dataField: 'Key',
+                        caption: 'Download',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Original file')
+                                .attr('href', '@Url.Action("GetInputFile", "System")?uniqueKey=' + options.data.SourceUniqueKey)
+                                .appendTo(container);
+                        }
+                    },
+                    {
+                        dataField: 'Key',
+                        caption: 'Download',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('In .csv format')
+                                .attr('href', '@Url.Action("DownloadEntry", "System")?keyReference=' + options.data.KeyReference + '&type=@(typeof(RIFF.Framework.RFRawReportKey).FullName)')
+                                .appendTo(container);
+                        }
+                    },
+                    {
+                        dataField: 'Key',
+                        caption: 'Edit',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Edit manually')
+                                .attr('href', '@Url.Action("InputReport", "System")?keyReference=' + options.data.KeyReference + '&type=@(typeof(RIFF.Framework.RFRawReportKey).FullName)')
+                                .appendTo(container);
+                        }
+                    }
+
+                    @*,
+                    {
+                        dataField: 'Key',
+                        caption: 'View',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('View')
+                                .attr('href', '@Url.Action("InputReport", "System")?keyReference=' + options.data.KeyReference)
+                                .appendTo(container);
+                        }
+                    }*@
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: true },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                //paging: { pageSize: 15 },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var refreshGrid = function()
+        {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetInputReports", "System")", {
+                valueDate: RIFFWebCore.Helpers.getYMD($('#valuedate').dxDateBox('instance').option("value")),
+            }, initializeGrid);
+        }
+
+        var RFinitialize = function () {
+            $('#uploadfile').dxFileUploader({ name: 'filedata', multiple: false });
+            $('#uploadkey').dxTextBox({ name: 'filekey', width: "100px" });
+            $('#uploadbutton').dxButton({
+                text: 'Submit', onClick: function () {
+                    $('#filekey').val($('#uploadkey').dxTextBox('instance').option("value"));
+                    $('#uploadform').submit();
+                }
+            });
+
+            $('#valuedate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@(RIFF.Core.RFDate.Today().Year), @(RIFF.Core.RFDate.Today().Month) - 1, @(RIFF.Core.RFDate.Today().Day)),
+                onValueChanged: function (e) { refreshGrid(); }
+            });
+
+            @*RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetInputReports", "System")", null, initializeGrid);*@
+            refreshGrid();
+        };
+    </script>
+}
