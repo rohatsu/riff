@@ -45,7 +45,8 @@ namespace RIFF.Framework
                                 FullPath = file.UniqueKey,
                                 ModifiedDate = file.UpdateTime.UtcDateTime
                             },
-                            FileKey = RFEnum.FromString(file.FileKey)
+                            FileKey = RFEnum.FromString(file.FileKey),
+                            SourceSite = SiteKey
                         });
                     }
                 }

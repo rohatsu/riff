@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>2.1</version>
+    <title>RIFF.Console</title>
+    <authors>rohatsu software studios limited</authors>
+    <owners>rohatsu software studios limited</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>www.rohatsu.com</description>
+    <releaseNotes>For internal use only.</releaseNotes>
+    <copyright>Copyright 2017 www.rohatsu.com</copyright>
+  </metadata>
+</package>

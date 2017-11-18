@@ -1,8 +1,10 @@
 ﻿// ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using log4net.Config;
 using RIFF.Core;
+using RIFF.Framework;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Messaging;
 using System.Security;
 using System.ServiceModel;
@@ -15,12 +17,14 @@ namespace RIFF.Service
         protected IRFSystemContext _context;
         protected IRFEnvironment _environment;
         protected ServiceHost _serviceHost;
+        protected string[] _args;
 
-        public RFServiceHost()
+        public RFServiceHost(string[] args)
         {
             InitializeComponent();
             rfEventLog.Source = "RIFF";
             rfEventLog.Log = "Application";
+            _args = args;
         }
 
         public void StartEnvironment()
@@ -48,12 +52,44 @@ namespace RIFF.Service
                     CleanUpMSMQ(Environment.MachineName, engine.Environment);
                 }
 
-                _environment = RFEnvironments.StartLocal(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
-                _context = _environment.Start();
+                if (_args != null && _args.Length > 0)
+                {
+                    _environment = RFEnvironments.StartConsole(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
+                    _context = _environment.Start();
 
-                var wcfService = new RFService(_context, engineConfig, engine.Database);
-                _serviceHost = new ServiceHost(wcfService);
-                _serviceHost.Open();
+                    if (_args[0] == "command")
+                    {
+                        // run console command
+                        var engineConsole = engineConfig.Console;
+                        if (engineConsole != null)
+                        {
+                            engineConsole.Initialize(_context, engineConfig, engine.Database);
+                        }
+                        var executor = new RFConsoleExecutor(engineConfig, _context, engine, engineConsole);
+                        executor.ExecuteCommand(String.Join(" ", _args.Skip(1)));
+                    }
+                    else
+                    {
+                        // run named service
+                        var param = String.Join(" ", _args);
+                        var tokens = new Interfaces.Formats.CSV.CSVParser(param, ' ').Where(t => !string.IsNullOrWhiteSpace(t)).ToArray();
+                        var serviceName = tokens[0];
+                        var serviceParam = tokens.Length > 1 ? tokens[1] : null;
+                        RFStatic.Log.Info(this, $"Starting service: {serviceName}" + (serviceParam != null ? $"with param: {serviceParam}" : string.Empty));
+
+                        _context.RaiseEvent(this, new RFServiceEvent { ServiceName = serviceName, ServiceCommand = "start", ServiceParams = serviceParam });
+                    }
+                }
+                else
+                {
+                    // WCF service
+                    _environment = RFEnvironments.StartLocal(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
+                    _context = _environment.Start();
+
+                    var wcfService = new RFService(_context, engineConfig, engine.Database);
+                    _serviceHost = new ServiceHost(wcfService);
+                    _serviceHost.Open();
+                }
             }
             catch (Exception ex)
             {
@@ -91,6 +127,7 @@ namespace RIFF.Service
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            log4net.GlobalContext.Properties["LogName"] = _args != null && _args.Length > 0 ? _args[0] : "Service";
             XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
             StartEnvironment();
         }

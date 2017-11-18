@@ -14,8 +14,11 @@ namespace RIFF.Core
             _context = context;
             _engineConfig = engineConfig;
             _connectionString = connectionString;
+
+            Initialize();
         }
 
-        public abstract bool RunCommand(string[] tokens, List<string> queueCommand);
+        public virtual void Initialize() { }
+        public abstract bool RunCommand(string[] tokens, List<string> queueCommands);
     }
 }

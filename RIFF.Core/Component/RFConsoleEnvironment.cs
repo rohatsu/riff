@@ -52,13 +52,12 @@ namespace RIFF.Core
         }
 
         public override IRFSystemContext Start()
-        {
-            _context.Engine.Initialize();
-
+        {            
             var manager = new RFDispatchQueueSink(_context, _workQueue);
             _queueMonitor = new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue); // always use in-proc for console requests
 
             _localContext = _context.GetProcessingContext("console_" + Process.GetCurrentProcess().Id, manager, manager, _queueMonitor);
+            _context.Engine.Initialize(_localContext);
 
             _queueMonitor.StartThread();
 
@@ -70,6 +69,7 @@ namespace RIFF.Core
             RFStatic.SetShutdown();
             _queueMonitor.Shutdown();
             _localContext.RaiseEvent(this, new RFEvent { Timestamp = DateTime.Now });
+            _context.Shutdown();
         }
     }
 }

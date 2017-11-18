@@ -34,6 +34,7 @@ namespace RIFF.Core
             _readyQueue = new List<RFWorkQueueItem>();
             _processDependencies = dependencies ?? new Dictionary<string, SortedSet<string>>();
             _dispatchStore = context.DispatchStore;
+            _numQueuedInstructions = new Dictionary<string, int>();
         }
 
         public void ProcessingFinished(RFWorkQueueItem i, RFProcessingResult result)
@@ -245,6 +246,12 @@ namespace RIFF.Core
                 return i;
             }
             catch (ThreadInterruptedException)
+            {
+                RFStatic.Log.Info(typeof(RFGraphDispatchQueue), "Aborting WaitNextItem");
+                Monitor.Exit(_sync);
+                return null;
+            }
+            catch (ThreadAbortException)
             {
                 RFStatic.Log.Info(typeof(RFGraphDispatchQueue), "Aborting WaitNextItem");
                 Monitor.Exit(_sync);

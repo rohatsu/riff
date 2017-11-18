@@ -47,15 +47,21 @@ namespace RIFF.Interfaces.Formats.XLSX
                     {
                         try
                         {
-                            if (cell.CellType == CellType.Numeric || (cell.CellType == CellType.Formula && cell.CachedFormulaResultType == CellType.Numeric))
+                            var cellType = cell.CellType;
+                            if (cellType == CellType.Formula)
+                            {
+                                cellType = cell.CachedFormulaResultType;
+                            }
+
+                            if (cellType == CellType.Numeric)
                             {
                                 if (DateUtil.IsCellDateFormatted(cell))
                                 {
-                                    dr[i] = cell.DateCellValue;//.ToString(RFCore.sDateFormat);
+                                    dr[i] = cell.DateCellValue;
                                 }
                                 else
                                 {
-                                    dr[i] = cell.NumericCellValue;//.ToString();
+                                    dr[i] = cell.NumericCellValue;
                                 }
                             }
                             else if (cell.StringCellValue.NotBlank())

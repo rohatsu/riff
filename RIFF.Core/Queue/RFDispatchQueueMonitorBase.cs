@@ -1,5 +1,6 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using System;
+using System.Threading;
 
 namespace RIFF.Core
 {
@@ -67,7 +68,7 @@ namespace RIFF.Core
                     var content = item.Item;
                     if (content is RFInstruction i)
                     {
-                        if(i.ForceProcessLocally())
+                        if (i.ForceProcessLocally())
                         {
                             // processing results will go directly into our internal queues rather than be distributed
                             var result = _context.Engine.Process(content as RFInstruction, _context.GetProcessingContext(item.ProcessingKey, _instructionSink, _eventSink, this));
@@ -156,6 +157,12 @@ namespace RIFF.Core
                     }
                 }
                 while (!IsExiting());
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (ThreadInterruptedException)
+            {
             }
             catch (Exception ex)
             {

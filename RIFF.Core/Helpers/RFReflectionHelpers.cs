@@ -97,6 +97,14 @@ namespace RIFF.Core
 
         public static Type GetTypeByFullName(string type)
         {
+            foreach (var t in RFXMLSerializer.GetKnownTypes(null))
+            {
+                if(t.FullName == type)
+                {
+                    return t;
+                }
+            }
+            /*
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (!a.FullName.Contains("IKVM"))
@@ -109,7 +117,7 @@ namespace RIFF.Core
                         }
                     }
                 }
-            }
+            }*/
             return Type.GetType(type);
         }
 

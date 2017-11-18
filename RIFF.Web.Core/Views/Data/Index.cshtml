@@ -1,0 +1,58 @@
+﻿@model RIFF.Web.Core.Models.Data.IndexModel
+@{
+    ViewBag.Title = "Data Browser";
+    ViewBag.SuppressTitle = true;
+    ViewBag.MaxWidth = "1920px";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div style="width: 100%; clear: both; overflow: auto; margin-top: -5px;" id="outercontainer">
+    <div style="width: 100%; overflow: auto; clear: both; margin-bottom: 5px;">
+
+        <div style="width: 370px; float: left; overflow: auto;">
+
+            <div style="width: 340px; vertical-align: top; display: inline-block;">
+                <h3 style="margin-bottom: 10px;">Database Browser</h3>
+            </div>
+
+            <div style="width: 340px; vertical-align: top; display: inline-block; margin-left: 10px;">
+                <div class="dx-field" style="width: 340px; margin-bottom: 10px;">
+                    <div class="dx-field-label" style="width: 35%;">Data Source:</div>
+                    <div class="dx-field-value" style="" id="sourcebox"></div>
+                </div>
+            </div>
+
+            <div style="width: 180px; float: left; margin-left: 10px;">
+                <div id="aggregateContainer" style="width: 100%; min-height: 625px; display: inline-block; vertical-align: top; display: none;">
+                    Breakdown Columns:
+                    <div id="aggregatebox" style="margin-top: 6px;"></div>
+                </div>
+            </div>
+
+            <div style="width: 180px; float: left;">
+                <div id="includeContainer" style="width: 100%; min-height: 625px; display: inline-block; vertical-align: top; display: none;">
+                    Data Columns:
+                    <div id="includebox" style="margin-top: 6px;"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="width: auto; float: none; margin-left: 380px;">
+            <div id="dataContainer" style="min-width: 300px; height: 850px; display: block; vertical-align: top;">
+            </div>
+            <div id="footerContainer" style="display: none; color: #c1c8ce; text-align: right;"><span id="statusContainer"></span>&nbsp;<span style="text-decoration: underline; cursor: pointer;" onclick="javascript: codeBehind.showSQL();">Show SQL</span></div>
+        </div>
+    </div>
+</div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var codeBehind = new RIFF.Web.System.DataBrowserPage({
+            urlGetAggregateQuery: '@Html.Raw(Url.Action("GetAggregate", "Data"))',
+            urlGetDetailQuery: '@Html.Raw(Url.Action("GetDetail", "Data"))',
+            urlSourceDataQuery: '@Html.Raw(Url.Action("Get", "DataQuery"))',
+            dataSources: @Html.Raw(Model.Sources)
+        });
+    </script>
+}

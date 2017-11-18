@@ -32,9 +32,9 @@ namespace RIFF.Core
                     // try AD
                     try
                     {
-                        var adRoot = RFSettings.GetAppSetting("ActiveDomainRoot");
-                        var adUsername = RFSettings.GetAppSetting("ActiveDomainUsername");
-                        var adPassword = RFSettings.GetAppSetting("ActiveDomainPassword");
+                        var adRoot = RFSettings.GetAppSetting("ActiveDomainRoot", null);
+                        var adUsername = RFSettings.GetAppSetting("ActiveDomainUsername", null);
+                        var adPassword = RFSettings.GetAppSetting("ActiveDomainPassword", null);
                         if (!string.IsNullOrWhiteSpace(adRoot))
                         {
                             PrincipalContext context = null;

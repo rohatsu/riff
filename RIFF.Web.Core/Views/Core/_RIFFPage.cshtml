@@ -1,0 +1,34 @@
+﻿@{
+    Layout = "~/Views/Core/_Layout.cshtml";
+}
+
+<div class="dx-theme-generic-typography" style="max-width: @(ViewBag.MaxWidth != null ? ViewBag.MaxWidth.ToString() : "1550px"); margin: 0 auto; height: 100%; position: relative;" id="riffpagewrapper">
+    <div id="loadPanel"></div>
+    @if (!string.IsNullOrWhiteSpace(ViewBag.Title) && ViewBag.SuppressTitle == null)
+    {
+        <div style=" top: 0px; left: 0px; position: absolute; height: 60px;">
+            <h3 id="pagetitle" style="margin-top: 24px;">@ViewBag.Title</h3>
+        </div>
+        <div style="padding-top: 60px; box-sizing: border-box; height: 100%; width: 100%;">
+            @RenderBody()
+        </div>
+    }
+    else
+    {
+        <div style="box-sizing: border-box; height: 100%; width: 100%; position: relative;">
+            @RenderBody()
+        </div>
+    }
+</div>
+
+@section PageScripts {
+    @if (ViewBag.Script != null)
+    {
+        <script type="text/javascript" src="@Url.Content(ViewBag.Script)"></script>
+    }
+    @if (ViewBag.Bundle != null)
+    {
+        @: @Scripts.Render(ViewBag.Bundle)
+    }
+    @RenderSection("RIFFPageScripts", required: false)
+}

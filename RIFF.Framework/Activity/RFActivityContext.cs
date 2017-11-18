@@ -213,28 +213,10 @@ namespace RIFF.Framework
 
     public interface IRFActivityContext : IRFReadingContext
     {
-        //IRFUserConfig UserConfig { get; }
-
-        //string Environment { get; }
-
-        //IRFLog SystemLog { get; }
-
-        /*IRFUserLog UserLog { get; }
-
-        RFCatalogKeyMetadata GetKeyMetadata(RFCatalogKey key);
-
-        Dictionary<long, T> GetKeysByType<T>() where T : RFCatalogKey;
-
-        Dictionary<long, RFCatalogKey> GetKeysByType(Type t);
-        */
         RFProcessingTracker GetStatus(RFProcessingTrackerHandle trackerHandle);
 
         void Invalidate(RFCatalogKey key);
 
-        /*T LoadDocumentContent<T>(RFCatalogKey key, RFCatalogOptions options = null) where T : class;
-
-        RFCatalogEntry LoadEntry(RFCatalogKey key, RFCatalogOptions options = null);
-        */
         RFProcessingTracker SaveDocument(RFCatalogKey key, object content, bool raiseEvent, RFUserLogEntry userLogEntry);
 
         RFProcessingTrackerHandle SaveDocumentAsync(RFCatalogKey key, object content, RFUserLogEntry userLogEntry);
@@ -244,7 +226,5 @@ namespace RIFF.Framework
         RFProcessingTracker SaveEntry(RFCatalogEntry entry, RFUserLogEntry userLogEntry);
 
         RFProcessingTrackerHandle SaveEntryAsync(RFCatalogEntry entry, RFUserLogEntry userLogEntry);
-
-        //List<RFCatalogKeyMetadata> SearchKeys(Type t, DateTime? startTime = null, DateTime? endTime = null, int limitResults = 0, RFDate? valueDate = null, bool latestOnly = false);
     }
 }

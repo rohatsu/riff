@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Configuration";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="gridContainer" style="min-height:750px; width:100%; margin: 0 auto"></div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var groupCellTemplate = function (groupCell, info) {
+            $('<div>').html(info.text).css('font-weight', 'bold').appendTo(groupCell);
+        };
+
+        var initializeGrid = function (data) {
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: [
+
+                    { dataField: 'Section', caption: 'Section', width: "100px", allowEditing: false, groupIndex: 0 },
+                    { dataField: 'Item', caption: 'Item', width: "100px", allowEditing: false, groupIndex: 1 },
+                    { dataField: 'Key', caption: 'Key', width: "200px", allowEditing: false },
+                    { dataField: 'Description', caption: 'Description', width: "300px", allowEditing: false },
+                    { dataField: 'Environment', caption: 'Env', width: "60px", allowEditing: false },
+                    { dataField: 'UpdateTime', caption: 'Updated', dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", width: "150px", visible: false, allowEditing: false },
+                    { dataField: 'UpdateUser', caption: 'Updater', width: "150px", visible: false, allowEditing: false },
+                    { dataField: 'Value', caption: 'Value', width: "800px" },
+                    { dataField: 'UserConfigKeyID', visible: false, allowEditing: false },
+                    { dataField: 'UserConfigValueID', visible: false, allowEditing: false }
+                ],
+          /*      customizeColumns: function (columns) {
+                    $.each(columns, function (_, element) {
+                        element.groupCellTemplate = groupCellTemplate;
+                    });
+                },
+            */    editing: {
+                mode: 'row',
+                    allowUpdating: true,
+                    allowDeleting: false,
+                    allowAdding: false
+                },
+                columnChooser: { enabled: true },
+                allowColumnReordering: true,
+                allowColumnResizing: true,
+                grouping: {
+                    autoExpandAll: false
+                },
+                onRowUpdating: function (e) {
+                    e.element.addClass('nointeraction');
+                    e.cancel = RIFFWebCore.Helpers.postUserAction("@Url.Action("UpdateConfig", "System")", $.extend({}, e.oldData, e.newData), "Configuration updated.");
+                },
+                onRowUpdated: function (e) {
+                    e.element.removeClass('nointeraction');
+                },
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                //paging: { pageSize: 15 },
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var RFinitialize = function() {
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetConfigs", "System")", null, initializeGrid);
+        };
+    </script>
+}

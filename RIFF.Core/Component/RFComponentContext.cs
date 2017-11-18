@@ -48,5 +48,13 @@ namespace RIFF.Core
         {
             return RFProcessingContext.Create(this, null, null, null, null); // could implement lightweight version
         }
+
+        public void Shutdown()
+        {
+            foreach(var ac in ActiveComponents)
+            {
+                ac.Shutdown();
+            }
+        }
     }
 }

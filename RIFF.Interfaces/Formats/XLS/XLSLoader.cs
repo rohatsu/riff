@@ -80,28 +80,38 @@ namespace RIFF.Interfaces.Formats.XLS
                         {
                             try
                             {
-                                if (cell.CellType == CellType.Numeric)
+                                var cellType = cell.CellType;
+                                if (cellType == CellType.Formula)
                                 {
-                                    if (DateUtil.IsCellDateFormatted(cell))
-                                    {
-                                        // date or time
-                                        if (cell.DateCellValue == cell.DateCellValue.Date)
+                                    cellType = cell.CachedFormulaResultType;
+                                }
+
+                                switch (cellType)
+                                {
+                                    case CellType.Numeric:
+                                        if (DateUtil.IsCellDateFormatted(cell))
                                         {
-                                            dr[i] = cell.DateCellValue.ToString(RFCore.sDateFormat);
+                                            // date or time
+                                            if (cell.DateCellValue == cell.DateCellValue.Date)
+                                            {
+                                                dr[i] = cell.DateCellValue.ToString(RFCore.sDateFormat);
+                                            }
+                                            else
+                                            {
+                                                dr[i] = cell.DateCellValue.ToString(RFCore.sDateTimeFormat);
+                                            }
                                         }
                                         else
                                         {
-                                            dr[i] = cell.DateCellValue.ToString(RFCore.sDateTimeFormat);
+                                            dr[i] = cell.NumericCellValue.ToString();
                                         }
-                                    }
-                                    else
-                                    {
-                                        dr[i] = cell.NumericCellValue.ToString();
-                                    }
-                                }
-                                else
-                                {
-                                    dr[i] = cell.ToString();
+                                        break;
+                                    case CellType.String:
+                                        dr[i] = cell.StringCellValue;
+                                        break;
+                                    default:
+                                        dr[i] = cell.ToString();
+                                        break;
                                 }
                             }
                             catch (Exception ex)

@@ -222,11 +222,11 @@ namespace RIFF.Core
                             {
                                 try
                                 {
-                                    var emailTo = RFSettings.GetAppSetting("UserLogWarningsTo");
+                                    var emailTo = RFSettings.GetAppSetting("UserLogWarningsTo", null);
                                     if (!string.IsNullOrWhiteSpace(emailTo))
                                     {
-                                        var emailFrom = RFSettings.GetAppSetting("SmtpSender") ?? "riff@localhost";
-                                        var systemName = RFSettings.GetAppSetting("SystemName") ?? "RIFF System";
+                                        var emailFrom = RFSettings.GetAppSetting("SmtpSender", "riff@localhost");
+                                        var systemName = RFSettings.GetAppSetting("SystemName", "RIFF System");
 
                                         var message = new MailMessage();
                                         message.From = new MailAddress(emailFrom, systemName);

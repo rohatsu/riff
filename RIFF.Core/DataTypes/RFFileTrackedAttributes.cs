@@ -19,6 +19,9 @@ namespace RIFF.Core
         [DataMember]
         public DateTime ModifiedDate { get; set; }
 
+        [IgnoreDataMember]
+        public object SiteLink { get; set; }
+
         // MD5?
 
         public override bool Equals(object obj)

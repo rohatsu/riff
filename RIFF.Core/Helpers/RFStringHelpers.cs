@@ -97,5 +97,14 @@ namespace RIFF.Core
 
             return s;
         }
+
+        public static string ThrowIfBlank(this string s, string message = null)
+        {
+            if(s.IsBlank())
+            {
+                throw new RFLogicException(typeof(RFStringHelpers), message ?? "Parameter cannot be blank");
+            }
+            return s;
+        }
     }
 }

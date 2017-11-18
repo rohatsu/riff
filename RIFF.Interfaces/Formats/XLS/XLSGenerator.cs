@@ -10,22 +10,45 @@ namespace RIFF.Interfaces.Formats.XLS
 {
     public static class XLSGenerator
     {
-        public static byte[] Export(string sheetName, DataTable dataTable)
+        public static string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
+        }
+
+        public static byte[] Export(string sheetName, DataTable dataTable, bool outputHeader = true)
         {
             using (var stream = new MemoryStream())
             {
                 var workbook = new HSSFWorkbook();
                 var sheet = workbook.CreateSheet(sheetName);
 
-                var headerRow = sheet.CreateRow(0);
+                var dateStyle = workbook.CreateCellStyle();
+                dateStyle.DataFormat = HSSFDataFormat.GetBuiltinFormat("d-mmm-yy");
+
+                int r = 0;
                 int c = 0;
-                foreach (DataColumn col in dataTable.Columns)
+                if (outputHeader)
                 {
-                    var cell = headerRow.CreateCell(c, CellType.String);
-                    cell.SetCellValue(col.Caption);
-                    c++;
+                    var headerRow = sheet.CreateRow(0);
+                    foreach (DataColumn col in dataTable.Columns)
+                    {
+                        var cell = headerRow.CreateCell(c, CellType.String);
+                        cell.SetCellValue(col.Caption);
+                        c++;
+                    }
+                    r++;
                 }
-                int r = 1;
                 foreach (DataRow row in dataTable.Rows)
                 {
                     var dataRow = sheet.CreateRow(r);
@@ -34,16 +57,47 @@ namespace RIFF.Interfaces.Formats.XLS
                     {
                         try
                         {
-                            if (col.DataType == typeof(decimal))
+                            var v = row[col];
+                            if (v != null && v != DBNull.Value)
                             {
-                                var cell = dataRow.CreateCell(c, CellType.Numeric);
-                                var value = (double)((decimal)row[col]);
-                                cell.SetCellValue(value);
-                            }
-                            else
-                            {
-                                var cell = dataRow.CreateCell(c, CellType.String);
-                                cell.SetCellValue(row[col].ToString());
+                                var type = col.DataType;
+                                if (type == typeof(object))
+                                {
+                                    type = v.GetType();
+                                }
+
+                                if (type == typeof(decimal))
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.Numeric);
+                                    cell.SetCellValue((double)((decimal)v));
+                                }
+                                else if (type == typeof(int))
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.Numeric);
+                                    cell.SetCellValue((int)v);
+                                }
+                                else if (type == typeof(double))
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.Numeric);
+                                    cell.SetCellValue((double)v);
+                                }
+                                else if (type == typeof(RFDate))
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.Numeric);
+                                    cell.SetCellValue(((RFDate)v).Date);
+                                    cell.CellStyle = dateStyle;
+                                }
+                                else if (type == typeof(DateTime))
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.Numeric);
+                                    cell.SetCellValue(((DateTime)v).Date);
+                                    cell.CellStyle = dateStyle;
+                                }
+                                else
+                                {
+                                    var cell = dataRow.CreateCell(c, CellType.String);
+                                    cell.SetCellValue(v.ToString());
+                                }
                             }
                         }
                         catch (Exception ex)

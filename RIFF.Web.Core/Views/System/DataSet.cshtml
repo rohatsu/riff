@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = ViewBag.Key;
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+@*
+<div>
+    <div id="applyButton"></div>
+</div>
+
+@using (Html.BeginForm("UpdateDataSet", "System", new { area = "" }, FormMethod.Post, new { id = "updateform", enctype = "multipart/form-data" }))
+{
+<input type="hidden" name="keyReference" value="@ViewBag.KeyReference" />
+<input type="hidden" name="updates" value="" id="updates" />
+}
+    *@
+<div id="gridContainer" style="min-height:750px; width: 100%; margin: 0 auto"></div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var updates = [];
+
+        var initializeGrid = function (data) {
+            /*$("#gridContainer").dxPivotGrid({
+                dataSource: data,
+            });*/
+
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: @Html.Raw(ViewBag.Data),
+
+                columns: [
+                    @foreach(var column in ViewBag.ColumnTypes as List<KeyValuePair<string, Type>>)
+                    {
+                        if (RIFF.Core.RFReflectionHelpers.IsDecimalDouble(column.Value))
+                        {
+                            <text> { dataField: '@column.Key', format: 'fixedPoint', precision: 2 }, </text>
+                        }
+                        else
+                        {
+                            <text> { dataField: '@column.Key' },</text>
+                        }
+                    }
+                ],
+
+                columnChooser: { enabled: true },
+                allowColumnReordering: true,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true },
+                columnAutoWidth: true,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                scrolling: {
+                            mode: 'virtual',
+                    preloadEnabled: true
+                },
+                //paging: { pageSize: 15 },
+                export: {
+                            enabled: true
+                },
+                onExporting: function (e) {
+                            window.location.assign('@Html.Raw(Url.Action("DownloadEntry", "System", new { keyReference = ViewBag.KeyReference, type = ViewBag.Type }))');
+                            e.cancel = true
+                },
+                summary: {
+                            totalItems: [
+                                @foreach(var column in (ViewBag.ColumnTypes as List<KeyValuePair<string, Type>>).Where(t => RIFF.Core.RFReflectionHelpers.IsDecimalDouble(t.Value)))
+                        {
+                            <text>{ column: '@column.Key', summaryType: 'sum', valueFormat: 'fixedPoint', precision: 2 }, </text>
+                        }
+                    ],
+                    texts: {
+                                sum: "{0}"
+                    }
+                        },
+                remoteOperations: false,
+                loadPanel: {
+                            enabled: false
+                },/*
+                editing: {
+                    mode: "cell",
+                    allowUpdating: true
+                },*/
+                onRowUpdated: function (e) {
+                            updates.push({ rowNum: e.key.RFRowNo, data: e.data });
+                        },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+                    });
+        };
+
+        var RFinitialize = function () {
+            @*
+            $('#applyButton').dxButton({
+                text: 'Apply Changes', onClick: function () {
+                    $('#updates').val(JSON.stringify(updates));
+                    $('#updateform').submit();
+                }
+            });
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetDataSet", "System", new { keyReference = ViewBag.KeyReference })", null, initializeGrid);
+                *@
+
+            initializeGrid();
+        };
+    </script>
+}

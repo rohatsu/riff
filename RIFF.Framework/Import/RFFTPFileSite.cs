@@ -170,7 +170,19 @@ namespace RIFF.Framework
 
         public override void PutFile(RFFileAvailableEvent file, RFMonitoredFile fileConfig, byte[] data)
         {
-            _connection.PutFile(GetUnixDirectory(fileConfig.PutSubDirectory), file.FileAttributes.FileName, data);
+            var directory = GetUnixDirectory(fileConfig.PutSubDirectory);
+            if (UseTemporaryName)
+            {
+                var tmpFileName = file.FileAttributes.FileName + ".tmp";
+                _connection.PutFile(directory, tmpFileName, data);
+                _connection.MoveFile(
+                    RFFileHelpers.GetUnixPath(directory, tmpFileName),
+                    RFFileHelpers.GetUnixPath(directory, file.FileAttributes.FileName));
+            }
+            else
+            {
+                _connection.PutFile(directory, file.FileAttributes.FileName, data);
+            }
         }
 
         protected string GetUnixDirectory(string subDirectory)

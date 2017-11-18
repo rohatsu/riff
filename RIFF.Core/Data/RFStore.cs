@@ -13,9 +13,9 @@ namespace RIFF.Core
         {
         }
 
-        public abstract Dictionary<RFGraphInstance, K> GetKeyInstances(RFCatalogKey key);
+        public abstract Dictionary<RFGraphInstance, K> GetKeyInstances(K key);
 
-        public abstract RFCatalogKeyMetadata GetKeyMetadata(RFCatalogKey key);
+        public abstract RFCatalogKeyMetadata GetKeyMetadata(K key);
 
         public abstract Dictionary<long, K> GetKeysByType(Type t);
 

@@ -1,0 +1,155 @@
+﻿@{
+    ViewBag.Title = "Error Queue";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="tabs"></div>
+<div id="tab1" class="tab-content">
+    <div id="queueContainer" style="height:800px; width:1500px; margin: 0 auto">
+    </div>
+</div>
+<div id="tab2" class="tab-content" style="display: none;">
+    <div id="completedContainer" style="height:800px; width:1500px; margin: 0 auto">
+    </div>
+</div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var initializeGrid = function (data) {
+            $("#queueContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.ErrorQueue,
+                columns: [
+                    { dataField: 'Weight', caption: 'Weight', dataType: 'number', width: '100px', sortIndex: 0, sortOrder: 'asc' },
+                    { dataField: 'ProcessName', caption: 'Process Name', dataType: 'string', width: '300px' },
+                    { dataField: 'GraphInstance', caption: 'Graph', dataType: 'string', width: '75px', alignment: 'center' },
+                    { dataField: 'ValueDate', caption: 'Value Date', dataType: 'date', width: '85px', format: 'yyyy-MM-dd', alignment: 'center' },
+                    { dataField: 'DispatchState', caption: 'State', dataType: 'date', width: '85px', format: 'yyyy-MM-dd', alignment: 'center' },
+                    { dataField: 'LastStart', caption: 'Last Start', dataType: 'date', width: '150px', format: 'dd/MM/yyyy HH:mm:ss', alignment: 'center' },
+                    { dataField: 'Message', caption: 'Message', dataType: 'string', width: '450px' },
+                    { dataField: 'ShouldRetry', caption: 'Transient?', dataType: 'boolean', width: '90px' },
+                    {
+                        caption: 'Retry',
+                        width: "80px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Retry')
+                                .attr('href', '@Url.Action("RetryError", "Process")?dp=' + options.data.DispatchKey +
+                                    '&returnUrl=' + escape('@Html.Raw(Url.Action("ErrorQueue"))'))
+                                .appendTo(container);
+                        }
+                    },
+                    {
+                        caption: 'Ignore',
+                        width: "80px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Ignore')
+                                .click(function () {
+                                    RIFFWebCore.Helpers.postUserAction("@Url.Action("IgnoreError", "System")", { dp: options.data.DispatchKey }, "Error Item Ignored.", function(data) { initializeGrid(data); });
+                                })
+                                .appendTo(container);
+                        }
+                    }
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: false, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: false,
+                showRowLines: true,
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' },
+                onCellPrepared: function (e) {
+                    if (e !== undefined && e.rowType === 'data' && e.column.caption === 'State') {
+                        if (e.data.DispatchState === 'Finished')
+                            e.cellElement.addClass('greencell');
+                        else if (e.data.DispatchState === 'Started' || e.data.DispatchState === 'Ignored')
+                            e.cellElement.addClass('yellowcell');
+                        else if (e.data.DispatchState === 'Error')
+                            e.cellElement.addClass('redcell');
+                    }
+                }
+            });
+
+            $("#completedContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.Completed,
+                columns: [
+                    { dataField: 'LastStart', caption: 'Last Start', dataType: 'date', width: '150px', format: 'dd/MM/yyyy HH:mm:ss', alignment: 'center', sortIndex: 0, sortOrder: 'desc' },
+                    { dataField: 'ProcessName', caption: 'Process Name', dataType: 'string', width: '410px' },
+                    { dataField: 'GraphInstance', caption: 'Graph', dataType: 'string', width: '75px', alignment: 'center' },
+                    { dataField: 'ValueDate', caption: 'Value Date', dataType: 'date', width: '85px', format: 'yyyy-MM-dd', alignment: 'center' },
+                    { dataField: 'DispatchState', caption: 'State', dataType: 'date', width: '85px', format: 'yyyy-MM-dd', alignment: 'center' },
+                    { dataField: 'Message', caption: 'Message', dataType: 'string', width: '690px' },
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: false, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: false,
+                showRowLines: true,
+                remoteOperations: false,
+                onCellPrepared: function(e)
+                {
+                    if(e !== undefined && e.rowType === 'data' && e.column.caption === 'State')
+                    {
+                        if (e.data.DispatchState === 'Finished')
+                            e.cellElement.addClass('greencell');
+                        else if (e.data.DispatchState === 'Started' || e.data.DispatchState === 'Ignored')
+                            e.cellElement.addClass('yellowcell');
+                        else if (e.data.DispatchState === 'Error')
+                            e.cellElement.addClass('redcell');
+                    }
+                },
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+
+            RIFFWebCore.RIFFPage.refreshSystemStatus();
+        }
+
+        var RFinitialize = function () {
+
+            $('#tabs').dxTabs({
+                dataSource:
+                    [
+                        { text: "Error Queue", content: "#tab1" },
+                        { text: "Recently Completed", content: "#tab2" },
+                    ],
+                width: "30%",
+                selectedIndex: 0,
+                onItemClick: function (e) {
+                    $(".tab-content").hide();
+                    $(e.itemData.content).show();
+                    if (e.itemData.content === "#tab1") {
+                        $('#queueContainer').dxDataGrid('instance').repaint();
+                    } else if (e.itemData.content === "#tab2") {
+                        $('#completedContainer').dxDataGrid('instance').repaint();
+                    }
+                }
+            });
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetErrorQueue", "System")", null, initializeGrid);
+        };
+    </script>
+}

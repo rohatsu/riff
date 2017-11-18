@@ -46,15 +46,14 @@ namespace RIFF.Core
         }
 
         public override IRFSystemContext Start()
-        {
-            _context.Engine.Initialize();
-
+        {            
             var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
             var manager = new RFDispatchQueueSink(_context, _workQueue);
             _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, manager, manager, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
             _workQueueMonitor.StartThread();
 
             _processingContext = _context.GetProcessingContext(null, manager, manager, _workQueueMonitor);
+            _context.Engine.Initialize(_processingContext);
             return _processingContext; // this is the root environment (time triggers) which doesn't have a tracker
         }
 

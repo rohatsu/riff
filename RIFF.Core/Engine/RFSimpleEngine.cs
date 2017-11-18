@@ -14,6 +14,7 @@ namespace RIFF.Core
         protected RFEngineDefinition _config;
         protected Dictionary<string, RFEngineProcess> _processes;
         protected List<RFEventReactor> _reactors;
+        protected List<RFBackgroundServiceComponent> _services;
 
         public RFSimpleEngine(RFEngineDefinition config, RFComponentContext componentContext)
             : base(componentContext)
@@ -21,6 +22,7 @@ namespace RIFF.Core
             _config = config;
             _reactors = new List<RFEventReactor>();
             _processes = new Dictionary<string, RFEngineProcess>();
+            _services = new List<RFBackgroundServiceComponent>();
         }
 
         public Dictionary<string, SortedSet<string>> GetDependencies()
@@ -35,7 +37,7 @@ namespace RIFF.Core
             return map.CalculateWeights();
         }
 
-        public void Initialize()
+        public void Initialize(IRFProcessingContext serviceContext)
         {
             Log.Info(this, "Initializing RFSimpleEngine.");
 
@@ -53,6 +55,13 @@ namespace RIFF.Core
             foreach (var graphConfig in _config.Graphs.Values)
             {
                 AddGraph(graphConfig);
+            }
+
+            foreach (var service in _config.Services)
+            {
+                var backgroundService = new RFBackgroundServiceComponent(_context, service.Value(serviceContext));
+                _services.Add(backgroundService);
+                _reactors.Add(new RFServiceReactor { ServiceName = service.Key, Service = backgroundService });
             }
 
             //_reactors.Add(new RFIntervalReactor(_config.IntervalDocumentKey(), _context.GetReadingContext()));

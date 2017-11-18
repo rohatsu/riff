@@ -1,0 +1,82 @@
+﻿@model RIFF.Web.Core.Models.System.DataEditorModel
+@{
+    ViewBag.Title = "Data Editor";
+    ViewBag.SuppressTitle = true;
+    ViewBag.Bundle = "~/bundles/codemirror";
+    ViewBag.MaxWidth = "1850px";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div style="width: 100%; clear: both; overflow: auto;" id="outercontainer">
+    <div style="width: 760px; vertical-align: top; display: inline-block;">
+        <div class="dx-field" style="width: 300px; margin-bottom: 7px;">
+            <div class="dx-field-label" style="width: 20%;">Latest Date</div>
+            <div class="dx-field-value" style="width: 40%;" id="datebox"></div>
+        </div>
+        <div id="gridContainer" style="height: 650px; margin: 0; width: 100%;"></div>
+    </div>
+    <div id="editingPanel" style="min-height: 625px; margin: -20px 0 0 0;/* width: 49%;*/ display: inline-block; vertical-align: top;">
+        <div style="padding: 0 0 0 0; width: 100%;" class="dx-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label" style="width: 66%;">
+                    <div id="copybutton"></div>
+                    <div id="savebutton"></div>
+                    <div id="deletebutton"></div>
+                    <div id="importbutton"></div>
+                </div>
+                <div class="dx-field-value" style="width: 33%; margin-top: 6px;" id="keytypebox"></div>
+            </div>
+            <div class="dx-field">
+                <textarea id="keyeditorbox" style="width: 100%;"></textarea>
+            </div>
+        </div>
+        <div style="padding: 0 0 0 0; width: 100%;" class="dx-fieldset">
+            <div class="dx-field">
+                <div class="dx-field-label" style="width: 66%;">
+                    <div id="editbutton"></div>
+                    <div id="updatebutton"></div>
+                    <div id="viewbutton"></div>
+                    <div id="xmlbutton"></div>
+                    <div id="excelbutton"></div>
+                </div>
+                <div class="dx-field-value" style="width: 33%; margin-top: 6px;" id="contenttypebox"></div>
+            </div>
+            <div class="dx-field">
+                <textarea id="contenteditorbox" style="width: 100%;"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="importentry" style="display: none;">
+    <h3>Import Entry</h3>
+    @using (Html.BeginForm("ImportEntry", "System", FormMethod.Post, new { id = "uploadform", enctype = "multipart/form-data" }))
+    {
+        <div class="dx-fieldset" style="width: 600px;">
+            <div class="dx-field">
+                <div class="dx-field-label" style="width: 20%;">&nbsp;</div>
+                <div class="dx-field-value" style="width: 80%;"><div id="uploadfile"></div></div>
+            </div>
+        </div>
+        <div id="uploadbutton"></div>
+    }
+</div>
+
+@section RIFFPageScripts {
+
+    <script type="text/javascript">
+
+        var codeBehind = new RIFF.Web.System.DataEditorPage({
+            urlGetDocumentForEdit: '@Html.Raw(Url.Action("GetDocumentForEdit", "System"))',
+            urlInvalidateEntry: '@Html.Raw(Url.Action("InvalidateEntry", "System"))',
+            urlDataSet: '@Html.Raw(Url.Action("DataSet", "System"))',
+            urlExportEntry: '@Html.Raw(Url.Action("ExportEntry", "System"))',
+            urlDownloadEntry: '@Html.Raw(Url.Action("DownloadEntry", "System"))',
+            urlUpdateDocument: '@Html.Raw(Url.Action("UpdateDocument", "System"))',
+            urlSaveDocument: '@Html.Raw(Url.Action("SaveDocument", "System"))',
+            urlGetLatestDocuments: '@Html.Raw(Url.Action("GetLatestDocuments", "System"))',
+            urlGetInstances: '@Html.Raw(Url.Action("GetInstances", "System"))',
+            initialDate: new Date(@RIFF.Core.RFDate.Today().Year, @RIFF.Core.RFDate.Today().Month - 1, @RIFF.Core.RFDate.Today().Day)
+        });
+    </script>
+}

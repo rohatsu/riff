@@ -1,0 +1,150 @@
+﻿@{
+    ViewBag.Title = "Processing Logs";
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div id="tabs"></div>
+<div id="tab1" class="tab-content">
+    <div id="processContainer" style="min-height:500px; width:1500px; margin: 0 auto">
+    </div>
+</div>
+<div id="tab2" class="tab-content" style="display: none;">
+    <div id="gridContainer" style="min-height:500px; width:1500px; margin: 0 auto">
+    </div>
+    @*
+    <div>
+        <textarea id="logEntry" style="width:1500px;min-width:1500px;max-width:1500px;height:600px;border:none;">
+            &nbsp;
+        </textarea>
+    </div>*@
+</div>
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+        var initializeGrid = function (data) {
+            $("#processContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.ProcessLog,
+                columns: [
+                    { dataField: 'LogID', caption: 'Log ID', width: "50px", sortIndex: 0, sortOrder: 'desc' },
+                    { dataField: 'Timestamp', caption: 'Time Stamp', dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", width: "150px", alignment: 'center' },
+                    { dataField: 'GraphName', caption: 'Graph', width: "100px" },
+                    { dataField: 'ProcessName', caption: 'Process', width: "300px" },
+                    { dataField: 'Instance', caption: 'Instance', width: "80px", alignment: 'center' },
+                    { dataField: 'ValueDate', caption: 'Date', width: "90px", dataType: 'date', format: 'dd/MM/yyyy', alignment: 'center' },
+                    { dataField: 'IOTime', caption: 'IO [ms]', width: "85px", format: 'fixedPoint' },
+                    { dataField: 'ProcessingTime', caption: 'Work [ms]', width: "85px", format: 'fixedPoint' },
+                    { dataField: 'NumUpdates', caption: '# Upd', width: "75px" },
+                    { dataField: 'Success', caption: 'OK', width: "50px", dataType: "boolean" },
+                    { dataField: 'Message', caption: 'Message', width: "400px" },
+@*                    {
+                        dataField: 'LogID',
+                        caption: 'Show',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Show')
+                                //.attr('href', '@Url.Action("GetLog", "System")?logID=' + options.data.LogID)
+                                .on('click', function (data) {
+                                    $.getJSON('@Url.Action("GetLog", "System")?logID=' + options.data.LogID, function (response, status, jqXHR) {
+                                        $('#logEntry').text(JSON.stringify(response, null, 2));
+                                    });
+                                })
+                                .appendTo(container);
+                        }
+                    }*@
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: true,
+                pager: { visible: true },
+                paging: { pageSize: 22 },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data.SystemLog,
+                columns: [
+                    { dataField: 'LogID', caption: 'Log ID', width: "50px" },
+                    { dataField: 'Timestamp', caption: 'Time Stamp', dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", sortIndex: 0, sortOrder: 'desc', width: "150px" },
+                    { dataField: 'Hostname', caption: 'Host Name', width: "100px" },
+                    { dataField: 'Level', caption: 'Level', width: "75px" },
+                    { dataField: 'Source', caption: 'Source', width: "200px" },
+                    { dataField: 'Message', caption: 'Message', width: "570px" },
+                    { dataField: 'Thread', caption: 'Thread', width: "50px" },
+                    { dataField: 'Exception', caption: 'Exception', width: "200px" },
+                    { dataField: 'Content', caption: 'Content', width: "100px" },
+                    @*{
+                        dataField: 'LogID',
+                        caption: 'Show',
+                        width: "100px",
+                        alignment: "center",
+                        cellTemplate: function (container, options) {
+                            $('<a />').addClass('dx-link')
+                                .text('Show')
+                                //.attr('href', '@Url.Action("GetLog", "System")?logID=' + options.data.LogID)
+                                .on('click', function (data) {
+                                    $.getJSON('@Url.Action("GetLog", "System")?logID=' + options.data.LogID, function (response, status, jqXHR) {
+                                        $('#logEntry').text(JSON.stringify(response, null, 2));
+                                    });
+                                })
+                                .appendTo(container);
+                        }
+                    }*@
+                ],
+                columnChooser: { enabled: false },
+                allowColumnReordering: false,
+                sorting: { mode: 'single' },
+                groupPanel: { visible: true, emptyPanelText: 'Drag a column header here to group grid records' },
+                columnAutoWidth: true,
+                pager: { visible: true },
+                paging: { pageSize: 22 },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var RFinitialize = function () {
+
+            $('#tabs').dxTabs({
+                dataSource:
+                    [
+                        { text: "Process Log", content: "#tab1" },
+                        { text: "System Log", content: "#tab2" },
+                    ],
+                width: "30%",
+                selectedIndex: 0,
+                onItemClick: function (e) {
+                    $(".tab-content").hide();
+                    $(e.itemData.content).show();
+                    if (e.itemData.content === "#tab1") {
+                        $('#processContainer').dxDataGrid('instance').repaint();
+                    } else if (e.itemData.content === "#tab2") {
+                        $('#gridContainer').dxDataGrid('instance').repaint();
+                    }
+                }
+            });
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("GetLogs", "System")", null, initializeGrid);
+        };
+    </script>
+}

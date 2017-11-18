@@ -1,0 +1,37 @@
+﻿@*
+    Generator: MvcHelper
+    GeneratePrettyNames : true
+*@
+
+@helper TabsBase(string extraStyle = null)
+    {
+    <div class="tabsbase noprint" style="@(extraStyle ?? String.Empty)">&nbsp;</div>
+}
+
+@helper JustText(string text)
+    {
+    @:text
+    }
+
+@helper JavascriptArray(IEnumerable<object> l)
+    {
+    @: [
+if(l != null)
+{
+        @: @(new HtmlString(string.Join(",", l.Select(i => String.Format("'{0}'", i)))))
+}
+@: ]
+    }
+
+@functions {
+    public static string SanitizeID(string id)
+    {
+        return id.Replace(" ", "").Replace("(", "").Replace(")", "").Replace(".", "").Replace(",", "").ToLower();
+    }
+}
+@*
+    @helper SanitizeID(string id)
+    {
+@:@(id.Replace(" ", "").Replace("(", "").Replace(")", "").Replace(".", "").Replace(",", "").ToLower())
+    }
+*@

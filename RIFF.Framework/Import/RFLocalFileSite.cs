@@ -12,13 +12,12 @@ namespace RIFF.Framework
     [DataContract]
     public class RFLocalFileSite : RFFileSite
     {
+        // read full directory list once - for slow shared drives
         [DataMember]
         public bool CacheDirectoryList { get; set; }
 
         [DataMember]
         public bool PreserveModifiedDate { get; set; }
-
-        // read full directory list once - for slow shared drives
 
         [DataMember]
         public string RootDirectory { get; set; }
@@ -125,12 +124,8 @@ namespace RIFF.Framework
         {
         }
 
-        public override void PutFile(RFFileAvailableEvent file, RFMonitoredFile fileConfig, byte[] data)
+        protected void InternalPutFile(string path, RFFileAvailableEvent file, byte[] data)
         {
-            var directory = Path.Combine(RootDirectory, fileConfig.PutSubDirectory ?? String.Empty);
-            Directory.CreateDirectory(directory);
-            var path = Path.Combine(directory, file.FileAttributes.FileName); // file name could have subdirectories
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.WriteAllBytes(path, data);
             if (PreserveModifiedDate)
             {
@@ -144,6 +139,15 @@ namespace RIFF.Framework
                     RFStatic.Log.Warning(this, "Unable to set modified date on file {0}: {1}", path, ex.Message);
                 }
             }
+        }
+
+        public override void PutFile(RFFileAvailableEvent file, RFMonitoredFile fileConfig, byte[] data)
+        {
+            var directory = Path.Combine(RootDirectory, fileConfig.PutSubDirectory ?? String.Empty);
+            Directory.CreateDirectory(directory);
+            var path = Path.Combine(directory, file.FileAttributes.FileName); // file name could have subdirectories
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            InternalPutFile(path, file, data);
         }
 
         protected bool IsFileReadable(FileInfo file)
@@ -163,12 +167,6 @@ namespace RIFF.Framework
 
             //file is not locked
             return true;
-        }
-
-        private static bool FitsMask(string sFileName, string sFileMask)
-        {
-            Regex mask = new Regex("^" + Regex.Escape(sFileMask)/*.Replace(".", "[.]")*/.Replace(@"\*", ".*").Replace(@"\?", ".") + "$", RegexOptions.IgnoreCase);
-            return mask.IsMatch(sFileName);
         }
 
         private static string GetRelativePath(string rootPath, string subPath)
@@ -191,6 +189,11 @@ namespace RIFF.Framework
             return Uri.UnescapeDataString(diff.OriginalString).Replace('/', '\\');
         }
 
+        protected virtual string TrimRelativePath(string relativePath)
+        {
+            return relativePath.Trim('/', '\\', '.');
+        }
+
         private IEnumerable<FileInfo> FilterForFile(IEnumerable<FileInfo> allFiles, RFMonitoredFile file)
         {
             var expectedDirectory = (file.GetSubDirectory ?? "").ToLower().Trim('/', '\\', '.');
@@ -201,7 +204,7 @@ namespace RIFF.Framework
                 if (FitsMask(candidateFile.Name, file.FileNameWildcard))
                 {
                     // is it in required subdirectory?
-                    var relativePath = GetRelativePath(RootDirectory, candidateFile.DirectoryName).ToLower().Trim('/', '\\', '.');
+                    var relativePath = TrimRelativePath(GetRelativePath(RootDirectory, candidateFile.DirectoryName).ToLower());
 
                     if (relativePath == expectedDirectory || (file.Recursive && relativePath.StartsWith(expectedDirectory, StringComparison.OrdinalIgnoreCase)))
                     {

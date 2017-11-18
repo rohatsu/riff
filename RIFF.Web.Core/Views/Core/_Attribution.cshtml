@@ -1,0 +1,108 @@
+﻿@model RIFF.Web.Core.Models.AttributionModel
+@{
+    Layout = "~/Views/Core/_RIFFPage.cshtml";
+}
+
+<div class="box" id="topbox">
+    <div id="box1" data-options="dxItem: { ratio: 0.7 }">
+        <div id="textlabel" class="dx-field-label" style="width: 90%;">Effective Date</div>
+    </div>
+    <div id="box2" data-options="dxItem: { ratio: 1 }">
+        <div id="valuedate"></div>
+    </div>
+    <div id="box3" data-options="dxItem: { ratio: 0.5 }">
+        <div id="applyButton"></div>
+    </div>
+</div>
+
+@RenderSection("Help", false)
+
+<div id="gridContainer" style="min-height:780px; width:100%; margin: 0 auto"></div>
+
+@RenderSection("ColumnDefs", true)
+
+@section RIFFPageScripts {
+    <script type="text/javascript">
+
+        var initializeGrid = function (data) {
+            $("#gridContainer").dxDataGrid({
+                hoverStateEnabled: true,
+                dataSource: data,
+
+                columns: columnDefs,
+                editing: {
+                    mode: 'row',
+                    allowUpdating: true,
+                    allowDeleting: false,
+                    allowAdding: false
+                },
+                columnChooser: { enabled: false },
+                allowColumnReordering: true,
+                allowColumnResizing: true,
+                onRowUpdating: function (e) {
+                    RIFFWebCore.Helpers.postUserAction("@Url.Action("Update", Model.ControllerName, new { valueDate = Model.ValueDate })", $.extend(e.oldData, e.newData), "Mapping updated.",
+                        setRequiresApply);
+                },
+                sorting: { mode: 'single' },
+                columnAutoWidth: false,
+                pager: { visible: false },
+                paging: { enabled: false },
+                headerFilter: { visible: true },
+                rowAlternationEnabled: true,
+                scrolling: {
+                    mode: 'virtual',
+                    preloadEnabled: true
+                },
+                remoteOperations: false,
+                loadPanel: {
+                    enabled: false
+                },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                selection: { mode: 'single' }
+            });
+        }
+
+        var getValueDate = function () {
+            return RIFFWebCore.Helpers.getYMD($('#valuedate').dxDateBox('instance').option("value"));
+        }
+
+        var setRequiresApply = function ()
+        {
+            $('#applyButton').dxButton('instance').option('type', 'default');
+        }
+
+        var RFinitialize = function () {
+            $('#topbox').dxBox({
+                direction: 'row',
+                height: '30px',
+                width: '300px'
+            });
+
+            $('#valuedate').dxDateBox({
+                min: null,
+                max: new Date(),
+                displayFormat: 'yyyy-MM-dd',
+                value: new Date(@Model.ValueDate.Year, @Model.ValueDate.Month - 1, @Model.ValueDate.Day),
+                onValueChanged: function (e) {
+                    var valueDate = getValueDate();
+                    window.location.assign("@Url.Action("Index", Model.ControllerName, new { area = Model.AreaName })" + '?valueDate=' + valueDate);
+                }
+            });
+
+            $('#applyButton').dxButton({
+                text: 'Apply',
+                onClick: function () {
+                    window.location.assign("@Url.Action("Apply", Model.ControllerName, new { area = Model.AreaName, valueDate = Model.ValueDate })");
+                }
+            });
+
+            @if(Model.RequiresApply)
+            {
+                @: setRequiresApply();
+            }
+
+            RIFFWebCore.RIFFPage.populateGrid("@Url.Action("Attributions", Model.ControllerName, new { valueDate = Model.ValueDate })", null, initializeGrid);
+        };
+    </script>
+}

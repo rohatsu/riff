@@ -1,5 +1,6 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace RIFF.Core
 {
@@ -44,6 +45,38 @@ namespace RIFF.Core
         public override List<RFInstruction> React(RFEvent e)
         {
             return Trigger.React(e);
+        }
+    }
+
+    [DataContract]
+    public class RFServiceEvent : RFEvent
+    {
+        public const string START_COMMAND = "start";
+        public const string STOP_COMMAND = "stop";
+
+        [DataMember]
+        public string ServiceName { get; set; }
+
+        [DataMember]
+        public string ServiceCommand { get; set; }
+
+        [DataMember]
+        public string ServiceParams { get; set; }
+    }
+
+    internal class RFServiceReactor : RFEventReactor
+    {
+        public string ServiceName { get; set; }
+
+        public RFBackgroundServiceComponent Service { get; set; }
+
+        public override List<RFInstruction> React(RFEvent e)
+        {
+            if (e is RFServiceEvent se && se.ServiceName.Equals(ServiceName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return Service.Command(se.ServiceCommand.ToLower(), se.ServiceParams);
+            }
+            return null;
         }
     }
 }
