@@ -47,11 +47,6 @@ namespace RIFF.Service
                     return;
                 }
 
-                if (RFSettings.GetAppSetting("UseMSMQ", true))
-                {
-                    CleanUpMSMQ(Environment.MachineName, engine.Environment);
-                }
-
                 if (_args != null && _args.Length > 0)
                 {
                     _environment = RFEnvironments.StartConsole(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
@@ -82,6 +77,11 @@ namespace RIFF.Service
                 }
                 else
                 {
+                    if (RFSettings.GetAppSetting("UseMSMQ", true))
+                    {
+                        CleanUpMSMQ(Environment.MachineName, engine.Environment);
+                    }
+
                     // WCF service
                     _environment = RFEnvironments.StartLocal(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
                     _context = _environment.Start();

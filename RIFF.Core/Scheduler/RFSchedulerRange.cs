@@ -204,14 +204,20 @@ namespace RIFF.Core
     [DataContract]
     public abstract class RFSchedulerRange : RFSchedulerBase
     {
+        public bool IsEnabled { get; set; } = true;
+
         protected RFSchedulerRange(string timeZone) : base(timeZone)
         {
         }
 
         public bool InRange(RFInterval interval)
         {
-            var stInterval = ConvertToScheduleZone(interval);
-            return InternalInRange(stInterval);
+            if (IsEnabled)
+            {
+                var stInterval = ConvertToScheduleZone(interval);
+                return InternalInRange(stInterval);
+            }
+            return false;
         }
 
         protected abstract bool InternalInRange(RFInterval interval);

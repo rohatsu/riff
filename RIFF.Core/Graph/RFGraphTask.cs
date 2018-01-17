@@ -24,14 +24,14 @@ namespace RIFF.Core
     public class RFScheduledGraphTaskDefinition : RFGraphTaskDefinition, IRFScheduledTaskDefinition
     {
         [DataMember]
-        public RFSchedulerRange Range { get; set; }
+        public Func<RFSchedulerRange> RangeFunc { get; set; }
 
-        public override string SchedulerRange => Range?.ToString() ?? String.Empty;
+        public override string SchedulerRange => RangeFunc()?.ToString() ?? String.Empty;
 
-        public override string SchedulerSchedule => Schedules != null ? String.Join(", ", Schedules.Select(s => s.ToString())) : String.Empty;
+        public override string SchedulerSchedule => SchedulesFunc() != null ? String.Join(", ", SchedulesFunc().Select(s => s.ToString())) : String.Empty;
 
         [DataMember]
-        public List<RFSchedulerSchedule> Schedules { get; set; }
+        public Func<List<RFSchedulerSchedule>> SchedulesFunc { get; set; }
 
         [DataMember]
         public RFManualTriggerKey TriggerKey { get; set; }
@@ -51,9 +51,8 @@ namespace RIFF.Core
                 description: string.Format("Schedules task {0}", TaskName),
                 processor: () => new RFSchedulerProcessor(new RFSchedulerConfig
                 {
-                    Range = Range,
-                    Schedules = Schedules,
-                    //IntervalKey = engine.IntervalDocumentKey(),
+                    Range = RangeFunc(),
+                    Schedules = SchedulesFunc(),
                     TriggerKey = TriggerKey,
                     GraphInstance = (i) => TriggerKey.GraphInstance.WithDate(i.IntervalEnd.Date)
                 }));

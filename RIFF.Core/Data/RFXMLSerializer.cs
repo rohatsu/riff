@@ -110,6 +110,11 @@ namespace RIFF.Core
             return DeserializeContract(GetOrCreateSerializer(type), xml);
         }
 
+        public static object DeserializeContract(Type type, string xml)
+        {
+            return DeserializeContract(GetOrCreateSerializer(type), xml);
+        }
+
         public static IEnumerable<Type> GetKnownTypes(ICustomAttributeProvider provider)
         {
             return mPotentialTypes;
@@ -215,10 +220,10 @@ namespace RIFF.Core
 
         protected static DataContractSerializer GetOrCreateSerializer(Type type, bool isCaching = false)
         {
-            return GetOrCreateSerializer(type.FullName, isCaching);
+            return GetOrCreateSerializer(type.FullName, isCaching, type);
         }
 
-        protected static DataContractSerializer GetOrCreateSerializer(string typeName, bool isCaching = false)
+        protected static DataContractSerializer GetOrCreateSerializer(string typeName, bool isCaching = false, Type nonCachedType = null)
         {
 #if (DEBUG)
             const bool debug = true;
@@ -237,7 +242,7 @@ namespace RIFF.Core
 
                     try
                     {
-                        var type = RFReflectionHelpers.GetTypeByFullName(typeName);
+                        var type = RFReflectionHelpers.GetTypeByFullName(typeName) ?? nonCachedType;
                         if (!isCaching || !debug)
                         {
                             serializer = CreateDeserializer(type);

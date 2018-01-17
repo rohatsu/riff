@@ -44,9 +44,6 @@ namespace RIFF.Core
         [DataMember]
         public Func<RFInterval, RFGraphInstance> GraphInstance { get; set; }
 
-        /*[DataMember]
-        public RFCatalogKey IntervalKey { get; set; }*/
-
         [DataMember]
         public RFSchedulerRange Range { get; set; }
 
@@ -70,36 +67,52 @@ namespace RIFF.Core
     }
 
     [DataContract]
-    public class RFSchedulerProcessor : RFEngineProcessor<RFEngineProcessorIntervalParam> //RFGenericSingleInstanceProcessor
+    public class RFSchedulerProcessor : RFEngineProcessor<RFEngineProcessorIntervalParam>
     {
-        protected RFSchedulerConfig mConfig;
+        protected Func<IRFProcessingContext, List<RFSchedulerConfig>> mConfigFunc;
+
+        public RFSchedulerProcessor(Func<IRFProcessingContext, List<RFSchedulerConfig>> configFunc)
+        {
+            mConfigFunc = configFunc;
+        }
 
         public RFSchedulerProcessor(RFSchedulerConfig config)
         {
-            mConfig = config;
+            mConfigFunc = (_) => new List<RFSchedulerConfig> { config };
         }
 
         public override RFProcessingResult Process()
         {
-            //var interval = (Context.LoadEntry(mConfig.IntervalKey) as RFDocument).GetContent<RFInterval>();
             var interval = InstanceParams.Interval;
             var result = new RFProcessingResult();
 
-            if (mConfig.ShouldTrigger(interval))
+            foreach (var config in mConfigFunc(Context))
             {
-                var key = mConfig.TriggerKey;
-                if (mConfig.GraphInstance != null)
+                if (config.ShouldTrigger(interval))
                 {
-                    key = key.CreateForInstance(mConfig.GraphInstance(interval));
-                    Context.SaveEntry(RFDocument.Create(key, new RFGraphProcessorTrigger { TriggerStatus = true, TriggerTime = interval.IntervalEnd }));
+                    var key = config.TriggerKey;
+                    if (config.GraphInstance != null)
+                    {
+                        key = key.CreateForInstance(config.GraphInstance(interval));
+                        Context.SaveEntry(RFDocument.Create(key, new RFGraphProcessorTrigger { TriggerStatus = true, TriggerTime = interval.IntervalEnd }));
+                    }
+                    else
+                    {
+                        Context.SaveEntry(RFDocument.Create(key, new RFScheduleTrigger { LastTriggerTime = interval.IntervalEnd }));
+                    }
+                    result.WorkDone = true;
                 }
-                else
-                {
-                    Context.SaveEntry(RFDocument.Create(key, new RFScheduleTrigger { LastTriggerTime = interval.IntervalEnd }));
-                }
-                result.WorkDone = true;
             }
             return result;
+        }
+    }
+
+    [DataContract]
+    public class RFScheduledTaskTriggerProcessor : RFSchedulerProcessor
+    {
+        public RFScheduledTaskTriggerProcessor(RFCatalogKey configKey) : base((context) => context.LoadDocumentContent<List<RFSchedulerConfig>>(configKey))
+        {
+
         }
     }
 

@@ -125,7 +125,7 @@ namespace RIFF.Framework
                     case "error":
                         {
                             _context.SystemLog.Error(this, "System Log error message");
-                            _context.SystemLog.Exception(this, "System Log exception message", new Exception("Test exception"));
+                            //_context.SystemLog.Exception(this, "System Log exception message", new Exception("Test exception"));
                             break;
                         }
                     case "version":
@@ -150,6 +150,23 @@ namespace RIFF.Framework
                             else
                             {
                                 Console.WriteLine("provide email address as parameter");
+                            }
+                        }
+                        break;
+                    case "list":
+                        {
+                            Console.WriteLine("== PROCESSES");
+                            foreach (var p in _config.Processes.OrderBy(p => p.Key))
+                            {
+                                Console.WriteLine($"\"{p.Key}\" -> {p.Value.Processor().GetType().Name}");
+                            }
+                            Console.WriteLine("== GRAPHS");
+                            foreach (var g in _config.Graphs.OrderBy(g => g.Key))
+                            {
+                                foreach (var p in g.Value.Processes.OrderBy(p => p.Key))
+                                {
+                                    Console.WriteLine($"\"{RFGraphDefinition.GetFullName(g.Key, p.Key)}\" -> {p.Value.Processor().GetType().Name}");
+                                }
                             }
                         }
                         break;

@@ -22,11 +22,23 @@ namespace RIFF.Web.Core
         {
             RIFFStart.SetConfig(new C());
 
+            PreStart();
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            PostStart();
+        }
+
+        protected virtual void PreStart()
+        {
+        }
+
+        protected virtual void PostStart()
+        {
         }
     }
 }
