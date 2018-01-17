@@ -229,10 +229,23 @@ namespace RIFF.Core
         /// <returns></returns>
         public RFEngineTaskDefinition AddScheduledTask(string taskName, List<RFSchedulerSchedule> schedules, RFSchedulerRange range, RFEngineProcessDefinition process, bool isSystem)
         {
+            return AddScheduledTask(taskName, () => schedules, () => range, process, isSystem);
+        }
+
+        /// <summary>
+        /// Configures process to automatically run on specific schedule
+        /// </summary>
+        /// <param name="taskName"></param>
+        /// <param name="schedules"></param>
+        /// <param name="range"></param>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public RFEngineTaskDefinition AddScheduledTask(string taskName, Func<List<RFSchedulerSchedule>> schedulesFunc, Func<RFSchedulerRange> rangeFunc, RFEngineProcessDefinition process, bool isSystem)
+        {
             var task = new RFScheduledEngineTaskDefinition
             {
-                Range = range,
-                Schedules = schedules,
+                RangeFunc = rangeFunc,
+                SchedulesFunc = schedulesFunc,
                 TaskName = taskName,
                 TaskProcess = process,
                 IsSystem = isSystem
@@ -305,7 +318,7 @@ namespace RIFF.Core
 
         public void AddService(string serviceName, Func<IRFProcessingContext, IRFBackgroundService> service)
         {
-            if(Services.ContainsKey(serviceName))
+            if (Services.ContainsKey(serviceName))
             {
                 throw new Exception(String.Format("Already registered service {0}", serviceName));
             }

@@ -143,6 +143,7 @@
     <Compile Include="Engine\RFTask.cs" />
     <Compile Include="Graph\RFGraphDefinition.cs" />
     <Compile Include="Graph\RFGraphTask.cs" />
+    <Compile Include="Helpers\RFNetworkHelpers.cs" />
     <Compile Include="Helpers\RFDictionary.cs" />
     <Compile Include="Helpers\RFEnumHelpers.cs" />
     <Compile Include="Helpers\RFSettings.cs" />

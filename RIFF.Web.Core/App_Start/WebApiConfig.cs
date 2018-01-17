@@ -1,6 +1,8 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using RIFF.Web.Core.Controllers;
+using RIFF.Web.Core.Helpers;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 //*using System.Web.OData.Builder;
 //using System.Web.OData.Extensions;
 
@@ -11,6 +13,7 @@ namespace RIFF.Web.Core
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.EnableCors();
 
             // Web API routes
             config.MapHttpAttributeRoutes();
@@ -21,11 +24,9 @@ namespace RIFF.Web.Core
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            /*config.AddODataQueryFilter();
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
-            var builder = new ODataConventionModelBuilder();
-            builder.EntitySet<RFCatalogKeyData>("RFCatalogKeyData");
-            config.MapODataServiceRoute("ODataRoute", "odata", builder.GetEdmModel());*/
+            config.Services.Add(typeof(IExceptionLogger), new RFExceptionLogger());
         }
     }
 }

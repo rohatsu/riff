@@ -31,6 +31,8 @@ namespace RIFF.Web.Core.App_Start
         public static IRFProcessingContext Context { get; private set; }
         public static IRFUserRole UserRole { get; private set; }
 
+        public static EngineConfigElement EngineConfig { get; private set; }
+
         public static void CheckMenuItemPermission(RFMenuItem item, List<RFUserPermission> permissions)
         {
             var area = item.Area;
@@ -214,6 +216,7 @@ namespace RIFF.Web.Core.App_Start
             }
 
             var engine = RIFFSection.GetDefaultEngine();
+            EngineConfig = engine;
             var context = RFEnvironments.StartWeb(engine.Environment, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly });
             UserRole = context.UserRole;
 

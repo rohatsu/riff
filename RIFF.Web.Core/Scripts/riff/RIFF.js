@@ -94,6 +94,20 @@ var RIFF;
                 return SelectBox;
             }(Control));
             Core.SelectBox = SelectBox;
+            var DateBox = /** @class */ (function (_super) {
+                __extends(DateBox, _super);
+                function DateBox() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                DateBox.prototype.defaults = function () {
+                    return {
+                        activeStateEnabled: true,
+                        hoverStateEnabled: true,
+                    };
+                };
+                return DateBox;
+            }(Control));
+            Core.DateBox = DateBox;
         })(Core = Web.Core || (Web.Core = {}));
     })(Web = RIFF.Web || (RIFF.Web = {}));
 })(RIFF || (RIFF = {}));

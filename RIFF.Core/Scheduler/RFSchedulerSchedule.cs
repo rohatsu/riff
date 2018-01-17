@@ -1,6 +1,7 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2017 rohatsu software studios limited / www.rohatsu.com
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace RIFF.Core
@@ -81,8 +82,18 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            var intervalString = ((Interval.Hours != 0 ? (Interval.Hours.ToString() + "h") : String.Empty) + " " + (Interval.Minutes != 0 ? (Interval.Minutes.ToString() + "m") : String.Empty)).Trim();
-            var offsetString = ((Offset.Hours != 0 ? (Offset.Hours.ToString() + "h") : String.Empty) + " " + (Offset.Minutes != 0 ? (Offset.Minutes.ToString() + "m") : String.Empty)).Trim();
+            var intervalString = string.Join(" ", new string[] {
+                Interval.Hours != 0 ? (Interval.Hours.ToString() + "h") : null,
+                Interval.Minutes != 0 ? (Interval.Minutes.ToString() + "m") : null,
+                Interval.Seconds != 0 ? (Interval.Seconds.ToString() + "s") : null,
+            }.Where(s => s.NotBlank()));
+
+            var offsetString = string.Join(" ", new string[] {
+                Offset.Hours != 0 ? (Offset.Hours.ToString() + "h") : null,
+                Offset.Minutes != 0 ? (Offset.Minutes.ToString() + "m") : null,
+                Offset.Seconds != 0 ? (Offset.Seconds.ToString() + "s") : null,
+            }.Where(s => s.NotBlank()));
+
             if (offsetString.NotBlank())
             {
                 return String.Format("Every {0} (delta {1})", intervalString, offsetString);

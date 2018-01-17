@@ -63,8 +63,6 @@ namespace RIFF.Core
                 _services.Add(backgroundService);
                 _reactors.Add(new RFServiceReactor { ServiceName = service.Key, Service = backgroundService });
             }
-
-            //_reactors.Add(new RFIntervalReactor(_config.IntervalDocumentKey(), _context.GetReadingContext()));
         }
 
         public RFProcessingResult Process(RFInstruction i, IRFProcessingContext processingContext)
@@ -180,15 +178,6 @@ namespace RIFF.Core
             }
         }
 
-        protected void AddGraphTasks(RFGraphDefinition graphConfig)
-        {
-            // add tasks
-            foreach (var task in graphConfig.GraphTasks)
-            {
-                task.AddToEngine(_config);
-            }
-        }
-
         protected void LogProcessingStat(RFEngineProcess process, RFProcessInstruction i, Stopwatch sw, DateTimeOffset startTime)
         {
             try
@@ -230,7 +219,7 @@ namespace RIFF.Core
             }
             catch (Exception ex)
             {
-                Log.Exception(this, ex, "Error saving processing stats for process {0}", process.Name);
+                Log.Warning(this, "Error saving processing stats for process {0}: {1}", process.Name, ex.Message);
             }
         }
 

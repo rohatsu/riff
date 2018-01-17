@@ -104,6 +104,16 @@ namespace RIFF.Core
         public RFGraphTaskDefinition AddScheduledTask<D>(string taskName, List<RFSchedulerSchedule> schedules, RFSchedulerRange range, RFGraphProcessDefinition process, RFGraphInstance instance)
             where D : RFGraphProcessorDomain
         {
+            return AddScheduledTask<D>(taskName, () => schedules, () => range, process, instance);
+        }
+
+        /// <summary>
+        /// Configures graph process to automatically trigger on specific schedule
+        /// </summary>
+        /// <returns></returns>
+        public RFGraphTaskDefinition AddScheduledTask<D>(string taskName, Func<List<RFSchedulerSchedule>> schedulesFunc, Func<RFSchedulerRange> rangeFunc, RFGraphProcessDefinition process, RFGraphInstance instance)
+            where D : RFGraphProcessorDomain
+        {
             var triggerName = RFEnum.FromString(taskName);
             var triggerKey = RFManualTriggerKey.CreateKey(EngineConfig.KeyDomain, triggerName, instance);
 
@@ -112,8 +122,8 @@ namespace RIFF.Core
 
             var task = new RFScheduledGraphTaskDefinition
             {
-                Range = range,
-                Schedules = schedules,
+                RangeFunc = rangeFunc,
+                SchedulesFunc = schedulesFunc,
                 TaskName = taskName,
                 GraphProcess = process,
                 TriggerKey = triggerKey

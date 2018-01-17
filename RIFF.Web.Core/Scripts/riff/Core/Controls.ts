@@ -79,4 +79,14 @@
             }
         }
     }
+
+    export class DateBox extends Control<DevExpress.ui.dxDateBox, DevExpress.ui.dxDateBoxOptions>
+    {
+        defaults(): DevExpress.ui.dxDateBoxOptions {
+            return {
+                activeStateEnabled: true,
+                hoverStateEnabled: true,
+            }
+        }
+    }
 }

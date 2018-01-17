@@ -49,13 +49,13 @@ namespace RIFF.Core
     public class RFScheduledEngineTaskDefinition : RFEngineTaskDefinition, IRFScheduledTaskDefinition
     {
         [DataMember]
-        public RFSchedulerRange Range { get; set; }
+        public Func<RFSchedulerRange> RangeFunc { get; set; }
 
         public override string SchedulerRange
         {
             get
             {
-                return Range?.ToString() ?? String.Empty;
+                return RangeFunc()?.ToString() ?? String.Empty;
             }
         }
 
@@ -63,12 +63,12 @@ namespace RIFF.Core
         {
             get
             {
-                return Schedules != null ? String.Join(", ", Schedules.Select(s => s.ToString())) : String.Empty;
+                return SchedulesFunc() != null ? String.Join(", ", SchedulesFunc().Select(s => s.ToString())) : String.Empty;
             }
         }
 
         [DataMember]
-        public List<RFSchedulerSchedule> Schedules { get; set; }
+        public Func<List<RFSchedulerSchedule>> SchedulesFunc { get; set; }
 
         public override void AddToEngine(RFEngineDefinition engine)
         {
@@ -80,9 +80,8 @@ namespace RIFF.Core
                 description: string.Format("Schedules task {0}", TaskName),
                 processor: () => new RFSchedulerProcessor(new RFSchedulerConfig
                 {
-                    Range = Range,
-                    Schedules = Schedules,
-                    //IntervalKey = engine.IntervalDocumentKey(),
+                    Range = RangeFunc(),
+                    Schedules = SchedulesFunc(),
                     TriggerKey = triggerKey
                 }));
 
@@ -101,7 +100,10 @@ namespace RIFF.Core
 
         public override void AddToEngine(RFEngineDefinition engine)
         {
-            engine.AddCatalogUpdateTrigger<RFCatalogKey>(k => k.MatchesRoot(TriggerKey), TaskProcess);
+            if (TriggerKey != null)
+            {
+                engine.AddCatalogUpdateTrigger<RFCatalogKey>(k => k.MatchesRoot(TriggerKey), TaskProcess);
+            }
         }
     }
 }

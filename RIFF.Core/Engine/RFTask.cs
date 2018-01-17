@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -58,8 +59,8 @@ namespace RIFF.Core
 
     public interface IRFScheduledTaskDefinition : IRFTaskDefinition
     {
-        RFSchedulerRange Range { get; }
-        List<RFSchedulerSchedule> Schedules { get; }
+        Func<RFSchedulerRange> RangeFunc { get; }
+        Func<List<RFSchedulerSchedule>> SchedulesFunc { get; }
     }
 
     public interface IRFTaskDefinition

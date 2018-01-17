@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Core", "RIFF.Core\RIFF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Framework", "RIFF.Framework\RIFF.Framework.csproj", "{664C1AAD-D414-4362-815E-E4FDBEC98D94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Web.Core", "RIFF.Web.Core\RIFF.Web.Core.csproj", "{A79E8340-0748-4B72-B094-AD623C58CD7E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Tests", "RIFF.Tests\RIFF.Tests.csproj", "{7935C296-DCD2-43FD-A0AB-E71CA92EDD45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Interfaces", "RIFF.Interfaces\RIFF.Interfaces.csproj", "{2D095AC1-A543-41C8-B854-C2184EBBFC97}"
@@ -16,6 +14,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Service", "RIFF.Service\RIFF.Service.csproj", "{BFCFB390-2052-44A7-9619-9D82B553D8C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RIFF.Console", "RIFF.Console\RIFF.Console.csproj", "{C5BD436A-45D8-495C-9751-82AD334BEF14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{4A603D7C-7C14-4915-B058-93A4304B19E3}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\API.md = Documentation\API.md
+		Documentation\Architecture.md = Documentation\Architecture.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +35,6 @@ Global
 		{664C1AAD-D414-4362-815E-E4FDBEC98D94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{664C1AAD-D414-4362-815E-E4FDBEC98D94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{664C1AAD-D414-4362-815E-E4FDBEC98D94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A79E8340-0748-4B72-B094-AD623C58CD7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A79E8340-0748-4B72-B094-AD623C58CD7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A79E8340-0748-4B72-B094-AD623C58CD7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A79E8340-0748-4B72-B094-AD623C58CD7E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7935C296-DCD2-43FD-A0AB-E71CA92EDD45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7935C296-DCD2-43FD-A0AB-E71CA92EDD45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7935C296-DCD2-43FD-A0AB-E71CA92EDD45}.Release|Any CPU.ActiveCfg = Release|Any CPU

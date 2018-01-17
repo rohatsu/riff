@@ -43,6 +43,7 @@ namespace RIFF.Core
 
         protected override void SendBuffer(LoggingEvent[] events)
         {
+            //base.SendBuffer(events);
             foreach (var evt in events)
             {
                 _buffer.Add(evt);
