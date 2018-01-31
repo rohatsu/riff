@@ -11,7 +11,6 @@
 
 namespace ASP
 {
-    using RIFF.Web.Core;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -28,6 +27,7 @@ namespace ASP
     using System.Web.Security;
     using System.Web.UI;
     using System.Web.WebPages;
+    using RIFF.Web.Core;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/System/Tasks.cshtml")]
@@ -109,20 +109,22 @@ WriteLiteral(">\r\n\r\n        var initializeGrid = function (data) {\r\n       
 " },\r\n                    //{ dataField: \'SchedulerRange\', caption: \'Range\', widt" +
 "h: \"175px\", alignment: \"center\"  },\r\n                    //{ dataField: \'Trigger" +
 "\', caption: \'Trigger\', width: \"100px\" },\r\n\r\n                    { dataField: \'Is" +
-"System\', caption: \'Sys?\', dataType: \'boolean\', width: \"80px\", visible: false, so" +
-"rtOrder: \'asc\', sortIndex: 0 },\r\n\r\n                    { dataField: \'Status\', ca" +
-"ption: \'Status\', width: \"80px\", dataType: \'string\', alignment: \"center\" },\r\n    " +
-"                { dataField: \'LastRun\', caption: \'Last Run\', width: \"150px\", dat" +
-"aType: \'date\', format: \"dd/MM/yyyy HH:mm:ss\", alignment: \"center\" },\r\n          " +
-"          {\r\n                        //                        dataField: \'FullN" +
-"ame\',\r\n                        caption: \'Execute\',\r\n                        widt" +
-"h: \"85px\",\r\n                        alignment: \"center\",\r\n                      " +
-"  cellTemplate: function (container, options) {\r\n                            $(\'" +
-"<a />\').addClass(\'dx-link\')\r\n                                .text(\'Run\')\r\n     " +
-"                           .attr(\'href\', \'");
+"Enabled\', caption: \'Enabled\', dataType: \'boolean\', width: \"80px\", visible: true " +
+"},\r\n                    { dataField: \'IsSystem\', caption: \'Sys?\', dataType: \'boo" +
+"lean\', width: \"80px\", visible: false, sortOrder: \'asc\', sortIndex: 0 },\r\n\r\n     " +
+"               { dataField: \'Status\', caption: \'Status\', width: \"80px\", dataType" +
+": \'string\', alignment: \"center\" },\r\n                    { dataField: \'LastRun\', " +
+"caption: \'Last Run\', width: \"150px\", dataType: \'date\', format: \"dd/MM/yyyy HH:mm" +
+":ss\", alignment: \"center\" },\r\n                    {\r\n                        // " +
+"                       dataField: \'FullName\',\r\n                        caption: " +
+"\'Execute\',\r\n                        width: \"85px\",\r\n                        alig" +
+"nment: \"center\",\r\n                        cellTemplate: function (container, opt" +
+"ions) {\r\n                            $(\'<a />\').addClass(\'dx-link\')\r\n           " +
+"                     .text(\'Run\')\r\n                                .attr(\'href\'," +
+" \'");
 
             
-            #line 61 "..\..\Views\System\Tasks.cshtml"
+            #line 62 "..\..\Views\System\Tasks.cshtml"
                                           Write(Url.Action("RunProcess", "Process"));
 
             
@@ -135,7 +137,7 @@ WriteLiteral(@"?isGraph=' + options.data.IsGraph +
                                     '&returnUrl=' + escape('");
 
             
-            #line 65 "..\..\Views\System\Tasks.cshtml"
+            #line 66 "..\..\Views\System\Tasks.cshtml"
                                                        Write(Html.Raw(Url.Action("Tasks")));
 
             
@@ -170,7 +172,7 @@ WriteLiteral("\'))\r\n                                .appendTo(container);\r\n 
 "       RIFFWebCore.RIFFPage.populateGrid(\"");
 
             
-            #line 110 "..\..\Views\System\Tasks.cshtml"
+            #line 111 "..\..\Views\System\Tasks.cshtml"
                                           Write(Url.Action("GetTasks", "System"));
 
             
@@ -190,7 +192,7 @@ WriteLiteral(@""", {
                 value: new Date(");
 
             
-            #line 121 "..\..\Views\System\Tasks.cshtml"
+            #line 122 "..\..\Views\System\Tasks.cshtml"
                             Write(RIFF.Core.RFDate.Today().Year);
 
             
@@ -199,7 +201,7 @@ WriteLiteral(@""", {
 WriteLiteral(", ");
 
             
-            #line 121 "..\..\Views\System\Tasks.cshtml"
+            #line 122 "..\..\Views\System\Tasks.cshtml"
                                                               Write(RIFF.Core.RFDate.Today().Month);
 
             
@@ -208,7 +210,7 @@ WriteLiteral(", ");
 WriteLiteral(" - 1, ");
 
             
-            #line 121 "..\..\Views\System\Tasks.cshtml"
+            #line 122 "..\..\Views\System\Tasks.cshtml"
                                                                                                      Write(RIFF.Core.RFDate.Today().Day);
 
             
@@ -219,7 +221,7 @@ WriteLiteral("),\r\n                onValueChanged: function (e) { refreshGrid()
 "raph Instance Name\',\r\n                value: \'");
 
             
-            #line 126 "..\..\Views\System\Tasks.cshtml"
+            #line 127 "..\..\Views\System\Tasks.cshtml"
                    Write(RIFF.Core.RFGraphInstance.DEFAULT_INSTANCE);
 
             

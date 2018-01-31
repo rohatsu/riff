@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace RIFF.Core
 {
@@ -19,7 +20,7 @@ namespace RIFF.Core
 
         protected DateTime ConvertToScheduleZone(DateTime timestamp)
         {
-            if (!string.IsNullOrWhiteSpace(TimeZone))
+            if(!string.IsNullOrWhiteSpace(TimeZone))
             {
                 return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timestamp, TimeZone);
             }
@@ -28,7 +29,7 @@ namespace RIFF.Core
 
         protected RFInterval ConvertToScheduleZone(RFInterval interval)
         {
-            if (!string.IsNullOrWhiteSpace(TimeZone))
+            if(!string.IsNullOrWhiteSpace(TimeZone))
             {
                 var stIntervalStart = ConvertToScheduleZone(interval.IntervalStart);
                 var stIntervalEnd = ConvertToScheduleZone(interval.IntervalEnd);
@@ -51,34 +52,54 @@ namespace RIFF.Core
         public List<RFSchedulerSchedule> Schedules { get; set; }
 
         [DataMember]
+        public bool IsEnabled { get; set; }
+
+        [DataMember]
         public RFCatalogKey TriggerKey { get; set; }
 
         public RFSchedulerConfig()
         {
             Schedules = new List<RFSchedulerSchedule>();
+            IsEnabled = true;
+        }
+
+        public string SchedulerRangeString
+        {
+            get
+            {
+                return Range?.ToString() ?? String.Empty;
+            }
+        }
+
+        public string SchedulerScheduleString
+        {
+            get
+            {
+                return Schedules != null ? String.Join(", ", Schedules.Select(s => s.ToString())) : String.Empty;
+            }
         }
 
         public bool ShouldTrigger(RFInterval interval)
         {
             var shouldTrigger = Schedules.Any(s => s.ShouldTrigger(interval));
             var isAllowed = Range == null || Range.InRange(interval);
-            return (shouldTrigger && isAllowed);
+            return (IsEnabled && shouldTrigger && isAllowed);
         }
     }
 
     [DataContract]
     public class RFSchedulerProcessor : RFEngineProcessor<RFEngineProcessorIntervalParam>
     {
-        protected Func<IRFProcessingContext, List<RFSchedulerConfig>> mConfigFunc;
+        protected List<Func<IRFProcessingContext, RFSchedulerConfig>> mConfigFunc;
 
-        public RFSchedulerProcessor(Func<IRFProcessingContext, List<RFSchedulerConfig>> configFunc)
+        public RFSchedulerProcessor(List<Func<IRFProcessingContext, RFSchedulerConfig>> configFunc)
         {
             mConfigFunc = configFunc;
         }
 
         public RFSchedulerProcessor(RFSchedulerConfig config)
         {
-            mConfigFunc = (_) => new List<RFSchedulerConfig> { config };
+            mConfigFunc = new List<Func<IRFProcessingContext, RFSchedulerConfig>> { (_) => config };
         }
 
         public override RFProcessingResult Process()
@@ -86,12 +107,13 @@ namespace RIFF.Core
             var interval = InstanceParams.Interval;
             var result = new RFProcessingResult();
 
-            foreach (var config in mConfigFunc(Context))
+            foreach(var configFunc in mConfigFunc)
             {
-                if (config.ShouldTrigger(interval))
+                var config = configFunc(Context);
+                if(config.ShouldTrigger(interval))
                 {
                     var key = config.TriggerKey;
-                    if (config.GraphInstance != null)
+                    if(config.GraphInstance != null)
                     {
                         key = key.CreateForInstance(config.GraphInstance(interval));
                         Context.SaveEntry(RFDocument.Create(key, new RFGraphProcessorTrigger { TriggerStatus = true, TriggerTime = interval.IntervalEnd }));
@@ -107,6 +129,7 @@ namespace RIFF.Core
         }
     }
 
+    /*
     [DataContract]
     public class RFScheduledTaskTriggerProcessor : RFSchedulerProcessor
     {
@@ -114,7 +137,7 @@ namespace RIFF.Core
         {
 
         }
-    }
+    }*/
 
     [DataContract]
     public class RFSchedulerTriggerKey : RFCatalogKey

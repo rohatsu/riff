@@ -51,24 +51,18 @@ namespace RIFF.Core
         [DataMember]
         public Func<RFSchedulerRange> RangeFunc { get; set; }
 
-        public override string SchedulerRange
-        {
-            get
-            {
-                return RangeFunc()?.ToString() ?? String.Empty;
-            }
-        }
-
-        public override string SchedulerSchedule
-        {
-            get
-            {
-                return SchedulesFunc() != null ? String.Join(", ", SchedulesFunc().Select(s => s.ToString())) : String.Empty;
-            }
-        }
-
         [DataMember]
         public Func<List<RFSchedulerSchedule>> SchedulesFunc { get; set; }
+
+        public override RFSchedulerConfig SchedulerConfig(IRFProcessingContext context)
+        {
+            return new RFSchedulerConfig
+            {
+                IsEnabled = true,
+                Range = RangeFunc(),
+                Schedules = SchedulesFunc()
+            };
+        }
 
         public override void AddToEngine(RFEngineDefinition engine)
         {
@@ -91,6 +85,43 @@ namespace RIFF.Core
     }
 
     [DataContract]
+    public class RFSchedulerTaskDefinition : RFEngineTaskDefinition, IRFScheduledTaskDefinition
+    {
+        public static readonly string CONFIG_SECTION = "Scheduled Tasks";
+
+        [DataMember]
+        public Func<IRFProcessingContext, RFSchedulerRange> RangeFunc { get; set; }
+
+        [DataMember]
+        public Func<IRFProcessingContext, List<RFSchedulerSchedule>> SchedulesFunc { get; set; }
+
+        public override RFSchedulerConfig SchedulerConfig(IRFProcessingContext context)
+        {
+            return new RFSchedulerConfig
+            {
+                Range = RangeFunc(context),
+                Schedules = SchedulesFunc(context),
+                IsEnabled = context.UserConfig.GetBool(CONFIG_SECTION, TaskName, true, true, "Is Enabled")
+            };
+        }
+
+        public override void AddToEngine(RFEngineDefinition engine)
+        {
+            var triggerName = RFEnum.FromString(TaskName);
+            var triggerKey = RFSchedulerTriggerKey.Create(engine.KeyDomain, triggerName);
+            engine.AddCatalogUpdateTrigger<RFSchedulerTriggerKey>(k => k.TriggerName.Equals(triggerName), TaskProcess);
+
+            engine.Schedules.Add(c => new RFSchedulerConfig
+            {
+                Range = RangeFunc(c),
+                Schedules = SchedulesFunc(c),
+                TriggerKey = triggerKey,
+                IsEnabled = c.UserConfig.GetBool(CONFIG_SECTION, TaskName, true, true, "Is Enabled")
+            });
+        }
+    }
+
+    [DataContract]
     public class RFTriggeredEngineTaskDefinition : RFEngineTaskDefinition
     {
         public override string Trigger { get { return TriggerKey != null ? string.Format("Key: {0}", TriggerKey.FriendlyString()) : "Manual"; } }
@@ -100,7 +131,7 @@ namespace RIFF.Core
 
         public override void AddToEngine(RFEngineDefinition engine)
         {
-            if (TriggerKey != null)
+            if(TriggerKey != null)
             {
                 engine.AddCatalogUpdateTrigger<RFCatalogKey>(k => k.MatchesRoot(TriggerKey), TaskProcess);
             }

@@ -67,11 +67,11 @@ namespace RIFF.Framework
             }
 
             int newFiles = 0;
+            var destinationOpen = false;
             Log.Info("Checking for files to move from {0} to {1}", mConfig.SourceSite, mConfig.DestinationSite);
             try
             {
-                mConfig.SourceSite.Open(Context);
-                mConfig.DestinationSite.Open(Context);
+                mConfig.SourceSite.Open(Context);                
 
                 var availableFiles = mConfig.SourceSite.CheckSite(mConfig.MonitoredFiles);
                 var utcNow = DateTime.UtcNow;
@@ -134,6 +134,11 @@ namespace RIFF.Framework
                                                             FullPath = file.Item1.FullPath,
                                                             ModifiedDate = fileAttributes.ModifiedDate
                                                         };
+                                                        if (!destinationOpen)
+                                                        {
+                                                            mConfig.DestinationSite.Open(Context);
+                                                            destinationOpen = true;
+                                                        }
                                                         if (ProcessFile(new RFFileAvailableEvent
                                                         {
                                                             FileKey = candidateFile.FileKey,
@@ -158,6 +163,12 @@ namespace RIFF.Framework
                                 }
                                 else
                                 {
+                                    if (!destinationOpen)
+                                    {
+                                        mConfig.DestinationSite.Open(Context);
+                                        destinationOpen = true;
+                                    }
+
                                     if (ProcessFile(availableFile, data, monitoredFile, seenFiles))
                                     {
                                         newFiles++;
@@ -232,7 +243,7 @@ namespace RIFF.Framework
                     {
                         mConfig.SourceSite.Close();
                     }
-                    if (mConfig.DestinationSite != null)
+                    if (mConfig.DestinationSite != null && destinationOpen)
                     {
                         mConfig.DestinationSite.Close();
                     }

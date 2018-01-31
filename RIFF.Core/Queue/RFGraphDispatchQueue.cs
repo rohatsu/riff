@@ -19,12 +19,13 @@ namespace RIFF.Core
         private SortedDictionary<long, List<RFWorkQueueItem>> _pendingInstructions; // work items in the queue but not ready to be processed due to dependencies being worked on
         private Dictionary<string, SortedSet<string>> _processDependencies; // static data of dependencies between processes
         private Dictionary<string, int> _processWeights; // static data of calculation order
+        private SortedSet<string> _exclusiveProcesses; // tasks which cannot be run concurrently
         private List<RFWorkQueueItem> _readyQueue; // work items ready to be sent to workers
         private volatile object _statsSync;
         private volatile object _sync; // internal monitor
 
         // internal sync for statistics
-        public RFGraphDispatchQueue(Dictionary<string, int> weights, Dictionary<string, SortedSet<string>> dependencies, RFComponentContext context)
+        public RFGraphDispatchQueue(Dictionary<string, int> weights, Dictionary<string, SortedSet<string>> dependencies, SortedSet<string> exclusiveProcesses, RFComponentContext context)
         {
             _sync = new object();
             _statsSync = new object();
@@ -35,6 +36,7 @@ namespace RIFF.Core
             _processDependencies = dependencies ?? new Dictionary<string, SortedSet<string>>();
             _dispatchStore = context.DispatchStore;
             _numQueuedInstructions = new Dictionary<string, int>();
+            _exclusiveProcesses = exclusiveProcesses;
         }
 
         public void ProcessingFinished(RFWorkQueueItem i, RFProcessingResult result)
@@ -101,7 +103,7 @@ namespace RIFF.Core
                         return; // ignore already ready
                     }
                 }
-                // not sure this was used:
+                // not sure this was used - probably not since this throws away an instruction rather than delays it
                 /*
                 else
                 {
@@ -286,6 +288,11 @@ namespace RIFF.Core
                     .Union(_readyQueue.Select(p => p.Item as RFProcessInstruction).Where(p => p != null && p.ProcessName == pi.ProcessName));
                 if (existingForSameProcess.Any())
                 {
+                    if(_exclusiveProcesses.Contains(pi.ProcessName))
+                    {
+                        // cannot run concurrently - queue
+                        return false;
+                    }
                     return !existingForSameProcess.Any(e => RFEngineProcessorParam.Equals(e.ExtractParam(), pi.ExtractParam())); // catalog update on same key events will be queued
                 }
             }

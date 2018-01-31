@@ -30,12 +30,12 @@ namespace RIFF.Web.Core.Controllers
 
         public static string ImplyContentType(string fileName)
         {
-            if (!string.IsNullOrWhiteSpace(fileName))
+            if(!string.IsNullOrWhiteSpace(fileName))
             {
                 var extension = System.IO.Path.GetExtension(fileName).ToLower().Trim();
-                if (!string.IsNullOrWhiteSpace(extension))
+                if(!string.IsNullOrWhiteSpace(extension))
                 {
-                    switch (extension)
+                    switch(extension)
                     {
                         case ".xls":
                             return "application/excel";
@@ -73,7 +73,7 @@ namespace RIFF.Web.Core.Controllers
         [HttpPost]
         public JsonResult ConsoleCommand(string method = null, List<string> @params = null, string id = null)
         {
-            if (!string.IsNullOrWhiteSpace(method))
+            if(!string.IsNullOrWhiteSpace(method))
             {
                 var w = new StringWriter();
                 System.Console.SetOut(w);
@@ -106,13 +106,13 @@ namespace RIFF.Web.Core.Controllers
 
         public ActionResult DataSet(string type, long keyReference)
         {
-            using (var activity = new RFDataSetsActivity(Context))
+            using(var activity = new RFDataSetsActivity(Context))
             {
                 ViewBag.KeyReference = keyReference;
                 ViewBag.Type = type;
                 var columnTypes = new List<KeyValuePair<string, Type>>();
                 var dataSetDocument = activity.GetDataSetDocument(keyReference);
-                if (dataSetDocument != null)
+                if(dataSetDocument != null)
                 {
                     ViewBag.Key = String.Format("{0} / {1}", dataSetDocument.Key.FriendlyString(), dataSetDocument.Key.GetInstance());
                     ViewBag.Data = JSONGenerator.ExportToJSON(dataSetDocument.GetContent<IRFDataSet>(), columnTypes);
@@ -124,14 +124,14 @@ namespace RIFF.Web.Core.Controllers
 
         public FileResult DownloadEntry(string type, long keyReference)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 var entry = dataEditor.GetDocumentForDownload(type, keyReference);
-                if (entry != null)
+                if(entry != null)
                 {
                     var shortType = System.IO.Path.GetExtension(type).TrimStart('.');
                     var content = entry.Content;
-                    if (content is IRFDataSet)
+                    if(content is IRFDataSet)
                     {
                         var namePart = entry.Key.FriendlyString();
                         Array.ForEach(Path.GetInvalidFileNameChars(), c => namePart = namePart.Replace(c.ToString(), String.Empty));
@@ -140,22 +140,22 @@ namespace RIFF.Web.Core.Controllers
                         return File(RIFF.Interfaces.Formats.XLSX.XLSXGenerator.ExportToXLSX(type, content as IRFDataSet), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         String.Format("{0}_{3}-{1}-{2}.xlsx", namePart, shortType, keyReference, date.ToString("yyyyMMdd")));
                     }
-                    else if (entry.Content is RFFile)
+                    else if(entry.Content is RFFile)
                     {
                         var file = entry.Content as RFFile;
                         return File(file.Data, ImplyContentType(file.ContentName), file.Attributes.FileName);
                     }
-                    else if (entry.Content is RFRawReport)
+                    else if(entry.Content is RFRawReport)
                     {
                         var report = entry.Content as RFRawReport;
                         var csvBuilder = new StringBuilder();
-                        foreach (var section in report.Sections)
+                        foreach(var section in report.Sections)
                         {
                             try
                             {
                                 csvBuilder.Append(CSVBuilder.FromDataTable(section.AsDataTable()));
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
                                 Log.Warning(this, "Error exporting section {0} of report {1} to .csv: {2}", section.Name, report.ReportCode, ex.Message);
                             }
@@ -183,10 +183,10 @@ namespace RIFF.Web.Core.Controllers
 
         public FileResult ExportEntry(string type, long keyReference)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 var entry = dataEditor.GetDocumentForDownload(type, keyReference);
-                if (entry != null)
+                if(entry != null)
                 {
                     var shortType = System.IO.Path.GetExtension(type).TrimStart('.');
                     var xml = RFXMLSerializer.PrettySerializeContract(entry);
@@ -198,7 +198,7 @@ namespace RIFF.Web.Core.Controllers
 
         public JsonResult GetConfigs()
         {
-            using (var userConfig = new RFConfigActivity(Context, Username))
+            using(var userConfig = new RFConfigActivity(Context, Username))
             {
                 return Json(userConfig.GetConfigs().Select(c => new
                 {
@@ -219,7 +219,7 @@ namespace RIFF.Web.Core.Controllers
 
         public JsonResult GetDocumentForEdit(string type, long keyReference)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 return Json(dataEditor.GetDocumentForEdit(type, keyReference));
             }
@@ -261,7 +261,7 @@ namespace RIFF.Web.Core.Controllers
         {
             var activity = new RFInputFilesActivity(Context);
             var report = activity.GetInputFile(uniqueKey);
-            if (report != null)
+            if(report != null)
             {
                 return File(report.Data, ImplyContentType(report.ContentName), report.Attributes.FileName);
             }
@@ -288,7 +288,7 @@ namespace RIFF.Web.Core.Controllers
         {
             var activity = new RFInputReportsActivity(Context);
             var report = activity.GetInputReport(keyReference);
-            if (report != null)
+            if(report != null)
             {
                 return Json(report.GetFirstSection().AsDataTable());
             }
@@ -314,7 +314,7 @@ namespace RIFF.Web.Core.Controllers
 
         public JsonResult GetInstances(string keyType, long keyReference)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 var document = dataEditor.GetDocumentForDownload(keyType, keyReference);
 
@@ -335,7 +335,7 @@ namespace RIFF.Web.Core.Controllers
 
         public JsonResult GetLatestDocuments(RFDate? valueDate = null, bool validOnly = true)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 return Json(dataEditor.GetDocuments(null, null, null, 0, valueDate, true)
                     .Where(d => !validOnly || d.IsValid)
@@ -368,7 +368,7 @@ namespace RIFF.Web.Core.Controllers
         public JsonResult GetLog(long logID)
         {
             var logs = Context.SystemLog.GetLogs(null, logID);
-            if (logs != null && logs.Count == 1)
+            if(logs != null && logs.Count == 1)
             {
                 return Json(logs.First());
             }
@@ -410,7 +410,7 @@ namespace RIFF.Web.Core.Controllers
 
         public FileResult GetProcessDomain(string processName, string instanceName, DateTime? instanceDate)
         {
-            using (var activity = new RFEngineActivity(Context, EngineConfig))
+            using(var activity = new RFEngineActivity(Context, EngineConfig))
             {
                 RFGraphProcessorDomain domain = null;
                 var engineConfig = activity.GetEngineConfig();
@@ -420,29 +420,29 @@ namespace RIFF.Web.Core.Controllers
                     ValueDate = instanceDate.HasValue ? new RFDate(instanceDate.Value.Date) : RFDate.NullDate
                 };
 
-                foreach (var graph in engineConfig.Graphs.Values)
+                foreach(var graph in engineConfig.Graphs.Values)
                 {
                     var process = graph.Processes.Values.FirstOrDefault(p => RFGraphDefinition.GetFullName(graph.GraphName, p.Name) == processName);
-                    if (process != null)
+                    if(process != null)
                     {
                         var processor = process.Processor();
                         domain = processor.CreateDomain();
-                        if (domain != null)
+                        if(domain != null)
                         {
-                            foreach (var propertyInfo in domain.GetType().GetProperties())
+                            foreach(var propertyInfo in domain.GetType().GetProperties())
                             {
                                 var ioBehaviourAttribute = (propertyInfo.GetCustomAttributes(typeof(RFIOBehaviourAttribute), true).FirstOrDefault() as RFIOBehaviourAttribute);
                                 RFCatalogKey ioKey = null;
-                                if (ioBehaviourAttribute != null)
+                                if(ioBehaviourAttribute != null)
                                 {
                                     var ioBehaviour = ioBehaviourAttribute.IOBehaviour;
                                     var ioMapping = process.IOMappings.FirstOrDefault(m => m.PropertyName == propertyInfo.Name);
-                                    if (ioMapping != null)
+                                    if(ioMapping != null)
                                     {
                                         ioKey = ioMapping.Key.CreateForInstance(graphInstance);
                                         var options = RFGraphInstance.ImplyOptions(ioMapping);
                                         var entry = Context.LoadEntry(ioKey, options) as RFDocument;
-                                        if (entry != null)
+                                        if(entry != null)
                                         {
                                             propertyInfo.SetValue(domain, entry.Content);
                                         }
@@ -454,7 +454,7 @@ namespace RIFF.Web.Core.Controllers
                     }
                 }
 
-                if (domain != null)
+                if(domain != null)
                 {
                     var xmlString = RFXMLSerializer.PrettySerializeContract(domain);
                     return File(
@@ -469,7 +469,7 @@ namespace RIFF.Web.Core.Controllers
 
         public JsonResult GetProcesses(string instanceName, DateTime? instanceDate)
         {
-            using (var activity = new RFEngineActivity(Context, EngineConfig))
+            using(var activity = new RFEngineActivity(Context, EngineConfig))
             {
                 var engineConfig = activity.GetEngineConfig();
                 var graphInstance = new RFGraphInstance
@@ -480,7 +480,7 @@ namespace RIFF.Web.Core.Controllers
                 var stats = activity.GetEngineStats(graphInstance);
 
                 var allProcesses = new List<object>();
-                foreach (var process in engineConfig.Processes.Values)
+                foreach(var process in engineConfig.Processes.Values)
                 {
                     var processor = process.Processor();
                     var stat = stats.GetStat(process.Name);
@@ -498,30 +498,30 @@ namespace RIFF.Web.Core.Controllers
                     });
                 }
 
-                foreach (var graph in engineConfig.Graphs.Values)
+                foreach(var graph in engineConfig.Graphs.Values)
                 {
-                    foreach (var process in graph.Processes.Values)
+                    foreach(var process in graph.Processes.Values)
                     {
                         var fullName = RFGraphDefinition.GetFullName(graph.GraphName, process.Name);
                         var stat = stats.GetStat(fullName);
                         var processor = process.Processor();
                         var domain = processor.CreateDomain();
                         var io = new List<object>();
-                        if (domain != null)
+                        if(domain != null)
                         {
-                            foreach (var propertyInfo in domain.GetType().GetProperties())
+                            foreach(var propertyInfo in domain.GetType().GetProperties())
                             {
                                 var ioBehaviourAttribute = (propertyInfo.GetCustomAttributes(typeof(RFIOBehaviourAttribute), true).FirstOrDefault() as RFIOBehaviourAttribute);
                                 string direction = "-";
                                 string dateType = "-";
                                 RFCatalogKey ioKey = null;
-                                if (ioBehaviourAttribute != null)
+                                if(ioBehaviourAttribute != null)
                                 {
                                     var ioBehaviour = ioBehaviourAttribute.IOBehaviour;
                                     direction = ioBehaviour.ToString();
 
                                     var ioMapping = process.IOMappings.FirstOrDefault(m => m.PropertyName == propertyInfo.Name);
-                                    if (ioMapping != null)
+                                    if(ioMapping != null)
                                     {
                                         ioKey = ioMapping.Key.CreateForInstance(graphInstance);
                                         var options = RFGraphInstance.ImplyOptions(ioMapping);
@@ -564,7 +564,7 @@ namespace RIFF.Web.Core.Controllers
         {
             try
             {
-                using (var activity = new RFEngineActivity(Context, EngineConfig))
+                using(var activity = new RFEngineActivity(Context, EngineConfig))
                 {
                     var engineConfig = activity.GetEngineConfig();
                     var graphInstance = new RFGraphInstance
@@ -577,18 +577,20 @@ namespace RIFF.Web.Core.Controllers
 
                     var tasks = new List<object>();
 
-                    foreach (var t in EngineConfig.Tasks)
+                    foreach(var t in EngineConfig.Tasks)
                     {
                         var stat = engineStats?.GetStat(t.ProcessName);
                         var dispatchKey = new RFParamProcessInstruction(t.ProcessName, null).DispatchKey();
                         var error = dispatchKey.NotBlank() ? errors.Where(e => e.DispatchKey == dispatchKey).FirstOrDefault() : null;
+                        var schedule = t.SchedulerConfig(Context);
 
                         tasks.Add(new
                         {
                             t.TaskName,
                             t.Description,
                             t.GraphName,
-                            Schedule = String.Join(", ", new string[] { t.Trigger, t.SchedulerSchedule, t.SchedulerRange }.Where(s => s.NotBlank())),
+                            Schedule = String.Join(", ", new string[] { t.Trigger, schedule?.SchedulerScheduleString, schedule?.SchedulerRangeString }.Where(s => s.NotBlank())),
+                            IsEnabled = schedule?.IsEnabled ?? true,
                             t.IsSystem,
                             Status = error?.DispatchState.ToString() ?? "OK",
                             Message = error?.Message,
@@ -599,25 +601,27 @@ namespace RIFF.Web.Core.Controllers
                         });
                     }
 
-                    foreach (var g in EngineConfig.Graphs.Where(g => g.Value.GraphTasks.Any()))
+                    foreach(var g in EngineConfig.Graphs.Where(g => g.Value.GraphTasks.Any()))
                     {
                         var graphStats = activity.GetGraphStats(g.Value.GraphName, graphInstance);
-                        foreach (var t in g.Value.GraphTasks)
+                        foreach(var t in g.Value.GraphTasks)
                         {
                             var processName = RFGraphDefinition.GetFullName(t.GraphName, t.ProcessName);
                             var stat = graphStats?.GetStat(t.ProcessName);
                             var dispatchKey = new RFGraphProcessInstruction(graphInstance, processName)?.DispatchKey();
                             var error = dispatchKey.NotBlank() ? errors.Where(e => e.DispatchKey == dispatchKey).FirstOrDefault() : null;
+                            var schedule = t.SchedulerConfig(Context);
 
                             tasks.Add(new
                             {
                                 t.TaskName,
                                 t.Description,
                                 t.GraphName,
-                                Schedule = String.Join(", ", new string[] { t.Trigger, t.SchedulerSchedule, t.SchedulerRange }.Where(s => s.NotBlank())),
+                                Schedule = String.Join(", ", new string[] { t.Trigger, schedule?.SchedulerScheduleString, schedule?.SchedulerRangeString }.Where(s => s.NotBlank())),
                                 //t.SchedulerRange,
                                 //t.SchedulerSchedule,
                                 //t.Trigger,
+                                IsEnabled = schedule?.IsEnabled ?? true,
                                 t.IsSystem,
                                 Status = error?.DispatchState.ToString() ?? ((stat?.CalculationOK ?? false) ? "OK" : String.Empty),
                                 Message = error?.Message ?? stat?.Message,
@@ -631,7 +635,7 @@ namespace RIFF.Web.Core.Controllers
                     return Json(tasks);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(JsonError.Throw("GetTasks", ex));
             }
@@ -660,7 +664,7 @@ namespace RIFF.Web.Core.Controllers
         {
             try
             {
-                if (!dp.IsBlank())
+                if(!dp.IsBlank())
                 {
                     _systemContext.DispatchStore.Ignored(dp);
                     Context.UserLog.LogEntry(new RFUserLogEntry
@@ -677,7 +681,7 @@ namespace RIFF.Web.Core.Controllers
                 }
                 return Json(JsonError.Throw("IgnoreError", "System error: blank key"));
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(JsonError.Throw("IgnoreError", ex));
             }
@@ -689,7 +693,7 @@ namespace RIFF.Web.Core.Controllers
         {
             try
             {
-                if (fileData == null || fileData.FileName == null || fileData.InputStream == null)
+                if(fileData == null || fileData.FileName == null || fileData.InputStream == null)
                 {
                     throw new RFSystemException(this, "No file submitted.");
                 }
@@ -697,7 +701,7 @@ namespace RIFF.Web.Core.Controllers
                 var xml = System.Text.Encoding.UTF8.GetString(RFStreamHelpers.ReadBytes(fileData.InputStream));
                 var document = RFXMLSerializer.DeserializeContract(typeof(RFDocument).FullName, xml) as RFDocument;
 
-                if (document == null)
+                if(document == null)
                 {
                     return Error("ImportEntry", "System", null, "Unable to deserialize object.");
                 }
@@ -707,7 +711,7 @@ namespace RIFF.Web.Core.Controllers
                     return RedirectToAction("DataEditor", "System");
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, "ImportEntry", ex);
                 return Error("ImportEntry", "System", null, "Error submitting entry: {0}", ex.Message);
@@ -732,10 +736,10 @@ namespace RIFF.Web.Core.Controllers
 
         public ActionResult InvalidateEntry(string type, long keyReference)
         {
-            using (var dataEditor = new RFDataEditorActivity(Context, Username))
+            using(var dataEditor = new RFDataEditorActivity(Context, Username))
             {
                 var entry = dataEditor.GetDocumentForDownload(type, keyReference);
-                if (entry != null)
+                if(entry != null)
                 {
                     Context.Invalidate(entry.Key);
                 }
@@ -787,7 +791,7 @@ namespace RIFF.Web.Core.Controllers
             try
             {
                 var status = RFServiceMaintainer.Restart(Username);
-                if (status == RFServiceMaintainer.SUCCESS)
+                if(status == RFServiceMaintainer.SUCCESS)
                 {
                     return Json(true);
                 }
@@ -796,7 +800,7 @@ namespace RIFF.Web.Core.Controllers
                     throw new RFSystemException(this, status);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(JsonError.Throw("Restart", "Error restarting service: {0}", ex.Message));
             }
@@ -807,16 +811,16 @@ namespace RIFF.Web.Core.Controllers
         [RFControllerAuthorize(AccessLevel = RFAccessLevel.Write, ResponseType = ResponseType.Json)]
         public JsonResult SaveDocument(string keyType, string contentType, string keyData, string contentData)
         {
-            if (!string.IsNullOrWhiteSpace(keyType) && !string.IsNullOrWhiteSpace(keyData) && !string.IsNullOrWhiteSpace(contentType) && !string.IsNullOrWhiteSpace(contentData))
+            if(!string.IsNullOrWhiteSpace(keyType) && !string.IsNullOrWhiteSpace(keyData) && !string.IsNullOrWhiteSpace(contentType) && !string.IsNullOrWhiteSpace(contentData))
             {
                 try
                 {
-                    using (var dataEditor = new RFDataEditorActivity(Context, Username))
+                    using(var dataEditor = new RFDataEditorActivity(Context, Username))
                     {
                         return Json(dataEditor.SaveDocument(keyType, contentType, keyData, contentData));
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     return Json(JsonError.Throw("SaveDocument", ex));
                 }
@@ -829,12 +833,12 @@ namespace RIFF.Web.Core.Controllers
         {
             try
             {
-                using (var service = new RFServiceClient())
+                using(var service = new RFServiceClient())
                 {
                     var status = service.RFService.Status();
-                    if (status != null)
+                    if(status != null)
                     {
-                        if (status.Running)
+                        if(status.Running)
                         {
                             return Json(new
                             {
@@ -866,7 +870,7 @@ namespace RIFF.Web.Core.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(new
                 {
@@ -887,9 +891,9 @@ namespace RIFF.Web.Core.Controllers
         {
             try
             {
-                if (collection.GetValue("UserConfigKeyID") != null)
+                if(collection.GetValue("UserConfigKeyID") != null)
                 {
-                    using (var configActivity = new RFConfigActivity(Context, Username))
+                    using(var configActivity = new RFConfigActivity(Context, Username))
                     {
                         var userConfigKeyID = Int32.Parse(collection["UserConfigKeyID"]);
                         string environment = collection["Environment"];
@@ -899,11 +903,21 @@ namespace RIFF.Web.Core.Controllers
                         string key = collection["Key"];
                         var path = string.Format("{0}/{1}/{2}", section, item, key);
 
-                        return Json(configActivity.UpdateValue(userConfigKeyID, environment, value, Username, path));
+                        var update = configActivity.UpdateValue(userConfigKeyID, environment, value, Username, path);
+                        if(update && section == RFSchedulerTaskDefinition.CONFIG_SECTION)
+                        {
+                            // force reload scheduler config
+                            using(var rfService = new RFServiceClient())
+                            {
+                                rfService.RFService.ServiceCommand(RFSchedulerService.SERVICE_NAME, RFSchedulerService.RELOAD_COMMAND, null);
+                            }
+                        }
+
+                        return Json(update);
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(JsonError.Throw("UpdateConfig", ex));
             }
@@ -915,16 +929,16 @@ namespace RIFF.Web.Core.Controllers
         [RFControllerAuthorize(AccessLevel = RFAccessLevel.Write, ResponseType = ResponseType.Json)]
         public JsonResult UpdateDocument(string type, long keyReference, string data)
         {
-            if (!string.IsNullOrWhiteSpace(type) && keyReference > 0 && !string.IsNullOrWhiteSpace(data))
+            if(!string.IsNullOrWhiteSpace(type) && keyReference > 0 && !string.IsNullOrWhiteSpace(data))
             {
                 try
                 {
-                    using (var dataEditor = new RFDataEditorActivity(Context, Username))
+                    using(var dataEditor = new RFDataEditorActivity(Context, Username))
                     {
                         return Json(dataEditor.UpdateDocument(type, keyReference, data));
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     return Json(JsonError.Throw("UpdateDocument", ex));
                 }
@@ -938,18 +952,18 @@ namespace RIFF.Web.Core.Controllers
             {
                 var activity = new RFInputReportsActivity(Context);
                 var report = activity.GetInputReportDocument(keyReference);
-                if (report != null)
+                if(report != null)
                 {
                     var section = report.GetContent<RFRawReport>().GetFirstSection();
-                    foreach (var update in JsonConvert.DeserializeObject<List<dynamic>>(updates))
+                    foreach(var update in JsonConvert.DeserializeObject<List<dynamic>>(updates))
                     {
                         int rowNum = update.rowNum;
-                        if (section.Rows.Count >= rowNum)
+                        if(section.Rows.Count >= rowNum)
                         {
                             var row = section.Rows.Skip(rowNum - 1).First();
-                            foreach (JToken token in ((JObject)update.data).Children())
+                            foreach(JToken token in ((JObject)update.data).Children())
                             {
-                                if (token is JProperty)
+                                if(token is JProperty)
                                 {
                                     row.SetString((token as JProperty).Name, (token as JProperty).Value.ToString());
                                 }
@@ -957,7 +971,7 @@ namespace RIFF.Web.Core.Controllers
                         }
                     }
 
-                    using (var rfService = new RFServiceClient())
+                    using(var rfService = new RFServiceClient())
                     {
                         RFProcessingTrackerHandle trackerKey = null;
                         trackerKey = rfService.RFService.SubmitAndProcess(new List<RFCatalogEntryDTO> { new RFCatalogEntryDTO(report) }, new RFUserLogEntry
@@ -985,7 +999,7 @@ namespace RIFF.Web.Core.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, ex, "Error updating input report {0}", keyReference);
             }

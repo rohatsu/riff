@@ -72,5 +72,8 @@ namespace RIFF.Framework
 
         [OperationContract]
         RFProcessingTrackerHandle SubmitAndProcess(IEnumerable<RFCatalogEntryDTO> inputs, RFUserLogEntry userLogEntry);
+
+        [OperationContract]
+        void ServiceCommand(string serviceName, string command, string param);
     }
 }

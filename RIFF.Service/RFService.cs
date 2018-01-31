@@ -37,17 +37,17 @@ namespace RIFF.Service
                 Log.Debug(this, "GetProcessStatus {0}", trackerHandle.TrackerCode);
                 LogRequest();
                 RFProcessingTracker tracker = null;
-                lock (_sync)
+                lock(_sync)
                 {
                     _trackers.TryGetValue(trackerHandle.TrackerCode, out tracker);
-                    if (tracker == null)
+                    if(tracker == null)
                     {
                         Log.Warning(this, "Unable to find tracker for {0}; current cache size {1}", trackerHandle.TrackerCode, _trackers.Count);
                     }
                 }
                 return tracker;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, "GetProcessStatus", ex);
                 var tracker = new RFProcessingTracker(trackerHandle.TrackerCode);
@@ -66,7 +66,7 @@ namespace RIFF.Service
                 var activity = new RFRequestActivity(_context, _engineConfig);
 
                 var qi = _context.DispatchStore.GetInstruction(dispatchKey);
-                if (qi != null)
+                if(qi != null)
                 {
                     return RegisterTracker(activity.Submit(null, new List<RFInstruction> { qi }, userLogEntry));
                 }
@@ -75,7 +75,7 @@ namespace RIFF.Service
                     TrackerCode = "error"
                 };
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, "RetryError", ex);
                 return new RFProcessingTrackerHandle
@@ -95,7 +95,7 @@ namespace RIFF.Service
                 // TODO: how should we treat non-graph?
                 return RegisterTracker(activity.Run(isGraph, processName, new RFEngineProcessorGraphInstanceParam(instance), userLogEntry));
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, "RunProcess", ex);
                 return new RFProcessingTrackerHandle
@@ -108,7 +108,7 @@ namespace RIFF.Service
         public RFServiceStatus Status()
         {
             var process = Process.GetCurrentProcess();
-            lock (_sync)
+            lock(_sync)
             {
                 return new RFServiceStatus
                 {
@@ -131,7 +131,7 @@ namespace RIFF.Service
                 var activity = new RFRequestActivity(_context, _engineConfig);
                 return RegisterTracker(activity.Submit(inputs.Select(e => e.Deserialize()), userLogEntry));
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, "SubmitAndProcess", ex);
                 return new RFProcessingTrackerHandle
@@ -143,7 +143,7 @@ namespace RIFF.Service
 
         protected void LogRequest()
         {
-            lock (_sync)
+            lock(_sync)
             {
                 _requestsServed++;
                 _lastRequestTime = DateTime.Now;
@@ -153,7 +153,7 @@ namespace RIFF.Service
         protected RFProcessingTrackerHandle RegisterTracker(RFProcessingTracker tracker)
         {
             var guid = Guid.NewGuid().ToString();
-            lock (_sync)
+            lock(_sync)
             {
                 _trackers.Add(guid, tracker);
             }
@@ -161,6 +161,11 @@ namespace RIFF.Service
             {
                 TrackerCode = guid
             };
+        }
+
+        public void ServiceCommand(string serviceName, string command, string param)
+        {
+            _context.RaiseEvent(this, new RFServiceEvent { ServiceName = serviceName, ServiceCommand = command, ServiceParams = param, Timestamp = DateTime.Now });
         }
     }
 }

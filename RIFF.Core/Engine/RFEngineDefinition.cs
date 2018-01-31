@@ -50,6 +50,9 @@ namespace RIFF.Core
         [DataMember]
         public Dictionary<string, Func<IRFProcessingContext, IRFBackgroundService>> Services { get; private set; }
 
+        [DataMember]
+        public List<Func<IRFProcessingContext, RFSchedulerConfig>> Schedules { get; private set; }
+
         protected RFEngineDefinition(string engineName, RFKeyDomain keyDomain, int intervalSeconds, TimeSpan maxRuntime)
         {
             KeyDomain = keyDomain;
@@ -60,6 +63,7 @@ namespace RIFF.Core
             Graphs = new Dictionary<string, RFGraphDefinition>();
             Keys = new Dictionary<string, string>();
             Tasks = new List<RFEngineTaskDefinition>();
+            Schedules = new List<Func<IRFProcessingContext, RFSchedulerConfig>>();
             IntervalSeconds = intervalSeconds;
             MaxRuntime = maxRuntime;
             ProcessCounter = 1;
@@ -132,17 +136,18 @@ namespace RIFF.Core
         /// <returns></returns>
         public RFEngineProcessDefinition AddProcess(string processName, string description, Func<IRFEngineProcessor> processor, Func<RFInstruction, RFEngineProcessorParam> instanceParams = null)
         {
-            if (Processes.ContainsKey(processName))
+            if(Processes.ContainsKey(processName))
             {
                 throw new Exception(String.Format("Already registered process {0}", processName));
             }
-            processor(); // test instantiation
+            var p = processor(); // test instantiation
             var newProcess = new RFEngineProcessDefinition
             {
                 Name = processName,
                 InstanceParams = instanceParams ?? (i => i.ExtractParam()),
                 Processor = processor,
-                Description = description
+                Description = description,
+                IsExclusive = p.IsExclusive
             };
             Processes.Add(processName, newProcess);
             return newProcess;
@@ -161,17 +166,18 @@ namespace RIFF.Core
         /// <returns></returns>
         public RFEngineProcessDefinition<P> AddProcess<P>(string processName, string description, Func<RFEngineProcessor<P>> processor, Func<RFInstruction, P> instanceParams = null) where P : RFEngineProcessorParam
         {
-            if (Processes.ContainsKey(processName))
+            if(Processes.ContainsKey(processName))
             {
                 throw new Exception(String.Format("Already registered process {0}", processName));
             }
-            processor(); // test instantiation
+            var p = processor(); // test instantiation
             var newProcess = new RFEngineProcessDefinition<P>
             {
                 Name = processName,
                 InstanceParams = instanceParams ?? (i => i.ExtractParam()?.ConvertTo<P>()),
                 Processor = processor,
-                Description = description
+                Description = description,
+                IsExclusive = p.IsExclusive
             };
             Processes.Add(processName, newProcess);
             return newProcess;
@@ -197,11 +203,11 @@ namespace RIFF.Core
         public RFEngineProcessDefinition AddProcessWithCatalogTrigger<P>(string processName, string description, Func<IRFEngineProcessor> processor,
             RFCatalogKey triggerKey) where P : RFEngineProcessorParam
         {
-            if (Processes.ContainsKey(processName))
+            if(Processes.ContainsKey(processName))
             {
                 throw new Exception(String.Format("Already registered process {0}", processName));
             }
-            processor(); // test instantiation
+            var p = processor(); // test instantiation
 
             //Func<RFInstruction, RFEngineProcessorParam> instanceParams = i => i.ExtractParam();// new P().ExtractFrom;
 
@@ -210,7 +216,8 @@ namespace RIFF.Core
                 Name = processName,
                 InstanceParams = i => i.ExtractParam()?.ConvertTo<P>(),
                 Processor = processor,
-                Description = description
+                Description = description,
+                IsExclusive = p.IsExclusive
             };
             Processes.Add(processName, newProcess);
 
@@ -246,6 +253,29 @@ namespace RIFF.Core
             {
                 RangeFunc = rangeFunc,
                 SchedulesFunc = schedulesFunc,
+                TaskName = taskName,
+                TaskProcess = process,
+                IsSystem = isSystem
+            };
+            Tasks.Add(task);
+            task.AddToEngine(this);
+            return task;
+        }
+
+        /// <summary>
+        /// Configures process to automatically run based on configuration
+        /// </summary>
+        /// <param name="taskName"></param>
+        /// <param name="process"></param>
+        /// <param name="isExclusive">If set the task won't run concurrently</param>
+        /// <param name="isSystem"></param>
+        /// <returns></returns>
+        public RFEngineTaskDefinition AddScheduledTask(string taskName, RFEngineProcessDefinition process, bool isSystem = false)
+        {
+            var task = new RFSchedulerTaskDefinition
+            {
+                RangeFunc = c => RFSchedulerRange.ReadFromConfig(RFSchedulerTaskDefinition.CONFIG_SECTION, taskName, c.UserConfig),
+                SchedulesFunc = c => RFSchedulerSchedule.ReadFromConfig(RFSchedulerTaskDefinition.CONFIG_SECTION, taskName, c.UserConfig).Single(),
                 TaskName = taskName,
                 TaskProcess = process,
                 IsSystem = isSystem
@@ -318,7 +348,7 @@ namespace RIFF.Core
 
         public void AddService(string serviceName, Func<IRFProcessingContext, IRFBackgroundService> service)
         {
-            if (Services.ContainsKey(serviceName))
+            if(Services.ContainsKey(serviceName))
             {
                 throw new Exception(String.Format("Already registered service {0}", serviceName));
             }

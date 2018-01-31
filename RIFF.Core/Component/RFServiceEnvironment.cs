@@ -36,7 +36,7 @@ namespace RIFF.Core
             _context.UserRole = new RFSQLUserRole(dbConnection);
             _context.DispatchStore = new RFDispatchStoreSQL(_context);
 
-            _workQueue = new RFGraphDispatchQueue(engine.GetWeights(), engine.GetDependencies(), _context);
+            _workQueue = new RFGraphDispatchQueue(engine.GetWeights(), engine.GetDependencies(), engine.GetExclusiveProcesses(), _context);
             RFEnvironments.LogLicenseInfo(config);
         }
 
@@ -60,6 +60,9 @@ namespace RIFF.Core
         public override void Stop()
         {
             RFStatic.SetShutdown();
+            _context.CancellationTokenSource.Cancel();
+            _processingContext.RaiseEvent(this, new RFEvent { Timestamp = DateTime.Now });
+            Thread.Sleep(1000);
             _workQueueMonitor.Shutdown();
             _processingContext.RaiseEvent(this, new RFEvent { Timestamp = DateTime.Now });
         }
