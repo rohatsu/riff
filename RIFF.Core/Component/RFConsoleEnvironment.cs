@@ -41,7 +41,7 @@ namespace RIFF.Core
             _context.Engine = engine;
             _context.UserLog = new RFSQLUserLog(_context);
             _context.DispatchStore = new RFDispatchStoreSQL(_context);
-            _workQueue = new RFGraphDispatchQueue(engine.GetWeights(), engine.GetDependencies(), _context);
+            _workQueue = new RFGraphDispatchQueue(engine.GetWeights(), engine.GetDependencies(), engine.GetExclusiveProcesses(), _context);
 
             RFEnvironments.LogLicenseInfo(config);
         }

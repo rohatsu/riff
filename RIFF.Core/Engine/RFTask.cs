@@ -29,22 +29,6 @@ namespace RIFF.Core
         [DataMember]
         public abstract string ProcessName { get; }
 
-        public virtual string SchedulerRange
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public virtual string SchedulerSchedule
-        {
-            get
-            {
-                return null;
-            }
-        }
-
         [DataMember]
         public string TaskName { get; set; }
 
@@ -55,12 +39,16 @@ namespace RIFF.Core
                 return null;
             }
         }
+
+        public virtual RFSchedulerConfig SchedulerConfig(IRFProcessingContext context)
+        {
+            return new RFSchedulerConfig { IsEnabled = true };
+        }
     }
 
     public interface IRFScheduledTaskDefinition : IRFTaskDefinition
     {
-        Func<RFSchedulerRange> RangeFunc { get; }
-        Func<List<RFSchedulerSchedule>> SchedulesFunc { get; }
+        //RFSchedulerConfig SchedulerConfig(IRFProcessingContext context);
     }
 
     public interface IRFTaskDefinition
@@ -69,8 +57,7 @@ namespace RIFF.Core
         string GraphName { get; }
         bool IsSystem { get; }
         string ProcessName { get; }
-        string SchedulerRange { get; }
-        string SchedulerSchedule { get; }
+        RFSchedulerConfig SchedulerConfig(IRFProcessingContext context);
         string TaskName { get; }
         string Trigger { get; }
     }

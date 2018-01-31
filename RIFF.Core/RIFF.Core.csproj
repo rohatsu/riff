@@ -91,6 +91,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>True</Private>
@@ -199,6 +202,7 @@
     <Compile Include="Queue\RFDispatchQueueMonitorInProc.cs" />
     <Compile Include="Queue\RFDispatchQueueMonitorMSMQ.cs" />
     <Compile Include="Queue\RFDispatchQueueMonitorBase.cs" />
+    <Compile Include="Scheduler\RFSchedulerService.cs" />
     <Compile Include="Templates\RFRazor.cs" />
     <Compile Include="UserLog\RFProcessLog.cs" />
     <Compile Include="UserLog\RFUserLog.cs" />

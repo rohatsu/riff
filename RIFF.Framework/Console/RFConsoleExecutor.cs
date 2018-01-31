@@ -30,15 +30,15 @@ namespace RIFF.Framework
 
         public void ExecuteCommand(string input)
         {
-            if (!string.IsNullOrWhiteSpace(input))
+            if(!string.IsNullOrWhiteSpace(input))
             {
                 var tokens = new RIFF.Interfaces.Formats.CSV.CSVParser(input, ' ').Where(t => !string.IsNullOrWhiteSpace(t)).ToArray();
 
-                switch (tokens[0])
+                switch(tokens[0])
                 {
                     case "importupdates":
                         {
-                            if (tokens.Length < 2)
+                            if(tokens.Length < 2)
                             {
                                 Console.WriteLine("Usage: importupdates,<path>");
                                 break;
@@ -50,7 +50,7 @@ namespace RIFF.Framework
                         }
                     case "exportupdates":
                         {
-                            if (tokens.Length < 3)
+                            if(tokens.Length < 3)
                             {
                                 Console.WriteLine("Usage: exportupdates,<startDate>,<path>");
                                 break;
@@ -64,23 +64,23 @@ namespace RIFF.Framework
                     case "run":
                     case "runsequential":
                         {
-                            if (tokens.Length == 1)
+                            if(tokens.Length == 1)
                             {
                                 Console.WriteLine("Usage: run,<fullProcessName>,<graphInstance>,<startDate>,[endDate]");
                                 break;
                             }
                             var processName = tokens[1];
-                            if (tokens.Length > 2)
+                            if(tokens.Length > 2)
                             {
                                 var graphInstanceName = tokens[2];
                                 var startDate = RFDate.Parse(tokens[3], "yyyy-MM-dd");
                                 var endDate = startDate;
-                                if (tokens.Length > 4)
+                                if(tokens.Length > 4)
                                 {
                                     endDate = RFDate.Parse(tokens[4], "yyyy-MM-dd");
                                 }
                                 var instructions = new List<RFInstruction>();
-                                while (startDate <= endDate)
+                                while(startDate <= endDate)
                                 {
                                     var graphInstance = new RFGraphInstance
                                     {
@@ -92,12 +92,12 @@ namespace RIFF.Framework
                                 }
                                 var ra = new RFRequestActivity(_context, _config);
                                 var tracker = ra.Submit(null, instructions, null);
-                                while (!tracker.IsComplete)
+                                while(!tracker.IsComplete)
                                 {
                                     Thread.Sleep(100);
                                 }
                                 Console.WriteLine("Finished: #{0} cycles, #{1} keys, last run {2}.", tracker.FinishedCycles, tracker.KeyCount, tracker.CurrentProcess);
-                                foreach (var message in tracker.Messages)
+                                foreach(var message in tracker.Messages)
                                 {
                                     Console.WriteLine("Message: {0}: {1}", message.Key, message.Value);
                                 }
@@ -110,12 +110,12 @@ namespace RIFF.Framework
 
                                 var ra = new RFRequestActivity(_context, _config);
                                 var tracker = ra.Submit(null, new List<RFInstruction> { instruction }, null);
-                                while (!tracker.IsComplete)
+                                while(!tracker.IsComplete)
                                 {
                                     Thread.Sleep(100);
                                 }
                                 Console.WriteLine("Finished: #{0} cycles, #{1} keys, last run {2}.", tracker.FinishedCycles, tracker.KeyCount, tracker.CurrentProcess);
-                                foreach (var message in tracker.Messages)
+                                foreach(var message in tracker.Messages)
                                 {
                                     Console.WriteLine("Message: {0}: {1}", message.Key, message.Value);
                                 }
@@ -138,7 +138,7 @@ namespace RIFF.Framework
                         }
                     case "email":
                         {
-                            if (tokens.Length > 1)
+                            if(tokens.Length > 1)
                             {
                                 var e = new RFGenericEmail(new RFEmailConfig
                                 {
@@ -156,41 +156,51 @@ namespace RIFF.Framework
                     case "list":
                         {
                             Console.WriteLine("== PROCESSES");
-                            foreach (var p in _config.Processes.OrderBy(p => p.Key))
+                            foreach(var p in _config.Processes.OrderBy(p => p.Key))
                             {
                                 Console.WriteLine($"\"{p.Key}\" -> {p.Value.Processor().GetType().Name}");
                             }
                             Console.WriteLine("== GRAPHS");
-                            foreach (var g in _config.Graphs.OrderBy(g => g.Key))
+                            foreach(var g in _config.Graphs.OrderBy(g => g.Key))
                             {
-                                foreach (var p in g.Value.Processes.OrderBy(p => p.Key))
+                                foreach(var p in g.Value.Processes.OrderBy(p => p.Key))
                                 {
                                     Console.WriteLine($"\"{RFGraphDefinition.GetFullName(g.Key, p.Key)}\" -> {p.Value.Processor().GetType().Name}");
                                 }
                             }
                         }
                         break;
+                    case "scheduler":
+                        {
+                            if(tokens.Length == 1)
+                            {
+                                Console.WriteLine("Controls task scheduler. Commands: list, reload");
+                                break;
+                            }
+                            _context.RaiseEvent(this, new RFServiceEvent { ServiceName = RFSchedulerService.SERVICE_NAME, ServiceCommand = tokens[1], ServiceParams = tokens.Length > 2 ? tokens[2] : null });
+                            break;
+                        }
                     case "rebuildgraph":
                         {
-                            if (tokens.Length < 4)
+                            if(tokens.Length < 4)
                             {
                                 Console.WriteLine("Usage: rebuild,<graphNameOrBlank>,<graphInstance>,<startDate>,[endDate]");
                                 break;
                             }
                             var graphName = tokens[1];
                             var graphInstanceName = tokens[2];
-                            if (tokens.Length > 3)
+                            if(tokens.Length > 3)
                             {
                                 var startDate = RFDate.Parse(tokens[3], "yyyy-MM-dd");
                                 var endDate = startDate;
-                                if (tokens.Length > 4)
+                                if(tokens.Length > 4)
                                 {
                                     endDate = RFDate.Parse(tokens[4], "yyyy-MM-dd");
                                 }
                                 var instructions = new List<RFInstruction>();
 
                                 // queue all graph processes
-                                foreach (var vd in RFDate.Range(startDate, endDate, d => true))
+                                foreach(var vd in RFDate.Range(startDate, endDate, d => true))
                                 {
                                     var instance = new RFGraphInstance
                                     {
@@ -198,9 +208,9 @@ namespace RIFF.Framework
                                         ValueDate = vd
                                     };
 
-                                    foreach (var g in this._config.Graphs.Values.Where(g => graphName.IsBlank() || g.GraphName.StartsWith(graphName, StringComparison.OrdinalIgnoreCase)))
+                                    foreach(var g in this._config.Graphs.Values.Where(g => graphName.IsBlank() || g.GraphName.StartsWith(graphName, StringComparison.OrdinalIgnoreCase)))
                                     {
-                                        foreach (var gp in g.Processes.Values)
+                                        foreach(var gp in g.Processes.Values)
                                         {
                                             var processName = RFGraphDefinition.GetFullName(gp.GraphName, gp.Name);
                                             instructions.Add(new RFGraphProcessInstruction(instance, processName));
@@ -208,15 +218,15 @@ namespace RIFF.Framework
                                     }
                                 }
 
-                                if (instructions.Any())
+                                if(instructions.Any())
                                 {
                                     var tracker = new RFRequestActivity(_context, _config).Submit(null, instructions, null);
-                                    while (!tracker.IsComplete)
+                                    while(!tracker.IsComplete)
                                     {
                                         Thread.Sleep(100);
                                     }
                                     Console.WriteLine("Finished: #{0} cycles, #{1} keys, last run {2}.", tracker.FinishedCycles, tracker.KeyCount, tracker.CurrentProcess);
-                                    foreach (var message in tracker.Messages)
+                                    foreach(var message in tracker.Messages)
                                     {
                                         Console.WriteLine("Message: {0}: {1}", message.Key, message.Value);
                                     }
@@ -232,14 +242,14 @@ namespace RIFF.Framework
 
                     default:
                         {
-                            if (_engineConsole != null)
+                            if(_engineConsole != null)
                             {
                                 var queueCommands = new List<string>();
-                                if (!_engineConsole.RunCommand(tokens, queueCommands))
+                                if(!_engineConsole.RunCommand(tokens, queueCommands))
                                 {
                                     Console.WriteLine(String.Format("Unrecognized command '{0}'", tokens[0]));
                                 }
-                                foreach (var c in queueCommands)
+                                foreach(var c in queueCommands)
                                 {
                                     ExecuteCommand(c);
                                 }

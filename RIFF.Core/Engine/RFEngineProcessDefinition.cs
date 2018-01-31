@@ -13,6 +13,8 @@ namespace RIFF.Core
         public string Name { get; set; }
 
         public Func<IRFEngineProcessor> Processor { get; set; }
+
+        public bool IsExclusive { get; set; }
     }
 
     public class RFEngineProcessDefinition<P> : RFEngineProcessDefinition

@@ -127,8 +127,14 @@ namespace RIFF.Core
     {
         protected CancellationTokenSource CancellationSource { get; }
 
+        /// <summary>
+        /// Blocking call to run your service, finish with WaitForCancel
+        /// </summary>
         public abstract void Start();
 
+        /// <summary>
+        /// Cleanup
+        /// </summary>
         public abstract void Stop();
 
         public virtual List<RFInstruction> CustomCommand(string command, string param)

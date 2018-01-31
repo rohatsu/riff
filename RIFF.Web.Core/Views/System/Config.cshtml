@@ -25,7 +25,7 @@
                     { dataField: 'Environment', caption: 'Env', width: "60px", allowEditing: false },
                     { dataField: 'UpdateTime', caption: 'Updated', dataType: 'date', format: "dd/MM/yyyy HH:mm:ss", width: "150px", visible: false, allowEditing: false },
                     { dataField: 'UpdateUser', caption: 'Updater', width: "150px", visible: false, allowEditing: false },
-                    { dataField: 'Value', caption: 'Value', width: "800px" },
+                    { dataField: 'Value', caption: 'Value', width: "800px", allowEditing: true },
                     { dataField: 'UserConfigKeyID', visible: false, allowEditing: false },
                     { dataField: 'UserConfigValueID', visible: false, allowEditing: false }
                 ],
@@ -35,7 +35,7 @@
                     });
                 },
             */    editing: {
-                mode: 'row',
+                mode: 'cell',
                     allowUpdating: true,
                     allowDeleting: false,
                     allowAdding: false

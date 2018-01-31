@@ -11,7 +11,6 @@
 
 namespace ASP
 {
-    using RIFF.Web.Core;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -28,6 +27,7 @@ namespace ASP
     using System.Web.Security;
     using System.Web.UI;
     using System.Web.WebPages;
+    using RIFF.Web.Core;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/System/Config.cshtml")]
@@ -77,20 +77,20 @@ WriteLiteral(">\r\n        var groupCellTemplate = function (groupCell, info) {\
 "x\", visible: false, allowEditing: false },\r\n                    { dataField: \'Up" +
 "dateUser\', caption: \'Updater\', width: \"150px\", visible: false, allowEditing: fal" +
 "se },\r\n                    { dataField: \'Value\', caption: \'Value\', width: \"800px" +
-"\" },\r\n                    { dataField: \'UserConfigKeyID\', visible: false, allowE" +
-"diting: false },\r\n                    { dataField: \'UserConfigValueID\', visible:" +
-" false, allowEditing: false }\r\n                ],\r\n          /*      customizeCo" +
-"lumns: function (columns) {\r\n                    $.each(columns, function (_, el" +
-"ement) {\r\n                        element.groupCellTemplate = groupCellTemplate;" +
-"\r\n                    });\r\n                },\r\n            */    editing: {\r\n   " +
-"             mode: \'row\',\r\n                    allowUpdating: true,\r\n           " +
-"         allowDeleting: false,\r\n                    allowAdding: false\r\n        " +
-"        },\r\n                columnChooser: { enabled: true },\r\n                a" +
-"llowColumnReordering: true,\r\n                allowColumnResizing: true,\r\n       " +
-"         grouping: {\r\n                    autoExpandAll: false\r\n                " +
-"},\r\n                onRowUpdating: function (e) {\r\n                    e.element" +
-".addClass(\'nointeraction\');\r\n                    e.cancel = RIFFWebCore.Helpers." +
-"postUserAction(\"");
+"\", allowEditing: true },\r\n                    { dataField: \'UserConfigKeyID\', vi" +
+"sible: false, allowEditing: false },\r\n                    { dataField: \'UserConf" +
+"igValueID\', visible: false, allowEditing: false }\r\n                ],\r\n         " +
+" /*      customizeColumns: function (columns) {\r\n                    $.each(colu" +
+"mns, function (_, element) {\r\n                        element.groupCellTemplate " +
+"= groupCellTemplate;\r\n                    });\r\n                },\r\n            *" +
+"/    editing: {\r\n                mode: \'cell\',\r\n                    allowUpdatin" +
+"g: true,\r\n                    allowDeleting: false,\r\n                    allowAd" +
+"ding: false\r\n                },\r\n                columnChooser: { enabled: true " +
+"},\r\n                allowColumnReordering: true,\r\n                allowColumnRes" +
+"izing: true,\r\n                grouping: {\r\n                    autoExpandAll: fa" +
+"lse\r\n                },\r\n                onRowUpdating: function (e) {\r\n        " +
+"            e.element.addClass(\'nointeraction\');\r\n                    e.cancel =" +
+" RIFFWebCore.Helpers.postUserAction(\"");
 
             
             #line 51 "..\..\Views\System\Config.cshtml"

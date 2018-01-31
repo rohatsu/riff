@@ -87,6 +87,12 @@ namespace RIFF.Core
         }
 
         /// <summary>
+        /// Determines if the process can only run one instance at a time
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsExclusive => false;
+
+        /// <summary>
         /// Main worker function
         /// </summary>
         public abstract RFProcessingResult Process();
@@ -145,6 +151,8 @@ namespace RIFF.Core
         void Initialize(RFEngineProcessorParam p, IRFProcessingContext context, RFKeyDomain keyDomain, string processName);
 
         TimeSpan MaxRuntime();
+
+        bool IsExclusive { get; }
 
         RFProcessingResult Process();
     }

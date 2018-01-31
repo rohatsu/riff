@@ -26,23 +26,21 @@ namespace RIFF.Core
         [DataMember]
         public Func<RFSchedulerRange> RangeFunc { get; set; }
 
-        public override string SchedulerRange => RangeFunc()?.ToString() ?? String.Empty;
-
-        public override string SchedulerSchedule => SchedulesFunc() != null ? String.Join(", ", SchedulesFunc().Select(s => s.ToString())) : String.Empty;
-
         [DataMember]
         public Func<List<RFSchedulerSchedule>> SchedulesFunc { get; set; }
 
+        public override RFSchedulerConfig SchedulerConfig(IRFProcessingContext context)
+        {
+            return new RFSchedulerConfig
+            {
+                IsEnabled = true,
+                Range = RangeFunc(),
+                Schedules = SchedulesFunc()
+            };
+        }
+
         [DataMember]
         public RFManualTriggerKey TriggerKey { get; set; }
-
-        /*public override string Trigger
-        {
-            get
-            {
-                return TriggerKey != null ? TriggerKey.FriendlyString() : String.Empty;
-            }
-        }*/
 
         public override void AddToEngine(RFEngineDefinition engine)
         {

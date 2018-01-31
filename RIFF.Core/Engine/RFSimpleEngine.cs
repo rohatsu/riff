@@ -37,31 +37,43 @@ namespace RIFF.Core
             return map.CalculateWeights();
         }
 
+        public SortedSet<string> GetExclusiveProcesses()
+        {
+            return new SortedSet<string>(_config.Processes.Where(p => p.Value.IsExclusive).Select(t => t.Value.Name));
+        }
+
         public void Initialize(IRFProcessingContext serviceContext)
         {
             Log.Info(this, "Initializing RFSimpleEngine.");
 
-            foreach (var processConfig in _config.Processes)
+            foreach(var processConfig in _config.Processes)
             {
                 var newProcess = new RFEngineProcess(processConfig.Value.Name, processConfig.Value as RFEngineProcessDefinition, _config.KeyDomain);
                 _processes.Add(processConfig.Value.Name, newProcess);
             }
 
-            foreach (var trigger in _config.Triggers)
+            foreach(var trigger in _config.Triggers)
             {
                 _reactors.Add(new RFTriggerReactor(trigger, _context.GetReadingContext()));
             }
 
-            foreach (var graphConfig in _config.Graphs.Values)
+            foreach(var graphConfig in _config.Graphs.Values)
             {
                 AddGraph(graphConfig);
             }
 
-            foreach (var service in _config.Services)
+            foreach(var service in _config.Services)
             {
                 var backgroundService = new RFBackgroundServiceComponent(_context, service.Value(serviceContext));
                 _services.Add(backgroundService);
                 _reactors.Add(new RFServiceReactor { ServiceName = service.Key, Service = backgroundService });
+            }
+
+            if(_config.Schedules.Any())
+            {
+                var schedulerService = new RFBackgroundServiceComponent(_context, new RFSchedulerService(serviceContext, _config.Schedules));
+                _services.Add(schedulerService);
+                _reactors.Add(new RFServiceReactor { ServiceName = RFSchedulerService.SERVICE_NAME, Service = schedulerService });
             }
         }
 
@@ -69,10 +81,10 @@ namespace RIFF.Core
         {
             try
             {
-                if (i is RFProcessInstruction)
+                if(i is RFProcessInstruction)
                 {
                     var pi = i as RFProcessInstruction;
-                    if (_processes.ContainsKey(pi.ProcessName))
+                    if(_processes.ContainsKey(pi.ProcessName))
                     {
                         var process = _processes[pi.ProcessName];
                         return ProcessInstruction(process, i as RFProcessInstruction, processingContext);
@@ -85,7 +97,7 @@ namespace RIFF.Core
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Exception(this, ex, "Exception processing instruction {0}", i);
                 return RFProcessingResult.Error(new string[] { ex.Message }, false);
@@ -96,7 +108,7 @@ namespace RIFF.Core
         public void React(RFEvent e, IRFProcessingContext processingContext)
         {
             var allInstructions = new BlockingCollection<RFInstruction>();
-            if (e is RFIntervalEvent ie) // silently store intervals in database?
+            if(e is RFIntervalEvent ie) // silently store intervals in database?
             {
                 processingContext.SaveEntry(new RFDocument
                 {
@@ -110,21 +122,21 @@ namespace RIFF.Core
                 try
                 {
                     var instructions = reactor.React(e);
-                    if (instructions != null)
+                    if(instructions != null)
                     {
-                        foreach (var instruction in instructions)
+                        foreach(var instruction in instructions)
                         {
                             allInstructions.Add(instruction);
                         }
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Log.Exception(this, ex, "Reactor {0} threw an exception processing event {1}", reactor, e);
                 }
             });
 
-            foreach (var instruction in allInstructions)
+            foreach(var instruction in allInstructions)
             {
                 processingContext.QueueInstruction(this, instruction);
             }
@@ -132,7 +144,7 @@ namespace RIFF.Core
 
         protected void AddGraph(RFGraphDefinition graphConfig)
         {
-            foreach (var graphProcess in graphConfig.Processes.Values)
+            foreach(var graphProcess in graphConfig.Processes.Values)
             {
                 var graphProcessName = RFGraphDefinition.GetFullName(graphConfig.GraphName, graphProcess.Name);
                 _processes.Add(graphProcessName,
@@ -146,22 +158,22 @@ namespace RIFF.Core
                     }, _config.KeyDomain));
 
                 // check for missing inputs
-                foreach (var p in graphProcess.Processor().CreateDomain().GetType().GetProperties())
+                foreach(var p in graphProcess.Processor().CreateDomain().GetType().GetProperties())
                 {
-                    if (RFReflectionHelpers.IsMandatory(p) && graphProcess.IOMappings.SingleOrDefault(m => m.Property.FullName() == p.FullName()) == null)
+                    if(RFReflectionHelpers.IsMandatory(p) && graphProcess.IOMappings.SingleOrDefault(m => m.Property.FullName() == p.FullName()) == null)
                     {
                         throw new RFSystemException(this, "Unmapped mandatory property {0} on processor {1}", p.FullName(), graphProcessName);
                     }
                 }
 
                 // auto-react to inputs
-                foreach (var ioMapping in graphProcess.IOMappings)
+                foreach(var ioMapping in graphProcess.IOMappings)
                 {
                     var ioBehaviour = ioMapping.Property.GetCustomAttributes(typeof(RFIOBehaviourAttribute), true).FirstOrDefault() as RFIOBehaviourAttribute;
                     var dateBehaviour = ioMapping.DateBehaviour;
-                    if (ioBehaviour != null && ioBehaviour.IOBehaviour == RFIOBehaviour.Input)
+                    if(ioBehaviour != null && ioBehaviour.IOBehaviour == RFIOBehaviour.Input)
                     {
-                        switch (dateBehaviour)
+                        switch(dateBehaviour)
                         {
                             case RFDateBehaviour.Range:
                                 _reactors.Add(RFGraphReactor.RangeReactor(ioMapping.Key, graphProcessName, _context.GetReadingContext(), ioMapping.RangeUpdateFunc, graphProcess.Processor().MaxInstance));
@@ -183,14 +195,14 @@ namespace RIFF.Core
             try
             {
                 RFGraphInstance graphInstance = null;
-                if (i is RFGraphProcessInstruction)
+                if(i is RFGraphProcessInstruction)
                 {
                     return; // these are logged by graph stats
                     //graphInstance = (i as RFGraphProcessInstruction).Instance;
                 }
                 var statsKey = RFEngineStatsKey.Create(_config.KeyDomain, graphInstance);
                 var statsDocument = _context.Catalog.LoadItem(statsKey, 0) as RFDocument;
-                if (statsDocument == null)
+                if(statsDocument == null)
                 {
                     statsDocument = RFDocument.Create(statsKey,
                         new RFEngineStats
@@ -206,7 +218,7 @@ namespace RIFF.Core
                     LastRun = startTime
                 };
                 var statsItem = statsDocument.GetContent<RFEngineStats>();
-                if (!statsItem.Stats.ContainsKey(process.Name))
+                if(!statsItem.Stats.ContainsKey(process.Name))
                 {
                     statsItem.Stats.Add(process.Name, stat);
                 }
@@ -217,7 +229,7 @@ namespace RIFF.Core
                 statsDocument.UpdateTime = DateTimeOffset.Now;
                 _context.Catalog.SaveItem(statsDocument, true); // don't keep versions
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Log.Warning(this, "Error saving processing stats for process {0}: {1}", process.Name, ex.Message);
             }
@@ -234,20 +246,20 @@ namespace RIFF.Core
                 try
                 {
                     var processorInstance = process.CreateInstance();
-                    if (processorInstance != null)
+                    if(processorInstance != null)
                     {
-                        if (_config.MaxRuntime.Ticks > 0)
+                        if(_config.MaxRuntime.Ticks > 0)
                         {
                             var maxRuntime = TimeSpan.FromTicks(Math.Max(processorInstance.MaxRuntime().Ticks, _config.MaxRuntime.Ticks));
                             var timerTask = Task.Delay(maxRuntime).ContinueWith(t =>
                              {
-                                 if (!completed)
+                                 if(!completed)
                                  {
                                      try
                                      {
                                          processorInstance.Cancel();
                                      }
-                                     catch (Exception ex)
+                                     catch(Exception ex)
                                      {
                                          Log.Warning(this, "Exception cancelling process {0}: {1}", process.Name, ex.Message);
                                      }
@@ -259,7 +271,7 @@ namespace RIFF.Core
                         result = process.RunInstance(processorInstance, i, processingContext);
                     }
                 }
-                catch (Exception ex) // hard exception, or softs should have bene handled by now
+                catch(Exception ex) // hard exception, or softs should have bene handled by now
                 {
                     var message = ex.InnerException?.Message ?? ex.Message;
                     result.AddMessage(message);
@@ -282,7 +294,7 @@ namespace RIFF.Core
                 LogProcessingStat(process, i, sw, startTime);
                 Log.Debug(this, String.Format("Engine: process {0} process took {1} ms.", process.Name, sw.ElapsedMilliseconds));
             }
-            catch (Exception ex) // a really bad system exception
+            catch(Exception ex) // a really bad system exception
             {
                 Log.Exception(this, ex, "Exception processing instruction {0} by process {1}", i, process);
 

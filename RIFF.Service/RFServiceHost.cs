@@ -86,6 +86,8 @@ namespace RIFF.Service
                     _environment = RFEnvironments.StartLocal(engine.Environment, engineConfig, engine.Database, new string[] { engine.Assembly });
                     _context = _environment.Start();
 
+                    _context.RaiseEvent(this, new RFServiceEvent { ServiceName = RFSchedulerService.SERVICE_NAME, ServiceCommand = "start", ServiceParams = null });
+
                     var wcfService = new RFService(_context, engineConfig, engine.Database);
                     _serviceHost = new ServiceHost(wcfService);
                     _serviceHost.Open();
