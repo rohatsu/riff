@@ -14,6 +14,5 @@ RIFF.Tests/bin/
 RIFF.Tests/obj/
 *.user
 bin/
-Nuget/
 RIFF.Web.Core/obj/
 RIFF.Web.Core/Properties/PublishProfiles/
