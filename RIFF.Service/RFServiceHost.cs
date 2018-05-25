@@ -89,7 +89,15 @@ namespace RIFF.Service
                     _context.RaiseEvent(this, new RFServiceEvent { ServiceName = RFSchedulerService.SERVICE_NAME, ServiceCommand = "start", ServiceParams = null });
 
                     var wcfService = new RFService(_context, engineConfig, engine.Database);
-                    _serviceHost = new ServiceHost(wcfService);
+                    var uriSetting = RFSettings.GetAppSetting("RFServiceUri");
+                    if (uriSetting.NotBlank())
+                    {
+                        _serviceHost = new ServiceHost(wcfService, new Uri(uriSetting));
+                    }
+                    else
+                    {
+                        _serviceHost = new ServiceHost(wcfService);
+                    }
                     _serviceHost.Open();
                 }
             }
@@ -109,16 +117,17 @@ namespace RIFF.Service
                 {
                     if (e.IsTerminating)
                     {
-                        RFStatic.Log.Critical(this, "Unhandled Exception - shutting down: {0}", e.ExceptionObject != null ? e.ExceptionObject.ToString() : "?");
+                        RFStatic.Log.Error(this, "Unhandled Exception - shutting down: {0}", e.ExceptionObject != null ? e.ExceptionObject.ToString() : "?");
+                        System.Threading.Thread.Sleep(1000); // let email logger send out notification
                     }
                     else
                     {
-                        RFStatic.Log.Critical(this, "Unhandled Exception - recovered: {0}", e.ExceptionObject != null ? e.ExceptionObject.ToString() : "?");
+                        RFStatic.Log.Error(this, "Unhandled Exception - recovered: {0}", e.ExceptionObject != null ? e.ExceptionObject.ToString() : "?");
                     }
                 }
                 else
                 {
-                    RFStatic.Log.Critical(this, "Unhandled Exception without additional info");
+                    RFStatic.Log.Error(this, "Unhandled Exception without additional info");
                 }
             }
         }
@@ -148,6 +157,7 @@ namespace RIFF.Service
         {
             try
             {
+                _context.RaiseEvent(this, new RFServiceEvent { ServiceName = RFSchedulerService.SERVICE_NAME, ServiceCommand = "stop", ServiceParams = null });
                 _environment.Stop();
             }
             catch (Exception ex)

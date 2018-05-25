@@ -78,6 +78,11 @@ namespace RIFF.Core
             {
                 Thread.Sleep(1000 - DateTime.Now.Millisecond);
 
+                if(IsExiting())
+                {
+                    return;
+                }
+
                 var now = DateTime.Now;
                 var interval = new RFInterval(_lastTrigger, now);
                 lock(_sync)

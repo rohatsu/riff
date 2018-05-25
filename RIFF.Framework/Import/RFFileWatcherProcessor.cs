@@ -29,12 +29,17 @@ namespace RIFF.Framework
 
             if (mConfig.SourceSite.ScanArchives)
             {
-                mConfig.MonitoredFiles.Add(new RFMonitoredFile
+                foreach (var subDirectory in mConfig.MonitoredFiles.Select(m => m.GetSubDirectory ?? string.Empty).Distinct().ToList())
                 {
-                    FileKey = RFInternalFileKey.ZIPArchive,
-                    FileNameWildcard = "*.zip",
-                    RemoveExpired = false
-                });
+                    mConfig.MonitoredFiles.Add(new RFMonitoredFile
+                    {
+                        FileKey = RFInternalFileKey.ZIPArchive,
+                        FileNameWildcard = "*.zip",
+                        Recursive = false,
+                        GetSubDirectory = subDirectory,
+                        RemoveExpired = false
+                    });
+                }
             }
         }
 

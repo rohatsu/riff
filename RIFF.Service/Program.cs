@@ -20,8 +20,15 @@ namespace RIFF.Service
                         {
                             try
                             {
-                                System.Diagnostics.EventLog.CreateEventSource("RIFF", "Application");
-                                Console.WriteLine("Created RIFF event log.");
+                                if (!System.Diagnostics.EventLog.SourceExists("RIFF"))
+                                {
+                                    System.Diagnostics.EventLog.CreateEventSource("RIFF", "Application");
+                                    Console.WriteLine("Created RIFF event log.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("RIFF event log already installed.");
+                                }
                             }
                             catch (Exception ex)
                             {

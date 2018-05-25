@@ -188,3 +188,9 @@ tr:not(.dx-state-hover) td.dxr-totalcolumn {
 .dx-theme-generic-typography {
   background-color: transparent;
 }
+.dx-datagrid .dx-row-alt > td {
+  background-color: #fcfdfd;
+}
+.dx-datagrid-rowsview .dx-row.dx-group-row {
+  color: #777;
+}

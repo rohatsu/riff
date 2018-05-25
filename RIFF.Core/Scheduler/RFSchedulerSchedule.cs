@@ -21,7 +21,7 @@ namespace RIFF.Core
             }
         }
 
-        public override DateTime GetNextTrigger(DateTime startTime)
+        protected override DateTime GetNextTrigger(DateTime startTime)
         {
             var triggerTime = startTime.Date.Add(TimeSpan);
             if(triggerTime < startTime)
@@ -33,7 +33,7 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            return TimeSpan.ToString(@"hh\:mm");
+            return (TimeSpan.ToString(@"hh\:mm") + " " + TimeZoneShort()).Trim();
         }
     }
 
@@ -70,7 +70,7 @@ namespace RIFF.Core
             }
         }
 
-        public override DateTime GetNextTrigger(DateTime startTime)
+        protected override DateTime GetNextTrigger(DateTime startTime)
         {
             var offsetTime = startTime.Date.Add(Offset);
             while(offsetTime <= startTime)
@@ -114,15 +114,20 @@ namespace RIFF.Core
         [DataMember]
         public List<RFIntervalSchedule> IntervalSchedules { get; set; }
 
-        public RFCompositeSchedule(string timeZone) : base(timeZone)
+        public RFCompositeSchedule() : base(null)
         {
             DailySchedules = new List<RFDailySchedule>();
             IntervalSchedules = new List<RFIntervalSchedule>();
         }
 
-        public override DateTime GetNextTrigger(DateTime startTime)
+        public override bool ShouldTrigger(RFInterval interval)
         {
-            return DailySchedules.Select(d => d.GetNextTrigger(startTime)).Concat(IntervalSchedules.Select(i => i.GetNextTrigger(startTime))).Min();
+            return DailySchedules.Any(d => d.ShouldTrigger(interval)) || IntervalSchedules.Any(d => d.ShouldTrigger(interval));
+        }
+
+        protected override DateTime GetNextTrigger(DateTime startTime)
+        {
+            return DateTime.MinValue; // what timezone?
         }
 
         public override string ToString()
@@ -138,9 +143,9 @@ namespace RIFF.Core
         {
         }
 
-        public abstract DateTime GetNextTrigger(DateTime startTime);
+        protected abstract DateTime GetNextTrigger(DateTime startTime);
 
-        public bool ShouldTrigger(RFInterval interval)
+        public virtual bool ShouldTrigger(RFInterval interval)
         {
             var stInterval = ConvertToScheduleZone(interval);
             var nextTrigger = GetNextTrigger(stInterval.IntervalStart);
@@ -160,7 +165,7 @@ namespace RIFF.Core
                 timeZone = null;
             }
 
-            var compositeSchedule = new RFCompositeSchedule(timeZone);
+            var compositeSchedule = new RFCompositeSchedule();
 
             var explicitTimes = config.GetString(configSection, configKey, false, "Times");
             if(explicitTimes.NotBlank())

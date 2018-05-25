@@ -159,7 +159,7 @@ namespace RIFF.Core
 
         public bool IsExiting()
         {
-            return CancellationSource.IsCancellationRequested;
+            return CancellationSource.IsCancellationRequested || RFStatic.IsShutdown;
         }
 
         public void StartCommand()
