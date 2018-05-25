@@ -75,7 +75,7 @@ namespace RIFF.Web.Core {
         onResized() { }
 
         // error thrown
-        onError(msg: string): boolean {
+        onError(msg: string | Event): boolean {
             return false;
         }
 

@@ -4,6 +4,7 @@
     var userName = RIFF.Core.RFUser.GetUserName(User);
     var presentationMode = RIFF.Web.Core.App_Start.RIFFStart.IsPresentationMode(userName);
     var menu = RIFF.Web.Core.App_Start.RIFFStart.GetMenu(User.Identity.Name, presentationMode);
+    var environment = RIFF.Web.Core.App_Start.RIFFStart.EngineConfig.Environment;
     ViewBag.PresentationMode = presentationMode;
 }
 <head>
@@ -18,7 +19,7 @@
     @Styles.Render("~/Content/custom")
 </head>
 
-<body class="dx-theme-generic-typography" id="riffbody">
+<body class="dx-theme-generic-typography env_@environment" id="riffbody">
     <div style="overflow-x: auto; overflow-y: hidden; width: 100%; clear: both; height: 39px; min-width: 1550px; top: 0px; left: 0px; position: absolute;" class="noprint" id="rifftopheader">
         <div id="header" style="float:left; cursor:pointer; padding: 5px;" onclick="javascript: window.location.assign('@Url.Action("Index", "Home", new { area = "" })');">
             <img src="@Url.Content("~/Images/riff_logo_29px.png")" />

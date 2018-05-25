@@ -169,6 +169,8 @@ namespace RIFF.Core
                 engine = RFEngineDefinition.Create("Empty", new RFSimpleKeyDomain("null"));
             }
             engine.LicenseTokens = LicenseTokens;
+            engine.Assembly = Assembly;
+            engine.Environment = Environment;
             return engine;
         }
     }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace RIFF.Core
 {
@@ -19,7 +20,7 @@ namespace RIFF.Core
             _environmentName = environmentName;
         }
 
-        public List<RFUserConfigValue> GetAllValues()
+        public virtual List<RFUserConfigValue> GetAllValues()
         {
             var entries = new List<RFUserConfigValue>();
             try
@@ -109,6 +110,26 @@ namespace RIFF.Core
             return defaultValue;
         }
 
+        public T GetEnum<T>(string section, string item, bool mandatory, params string[] path) where T : struct, IConvertible
+        {
+            var stringValue = GetString(section, item, mandatory, path);
+            if (stringValue.NotBlank())
+            {
+                return RFEnumHelpers.GetEnum<T>(stringValue, mandatory);
+            }
+            return default(T);
+        }
+
+        public List<T> GetEnums<T>(string section, string item, bool mandatory, char separator, params string[] path) where T : struct, IConvertible
+        {
+            var stringList = GetStrings(section, item, mandatory, separator, path);
+            if (stringList != null)
+            {
+                return stringList.Select(s => RFEnumHelpers.GetEnum<T>(s, mandatory)).ToList();
+            }
+            return new List<T>();
+        }
+
         public int? GetInt(string section, string item, bool mandatory, int? defaultValue, params string[] path)
         {
             var stringValue = GetString(section, item, mandatory, path);
@@ -129,7 +150,7 @@ namespace RIFF.Core
             return defaultValue;
         }
 
-        public string GetString(string section, string item, bool mandatory, params string[] path)
+        public virtual string GetString(string section, string item, bool mandatory, params string[] path)
         {
             if (item == null)
             {
@@ -205,7 +226,17 @@ namespace RIFF.Core
             return null;
         }
 
-        public bool UpdateValue(int userConfigKeyID, string environment, string newValue, string userName)
+        public List<string> GetStrings(string section, string item, bool mandatory, char separator, params string[] path)
+        {
+            var stringValue = GetString(section, item, mandatory, path);
+            if (stringValue.NotBlank())
+            {
+                return stringValue.Split(separator).Where(s => s.NotBlank()).Select(s => s.Trim()).ToList();
+            }
+            return new List<string>();
+        }
+
+        public virtual bool UpdateValue(int userConfigKeyID, string environment, string newValue, string userName)
         {
             if (userConfigKeyID == 0)
             {

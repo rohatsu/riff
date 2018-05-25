@@ -8,7 +8,7 @@ namespace RIFF.Core
     {
         public static IRFLog Log { get; set; }
         public static bool IsShutdown { get; set; }
-        private static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
         public static CancellationToken CancellationToken => CancellationTokenSource.Token;
 
         public static void SetShutdown()

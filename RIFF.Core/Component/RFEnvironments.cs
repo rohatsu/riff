@@ -66,7 +66,8 @@ namespace RIFF.Core
         {
             var license = RIFF.Core.RFPublicRSA.GetHost(config.LicenseTokens.Key, config.LicenseTokens.Value);
             RFStatic.Log.Info(typeof(RFCore), ">>> RIFF Framework {0} | (c) rohatsu software studios limited | www.rohatsu.com", RFCore.sVersion);
-            RFStatic.Log.Info(typeof(RFCore), ">>> Licensed to '{0}' ({1}).", license.Key, license.Value.ToString(RFCore.sDateFormat));
+            RFStatic.Log.Info(typeof(RFCore), ">>> Licensed to '{0}' ({1})", license.Key, license.Value.ToString(RFCore.sDateFormat));
+            RFStatic.Log.Info(typeof(RFCore), ">>> Loaded engine {0} from {1} in environment {2}", config?.EngineName, config?.Assembly, config?.Environment);
         }
 
         private static void LoadReferencedAssemblies()

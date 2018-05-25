@@ -18,6 +18,30 @@ namespace RIFF.Core
             TimeZone = timeZone;
         }
 
+        public string TimeZoneShort()
+        {
+            if (TimeZone.NotBlank())
+            {
+                switch (TimeZone)
+                {
+                    case "GMT Standard Time":
+                        return "UK";
+                    case "Greenwich Standard Time":
+                        return "GMT";
+                    case "UTC":
+                        return "UTC";
+                }
+
+                if(TimeZone.Contains(" Standard Time"))
+                {
+                    return TimeZone.Substring(0, TimeZone.IndexOf(" Standard Time"));
+                }
+
+                return TimeZone;
+            }
+            return string.Empty;
+        }
+
         protected DateTime ConvertToScheduleZone(DateTime timestamp)
         {
             if(!string.IsNullOrWhiteSpace(TimeZone))

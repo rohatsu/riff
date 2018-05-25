@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Xml;
 
 namespace RIFF.Core
@@ -122,54 +123,98 @@ namespace RIFF.Core
 
         public static void Initialize(IEnumerable<string> assemblyNames = null)
         {
-            if (assemblyNames != null)
+            try
             {
-                foreach (var assembly in assemblyNames)
+                if (assemblyNames != null)
                 {
-                    if (assembly.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                    foreach (var assembly in assemblyNames)
                     {
-                        sTypeAssemblies.Add(assembly.Substring(0, assembly.Length - 4));
-                    }
-                    else
-                    {
-                        sTypeAssemblies.Add(assembly);
+                        if (assembly.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            sTypeAssemblies.Add(assembly.Substring(0, assembly.Length - 4));
+                        }
+                        else
+                        {
+                            sTypeAssemblies.Add(assembly);
+                        }
                     }
                 }
-            }
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(a => sTypeAssemblies.Contains(a.GetName().Name)))
-            {
-                mPotentialTypes.AddRange(assembly.GetTypes().Where(t => (t.IsPublic || t.IsNestedPublic) && !t.IsInterface && !t.IsAbstract &&
-                    (t.GetCustomAttribute(typeof(DataContractAttribute)) != null || t.GetCustomAttribute(typeof(RFCacheSerializer)) != null)));
-            }
-
-            // pre-create serializers
-            lock (sCacheLock)
-            {
-                foreach (var pt in mPotentialTypes)
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(a => sTypeAssemblies.Contains(a.GetName().Name)))
                 {
-                    GetOrCreateSerializer(pt, true);
+                    try
+                    {
+                        mPotentialTypes.AddRange(assembly.GetTypes().Where(t => (t.IsPublic || t.IsNestedPublic) && !t.IsInterface && !t.IsAbstract &&
+                            (t.GetCustomAttribute(typeof(DataContractAttribute)) != null || t.GetCustomAttribute(typeof(RFCacheSerializer)) != null)));
+                    }
+                    catch (ReflectionTypeLoadException ex)
+                    {
+                        var sb = new StringBuilder();
+                        sb.AppendLine(ex.Message);
+                        foreach (var exSub in ex.LoaderExceptions)
+                        {
+                            sb.AppendLine(exSub.Message);
+                            if (exSub is FileNotFoundException fnfe && !string.IsNullOrWhiteSpace(fnfe.FusionLog))
+                            {
+                                sb.AppendLine(fnfe.FusionLog);
+                            }
+                        }
+                        RFStatic.Log.Error(typeof(RFXMLSerializer), "Error caching assembly {0}: {1}", assembly.FullName, sb.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        RFStatic.Log.Error(typeof(RFXMLSerializer), "Error caching assembly {0}: {1}", assembly.FullName, ex.Message);
+                    }
                 }
 
-                // system types
-                GetOrCreateSerializer(typeof(string[]), true);
-                GetOrCreateSerializer(typeof(string), true);
-                GetOrCreateSerializer(typeof(RFDate), true);
-                GetOrCreateSerializer(typeof(RFWorkQueueItem), true);
-                GetOrCreateSerializer(typeof(RFInstruction), true);
-                GetOrCreateSerializer(typeof(RFProcessInstruction), true);
-                GetOrCreateSerializer(typeof(RFParamProcessInstruction), true);
-                GetOrCreateSerializer(typeof(RFIntervalInstruction), true);
-                GetOrCreateSerializer(typeof(RFGraphProcessInstruction), true);
-                GetOrCreateSerializer(typeof(RFGraphInstance), true);
-                GetOrCreateSerializer(typeof(RFEngineProcessorKeyParam), true);
-                GetOrCreateSerializer(typeof(RFEngineProcessorGraphInstanceParam), true);
-                GetOrCreateSerializer(typeof(RFEvent), true);
-                GetOrCreateSerializer(typeof(RFCatalogUpdateEvent), true);
-                GetOrCreateSerializer(typeof(RFIntervalEvent), true);
-                GetOrCreateSerializer(typeof(RFProcessingFinishedEvent), true);
-            }
+                // pre-create serializers
+                lock (sCacheLock)
+                {
+                    foreach (var pt in mPotentialTypes)
+                    {
+                        GetOrCreateSerializer(pt, true);
+                    }
 
-            RFStatic.Log.Info(typeof(RFXMLSerializer), "Cached {0} serializers.", sSerializerCache.Count);
+                    // system types
+                    GetOrCreateSerializer(typeof(string[]), true);
+                    GetOrCreateSerializer(typeof(string), true);
+                    GetOrCreateSerializer(typeof(RFDate), true);
+                    GetOrCreateSerializer(typeof(RFWorkQueueItem), true);
+                    GetOrCreateSerializer(typeof(RFInstruction), true);
+                    GetOrCreateSerializer(typeof(RFProcessInstruction), true);
+                    GetOrCreateSerializer(typeof(RFParamProcessInstruction), true);
+                    GetOrCreateSerializer(typeof(RFIntervalInstruction), true);
+                    GetOrCreateSerializer(typeof(RFGraphProcessInstruction), true);
+                    GetOrCreateSerializer(typeof(RFGraphInstance), true);
+                    GetOrCreateSerializer(typeof(RFEngineProcessorKeyParam), true);
+                    GetOrCreateSerializer(typeof(RFEngineProcessorGraphInstanceParam), true);
+                    GetOrCreateSerializer(typeof(RFEvent), true);
+                    GetOrCreateSerializer(typeof(RFCatalogUpdateEvent), true);
+                    GetOrCreateSerializer(typeof(RFIntervalEvent), true);
+                    GetOrCreateSerializer(typeof(RFProcessingFinishedEvent), true);
+                }
+
+                RFStatic.Log.Info(typeof(RFXMLSerializer), "Cached {0} serializers.", sSerializerCache.Count);
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine(ex.Message);
+                foreach (var exSub in ex.LoaderExceptions)
+                {
+                    sb.AppendLine(exSub.Message);
+                    if (exSub is FileNotFoundException fnfe && !string.IsNullOrWhiteSpace(fnfe.FusionLog))
+                    {
+                        sb.AppendLine(fnfe.FusionLog);
+                    }
+                }
+                RFStatic.Log.Error(typeof(RFXMLSerializer), "Error initializing serializer: {0}", sb.ToString());
+                throw;
+            }
+            catch (Exception ex)
+            {
+                RFStatic.Log.Error(typeof(RFXMLSerializer), "Error initializing serializer: {0}", ex.Message);
+                throw;
+            }
         }
 
         public static string PrettySerializeContract(object o)

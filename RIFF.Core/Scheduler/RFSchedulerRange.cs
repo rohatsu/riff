@@ -18,7 +18,7 @@ namespace RIFF.Core
         [DataMember]
         public List<RFSchedulerRange> ExplicitRanges { get; set; }
 
-        public RFCompositeRange(string timeZone = null) : base(timeZone)
+        public RFCompositeRange() : base(null)
         {
             AllowRanges = new List<RFSchedulerRange>();
             DenyRanges = new List<RFSchedulerRange>();
@@ -28,17 +28,17 @@ namespace RIFF.Core
         public override string ToString()
         {
             var sb = new List<string>();
-            if(AllowRanges.Any())
+            if (AllowRanges.Any())
             {
                 sb.Add(String.Join(" & ", AllowRanges));
             }
-            if(DenyRanges.Any())
+            if (DenyRanges.Any())
             {
                 sb.Add(String.Format("Except {0}", String.Join(" & ", DenyRanges)));
             }
-            if(ExplicitRanges.Any())
+            if (ExplicitRanges.Any())
             {
-                sb.Add(String.Format("Only {0}", String.Join(" & ", ExplicitRanges)));
+                sb.Add(String.Format("On {0}", String.Join(" & ", ExplicitRanges)));
             }
             return string.Join(", ", sb);
         }
@@ -69,7 +69,7 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            return String.Format("{0}-{1}", WindowStart.ToString(@"hh\:mm"), WindowEnd.ToString(@"hh\:mm"));
+            return String.Format("{0}-{1} {2}", WindowStart.ToString(@"hh\:mm"), WindowEnd.ToString(@"hh\:mm"), TimeZoneShort()).Trim();
         }
 
         protected override bool InternalInRange(RFInterval interval)
@@ -114,11 +114,11 @@ namespace RIFF.Core
         protected override bool InternalInRange(RFInterval interval)
         {
             var today = new RFDate(interval.IntervalEnd.Date);
-            if(CalendarDay.HasValue && today.OffsetDays(CalendarDay.Value - 1) != today.LastCalendarDayOfTheMonth())
+            if (CalendarDay.HasValue && today.OffsetDays(CalendarDay.Value - 1) != today.LastCalendarDayOfTheMonth())
             {
                 return false;
             }
-            if(WeekDay.HasValue && today.OffsetWeekdays(WeekDay.Value - 1) != today.LastWorkdayOfTheMonth())
+            if (WeekDay.HasValue && today.OffsetWeekdays(WeekDay.Value - 1) != today.LastWorkdayOfTheMonth())
             {
                 return false;
             }
@@ -127,13 +127,13 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            if(CalendarDay.HasValue)
+            if (CalendarDay.HasValue)
             {
-                return string.Format("{0}{1} last day of the month", CalendarDay.Value, RFStringHelpers.OrdinalSuffix(CalendarDay.Value));
+                return string.Format("{0}{1} last day of the month {2}", CalendarDay.Value, RFStringHelpers.OrdinalSuffix(CalendarDay.Value), TimeZoneShort()).Trim();
             }
-            if(WeekDay.HasValue)
+            if (WeekDay.HasValue)
             {
-                return string.Format("{0}{1} last weekday of the month", WeekDay.Value, RFStringHelpers.OrdinalSuffix(WeekDay.Value));
+                return string.Format("{0}{1} last weekday of the month {2}", WeekDay.Value, RFStringHelpers.OrdinalSuffix(WeekDay.Value), TimeZoneShort()).Trim();
             }
             return "MonthEnd (?)";
         }
@@ -174,13 +174,13 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            if(CalendarDay.HasValue)
+            if (CalendarDay.HasValue)
             {
-                return string.Format("{0}{1} day of the month", CalendarDay.Value, RFStringHelpers.OrdinalSuffix(CalendarDay.Value));
+                return string.Format("{0}{1} day of the month {2}", CalendarDay.Value, RFStringHelpers.OrdinalSuffix(CalendarDay.Value), TimeZoneShort()).Trim();
             }
-            if(WeekDay.HasValue)
+            if (WeekDay.HasValue)
             {
-                return string.Format("{0}{1} weekday of the month", WeekDay.Value, RFStringHelpers.OrdinalSuffix(WeekDay.Value));
+                return string.Format("{0}{1} weekday of the month {2}", WeekDay.Value, RFStringHelpers.OrdinalSuffix(WeekDay.Value), TimeZoneShort()).Trim();
             }
             return "Monthly (?)";
         }
@@ -189,11 +189,11 @@ namespace RIFF.Core
         {
             var intervalDay = interval.IntervalEnd.Day;
 
-            if(CalendarDay.HasValue && intervalDay != CalendarDay.Value)
+            if (CalendarDay.HasValue && intervalDay != CalendarDay.Value)
             {
                 return false;
             }
-            if(WeekDay.HasValue && new RFDate(interval.IntervalEnd.Date).FirstDayOfTheMonth().OffsetWeekdays(WeekDay.Value - 1).Day != intervalDay)
+            if (WeekDay.HasValue && new RFDate(interval.IntervalEnd.Date).FirstDayOfTheMonth().OffsetWeekdays(WeekDay.Value - 1).Day != intervalDay)
             {
                 return false;
             }
@@ -212,7 +212,7 @@ namespace RIFF.Core
 
         public bool InRange(RFInterval interval)
         {
-            if(IsEnabled)
+            if (IsEnabled)
             {
                 var stInterval = ConvertToScheduleZone(interval);
                 return InternalInRange(stInterval);
@@ -234,20 +234,20 @@ namespace RIFF.Core
         protected static List<DayOfWeek> ParseDays(string weekdaysConfig)
         {
             var weekdays = new List<DayOfWeek>();
-            foreach(var token in weekdaysConfig.Split(',').Where(w => w.NotBlank()).Select(w => w.Trim().ToLower()))
+            foreach (var token in weekdaysConfig.Split(',').Where(w => w.NotBlank()).Select(w => w.Trim().ToLower()))
             {
-                if(token.Contains('-'))
+                if (token.Contains('-'))
                 {
                     var start = token.Split('-')[0];
                     var end = token.Split('-')[1];
-                    if(_daysOfWeek.ContainsKey(start) && _daysOfWeek.ContainsKey(end))
+                    if (_daysOfWeek.ContainsKey(start) && _daysOfWeek.ContainsKey(end))
                     {
                         var dayOfWeek = _daysOfWeek[start];
                         var endDay = _daysOfWeek[end];
                         do
                         {
                             weekdays.Add(dayOfWeek);
-                            if(dayOfWeek == DayOfWeek.Saturday)
+                            if (dayOfWeek == DayOfWeek.Saturday)
                             {
                                 dayOfWeek = DayOfWeek.Sunday;
                             }
@@ -255,11 +255,11 @@ namespace RIFF.Core
                             {
                                 dayOfWeek++;
                             }
-                        } while(dayOfWeek != endDay);
+                        } while (dayOfWeek != endDay);
                         weekdays.Add(endDay);
                     }
                 }
-                else if(_daysOfWeek.ContainsKey(token))
+                else if (_daysOfWeek.ContainsKey(token))
                 {
                     weekdays.Add(_daysOfWeek[token]);
                 }
@@ -278,25 +278,25 @@ namespace RIFF.Core
         {
             var compositeRange = new RFCompositeRange();
             var timeZone = config.GetString(configSection, configKey, false, "Time Zone");
-            if(timeZone.IsBlank())
+            if (timeZone.IsBlank())
             {
                 timeZone = null;
             }
 
             var allowDays = config.GetString(configSection, configKey, false, "Allow Days"); // mon,tue or mon-fri
-            if(allowDays.NotBlank())
+            if (allowDays.NotBlank())
             {
                 compositeRange.AllowRanges.Add(new RFWeeklyWindow(ParseDays(allowDays), timeZone));
             }
             var denyDays = config.GetString(configSection, configKey, false, "Deny Days"); // mon,tue or mon-fri
-            if(denyDays.NotBlank())
+            if (denyDays.NotBlank())
             {
                 compositeRange.DenyRanges.Add(new RFWeeklyWindow(ParseDays(denyDays), timeZone));
             }
 
             var awindowStart = config.GetString(configSection, configKey, false, "Allow Window Start"); // HH:mm
             var awindowEnd = config.GetString(configSection, configKey, false, "Allow Window End"); // HH:mm
-            if(awindowStart.NotBlank() || awindowEnd.NotBlank())
+            if (awindowStart.NotBlank() || awindowEnd.NotBlank())
             {
                 var window = ParseWindow(awindowStart, awindowEnd);
                 compositeRange.AllowRanges.Add(new RFDailyWindow(window.Item1, window.Item2, timeZone));
@@ -304,7 +304,7 @@ namespace RIFF.Core
 
             var dwindowStart = config.GetString(configSection, configKey, false, "Deny Window Start"); // HH:mm
             var dwindowEnd = config.GetString(configSection, configKey, false, "Deny Window End"); // HH:mm
-            if(dwindowStart.NotBlank() || dwindowEnd.NotBlank())
+            if (dwindowStart.NotBlank() || dwindowEnd.NotBlank())
             {
                 var window = ParseWindow(dwindowStart, dwindowEnd);
                 compositeRange.DenyRanges.Add(new RFDailyWindow(window.Item1, window.Item2, timeZone));
@@ -359,7 +359,24 @@ namespace RIFF.Core
 
         public override string ToString()
         {
-            return String.Join("/", DaysOfWeek.OrderBy(d => d).Select(d => d.ToString().Substring(0, 3)));
+            switch(DaysOfWeek.Count)
+            {
+                case 7:
+                    return String.Format("Every day");
+                case 5:
+                    if (!DaysOfWeek.Contains(DayOfWeek.Saturday) && !DaysOfWeek.Contains(DayOfWeek.Sunday))
+                    {
+                        return String.Format("Mon-Fri {0}", TimeZoneShort()).Trim();
+                    }
+                    if (!DaysOfWeek.Contains(DayOfWeek.Monday) && !DaysOfWeek.Contains(DayOfWeek.Sunday))
+                    {
+                        return String.Format("Tue-Sat {0}", TimeZoneShort()).Trim();
+                    }
+                    break;
+                case 0:
+                    return "Never";
+            }
+            return String.Format("{0} {1}", String.Join("/", DaysOfWeek.OrderBy(d => d).Select(d => d.ToString().Substring(0, 3))), TimeZoneShort()).Trim();
         }
 
         protected override bool InternalInRange(RFInterval interval)

@@ -34,14 +34,14 @@ namespace ASP
     public partial class _Views_Core__Layout_cshtml : System.Web.Mvc.WebViewPage<dynamic>
     {
 
-#line 96 "..\..\Views\Core\_Layout.cshtml"
+#line 97 "..\..\Views\Core\_Layout.cshtml"
 public System.Web.WebPages.HelperResult RenderMenu(RIFF.Web.Core.Helpers.RFMenuItem menuItem)
 {
 #line default
 #line hidden
 return new System.Web.WebPages.HelperResult(__razor_helper_writer => {
 
-#line 97 "..\..\Views\Core\_Layout.cshtml"
+#line 98 "..\..\Views\Core\_Layout.cshtml"
  
 
 
@@ -56,7 +56,7 @@ WriteLiteralTo(__razor_helper_writer, "    ");
 WriteLiteralTo(__razor_helper_writer, " text: \"");
 
 
-#line 99 "..\..\Views\Core\_Layout.cshtml"
+#line 100 "..\..\Views\Core\_Layout.cshtml"
 WriteTo(__razor_helper_writer, Html.Raw(menuItem.Text));
 
 
@@ -65,7 +65,7 @@ WriteTo(__razor_helper_writer, Html.Raw(menuItem.Text));
 WriteLiteralTo(__razor_helper_writer, "\", icon: \"");
 
 
-#line 99 "..\..\Views\Core\_Layout.cshtml"
+#line 100 "..\..\Views\Core\_Layout.cshtml"
                   WriteTo(__razor_helper_writer, Html.Raw(menuItem.Icon));
 
 
@@ -74,7 +74,7 @@ WriteLiteralTo(__razor_helper_writer, "\", icon: \"");
 WriteLiteralTo(__razor_helper_writer, "\", disabled: ");
 
 
-#line 99 "..\..\Views\Core\_Layout.cshtml"
+#line 100 "..\..\Views\Core\_Layout.cshtml"
                                                        WriteTo(__razor_helper_writer, Html.Raw(menuItem.Disabled.ToString().ToLower()));
 
 
@@ -83,7 +83,7 @@ WriteLiteralTo(__razor_helper_writer, "\", disabled: ");
 WriteLiteralTo(__razor_helper_writer, ",\r\n");
 
 
-#line 100 "..\..\Views\Core\_Layout.cshtml"
+#line 101 "..\..\Views\Core\_Layout.cshtml"
     if (!string.IsNullOrWhiteSpace(menuItem.Action))
     {
 
@@ -95,7 +95,7 @@ WriteLiteralTo(__razor_helper_writer, "        ");
 WriteLiteralTo(__razor_helper_writer, " url: \"");
 
 
-#line 102 "..\..\Views\Core\_Layout.cshtml"
+#line 103 "..\..\Views\Core\_Layout.cshtml"
 WriteTo(__razor_helper_writer, Url.Action(menuItem.Action, menuItem.Controller, new { area = menuItem.Area }));
 
 
@@ -104,7 +104,7 @@ WriteTo(__razor_helper_writer, Url.Action(menuItem.Action, menuItem.Controller, 
 WriteLiteralTo(__razor_helper_writer, "\",\r\n");
 
 
-#line 103 "..\..\Views\Core\_Layout.cshtml"
+#line 104 "..\..\Views\Core\_Layout.cshtml"
     }
     else if (!string.IsNullOrWhiteSpace(menuItem.Url))
     {
@@ -117,7 +117,7 @@ WriteLiteralTo(__razor_helper_writer, "        ");
 WriteLiteralTo(__razor_helper_writer, " url: \"");
 
 
-#line 106 "..\..\Views\Core\_Layout.cshtml"
+#line 107 "..\..\Views\Core\_Layout.cshtml"
 WriteTo(__razor_helper_writer, Html.Raw(menuItem.Url));
 
 
@@ -126,7 +126,7 @@ WriteTo(__razor_helper_writer, Html.Raw(menuItem.Url));
 WriteLiteralTo(__razor_helper_writer, "\",\r\n");
 
 
-#line 107 "..\..\Views\Core\_Layout.cshtml"
+#line 108 "..\..\Views\Core\_Layout.cshtml"
     }
     if (menuItem.SubMenu != null)
     {
@@ -139,7 +139,7 @@ WriteLiteralTo(__razor_helper_writer, "        ");
 WriteLiteralTo(__razor_helper_writer, " items: [\r\n");
 
 
-#line 111 "..\..\Views\Core\_Layout.cshtml"
+#line 112 "..\..\Views\Core\_Layout.cshtml"
         foreach (var subMenu in menuItem.SubMenu)
         {
 
@@ -151,7 +151,7 @@ WriteLiteralTo(__razor_helper_writer, "            ");
 WriteLiteralTo(__razor_helper_writer, " ");
 
 
-#line 113 "..\..\Views\Core\_Layout.cshtml"
+#line 114 "..\..\Views\Core\_Layout.cshtml"
 WriteTo(__razor_helper_writer, RenderMenu(subMenu));
 
 
@@ -160,7 +160,7 @@ WriteTo(__razor_helper_writer, RenderMenu(subMenu));
 WriteLiteralTo(__razor_helper_writer, "\r\n");
 
 
-#line 114 "..\..\Views\Core\_Layout.cshtml"
+#line 115 "..\..\Views\Core\_Layout.cshtml"
         }
 
 
@@ -171,7 +171,7 @@ WriteLiteralTo(__razor_helper_writer, "        ");
 WriteLiteralTo(__razor_helper_writer, " ]\r\n");
 
 
-#line 116 "..\..\Views\Core\_Layout.cshtml"
+#line 117 "..\..\Views\Core\_Layout.cshtml"
     }
 
 
@@ -182,14 +182,14 @@ WriteLiteralTo(__razor_helper_writer, "    ");
 WriteLiteralTo(__razor_helper_writer, " },\r\n");
 
 
-#line 118 "..\..\Views\Core\_Layout.cshtml"
+#line 119 "..\..\Views\Core\_Layout.cshtml"
 
 
 #line default
 #line hidden
 });
 
-#line 118 "..\..\Views\Core\_Layout.cshtml"
+#line 119 "..\..\Views\Core\_Layout.cshtml"
 }
 #line default
 #line hidden
@@ -211,6 +211,7 @@ WriteLiteral(">\r\n");
     var userName = RIFF.Core.RFUser.GetUserName(User);
     var presentationMode = RIFF.Web.Core.App_Start.RIFFStart.IsPresentationMode(userName);
     var menu = RIFF.Web.Core.App_Start.RIFFStart.GetMenu(User.Identity.Name, presentationMode);
+    var environment = RIFF.Web.Core.App_Start.RIFFStart.EngineConfig.Environment;
     ViewBag.PresentationMode = presentationMode;
 
             
@@ -235,7 +236,7 @@ WriteLiteral(" content=\"width=device-width, initial-scale=1.0\"");
 WriteLiteral(">\r\n    <title>");
 
             
-            #line 13 "..\..\Views\Core\_Layout.cshtml"
+            #line 14 "..\..\Views\Core\_Layout.cshtml"
       Write(ViewBag.Title);
 
             
@@ -244,7 +245,7 @@ WriteLiteral(">\r\n    <title>");
 WriteLiteral(" - ");
 
             
-            #line 13 "..\..\Views\Core\_Layout.cshtml"
+            #line 14 "..\..\Views\Core\_Layout.cshtml"
                        Write(menu.Name);
 
             
@@ -258,14 +259,14 @@ WriteLiteral(" type=\"image/png\"");
 
 WriteLiteral(" sizes=\"32x32\"");
 
-WriteAttribute("href", Tuple.Create(" href=\"", 629), Tuple.Create("\"", 678)
+WriteAttribute("href", Tuple.Create(" href=\"", 712), Tuple.Create("\"", 761)
             
-            #line 14 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 636), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/favicon-32x32.png")
+            #line 15 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 719), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/favicon-32x32.png")
             
             #line default
             #line hidden
-, 636), false)
+, 719), false)
 );
 
 WriteLiteral(">\r\n    <link");
@@ -276,14 +277,14 @@ WriteLiteral(" type=\"image/png\"");
 
 WriteLiteral(" sizes=\"16x16\"");
 
-WriteAttribute("href", Tuple.Create(" href=\"", 733), Tuple.Create("\"", 782)
+WriteAttribute("href", Tuple.Create(" href=\"", 816), Tuple.Create("\"", 865)
             
-            #line 15 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 740), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/favicon-16x16.png")
+            #line 16 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 823), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/favicon-16x16.png")
             
             #line default
             #line hidden
-, 740), false)
+, 823), false)
 );
 
 WriteLiteral(">\r\n    <link");
@@ -292,14 +293,14 @@ WriteLiteral(" rel=\"stylesheet\"");
 
 WriteLiteral(" type=\"text/css\"");
 
-WriteAttribute("href", Tuple.Create(" href=\"", 828), Tuple.Create("\"", 870)
+WriteAttribute("href", Tuple.Create(" href=\"", 911), Tuple.Create("\"", 953)
             
-            #line 16 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 835), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Content/print.css")
+            #line 17 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 918), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Content/print.css")
             
             #line default
             #line hidden
-, 835), false)
+, 918), false)
 );
 
 WriteLiteral(" media=\"print\"");
@@ -309,7 +310,7 @@ WriteLiteral(" />\r\n");
 WriteLiteral("    ");
 
             
-            #line 17 "..\..\Views\Core\_Layout.cshtml"
+            #line 18 "..\..\Views\Core\_Layout.cshtml"
 Write(Styles.Render("~/Content/core"));
 
             
@@ -320,7 +321,7 @@ WriteLiteral("\r\n");
 WriteLiteral("    ");
 
             
-            #line 18 "..\..\Views\Core\_Layout.cshtml"
+            #line 19 "..\..\Views\Core\_Layout.cshtml"
 Write(Styles.Render("~/Content/custom"));
 
             
@@ -328,7 +329,17 @@ Write(Styles.Render("~/Content/custom"));
             #line hidden
 WriteLiteral("\r\n</head>\r\n\r\n<body");
 
-WriteLiteral(" class=\"dx-theme-generic-typography\"");
+WriteAttribute("class", Tuple.Create(" class=\"", 1067), Tuple.Create("\"", 1119)
+, Tuple.Create(Tuple.Create("", 1075), Tuple.Create("dx-theme-generic-typography", 1075), true)
+, Tuple.Create(Tuple.Create(" ", 1102), Tuple.Create("env_", 1103), true)
+            
+            #line 22 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 1107), Tuple.Create<System.Object, System.Int32>(environment
+            
+            #line default
+            #line hidden
+, 1107), false)
+);
 
 WriteLiteral(" id=\"riffbody\"");
 
@@ -347,29 +358,29 @@ WriteLiteral(" id=\"header\"");
 
 WriteLiteral(" style=\"float:left; cursor:pointer; padding: 5px;\"");
 
-WriteAttribute("onclick", Tuple.Create(" onclick=\"", 1303), Tuple.Create("\"", 1399)
-, Tuple.Create(Tuple.Create("", 1313), Tuple.Create("javascript:", 1313), true)
-, Tuple.Create(Tuple.Create(" ", 1324), Tuple.Create("window.location.assign(\'", 1325), true)
+WriteAttribute("onclick", Tuple.Create(" onclick=\"", 1403), Tuple.Create("\"", 1499)
+, Tuple.Create(Tuple.Create("", 1413), Tuple.Create("javascript:", 1413), true)
+, Tuple.Create(Tuple.Create(" ", 1424), Tuple.Create("window.location.assign(\'", 1425), true)
             
-            #line 23 "..\..\Views\Core\_Layout.cshtml"
-                                        , Tuple.Create(Tuple.Create("", 1349), Tuple.Create<System.Object, System.Int32>(Url.Action("Index", "Home", new { area = "" })
+            #line 24 "..\..\Views\Core\_Layout.cshtml"
+                                        , Tuple.Create(Tuple.Create("", 1449), Tuple.Create<System.Object, System.Int32>(Url.Action("Index", "Home", new { area = "" })
             
             #line default
             #line hidden
-, 1349), false)
-, Tuple.Create(Tuple.Create("", 1396), Tuple.Create("\');", 1396), true)
+, 1449), false)
+, Tuple.Create(Tuple.Create("", 1496), Tuple.Create("\');", 1496), true)
 );
 
 WriteLiteral(">\r\n            <img");
 
-WriteAttribute("src", Tuple.Create(" src=\"", 1419), Tuple.Create("\"", 1468)
+WriteAttribute("src", Tuple.Create(" src=\"", 1519), Tuple.Create("\"", 1568)
             
-            #line 24 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 1425), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/riff_logo_29px.png")
+            #line 25 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 1525), Tuple.Create<System.Object, System.Int32>(Url.Content("~/Images/riff_logo_29px.png")
             
             #line default
             #line hidden
-, 1425), false)
+, 1525), false)
 );
 
 WriteLiteral(" />\r\n            <span");
@@ -380,7 +391,7 @@ WriteLiteral(" style=\"margin: 0 0 0 3px; color: #4B6377; font-size: 20px; font-
 WriteLiteral(">");
 
             
-            #line 25 "..\..\Views\Core\_Layout.cshtml"
+            #line 26 "..\..\Views\Core\_Layout.cshtml"
                                                                                                                    Write(menu.Name);
 
             
@@ -436,20 +447,20 @@ WriteLiteral("></span>\r\n            <span");
 
 WriteLiteral(" style=\"color: #34346b;\"");
 
-WriteAttribute("title", Tuple.Create(" title=\"", 2432), Tuple.Create("\"", 2479)
+WriteAttribute("title", Tuple.Create(" title=\"", 2532), Tuple.Create("\"", 2579)
             
-            #line 36 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 2440), Tuple.Create<System.Object, System.Int32>(User?.Identity?.Name ?? String.Empty
+            #line 37 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 2540), Tuple.Create<System.Object, System.Int32>(User?.Identity?.Name ?? String.Empty
             
             #line default
             #line hidden
-, 2440), false)
+, 2540), false)
 );
 
 WriteLiteral(">");
 
             
-            #line 36 "..\..\Views\Core\_Layout.cshtml"
+            #line 37 "..\..\Views\Core\_Layout.cshtml"
                                                                                      Write(userName);
 
             
@@ -467,17 +478,17 @@ WriteLiteral(" style=\"display: none; margin-top: 4px; color: #f97d7d; cursor: p
 
 WriteLiteral(" title=\"\"");
 
-WriteAttribute("onclick", Tuple.Create("\r\n                 onclick=\"", 2711), Tuple.Create("\"", 2831)
-, Tuple.Create(Tuple.Create("", 2739), Tuple.Create("javascript:", 2739), true)
-, Tuple.Create(Tuple.Create(" ", 2750), Tuple.Create("window.open(\'", 2751), true)
+WriteAttribute("onclick", Tuple.Create("\r\n                 onclick=\"", 2811), Tuple.Create("\"", 2931)
+, Tuple.Create(Tuple.Create("", 2839), Tuple.Create("javascript:", 2839), true)
+, Tuple.Create(Tuple.Create(" ", 2850), Tuple.Create("window.open(\'", 2851), true)
             
-            #line 40 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 2764), Tuple.Create<System.Object, System.Int32>(Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))
+            #line 41 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 2864), Tuple.Create<System.Object, System.Int32>(Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))
             
             #line default
             #line hidden
-, 2764), false)
-, Tuple.Create(Tuple.Create("", 2828), Tuple.Create("\');", 2828), true)
+, 2864), false)
+, Tuple.Create(Tuple.Create("", 2928), Tuple.Create("\');", 2928), true)
 );
 
 WriteLiteral(">\r\n                <span");
@@ -492,17 +503,17 @@ WriteLiteral(" style=\"display: none; margin-top: 4px; color: #f2cc63; cursor: p
 
 WriteLiteral(" title=\"\"");
 
-WriteAttribute("onclick", Tuple.Create("\r\n                 onclick=\"", 3037), Tuple.Create("\"", 3157)
-, Tuple.Create(Tuple.Create("", 3065), Tuple.Create("javascript:", 3065), true)
-, Tuple.Create(Tuple.Create(" ", 3076), Tuple.Create("window.open(\'", 3077), true)
+WriteAttribute("onclick", Tuple.Create("\r\n                 onclick=\"", 3137), Tuple.Create("\"", 3257)
+, Tuple.Create(Tuple.Create("", 3165), Tuple.Create("javascript:", 3165), true)
+, Tuple.Create(Tuple.Create(" ", 3176), Tuple.Create("window.open(\'", 3177), true)
             
-            #line 44 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create("", 3090), Tuple.Create<System.Object, System.Int32>(Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))
+            #line 45 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create("", 3190), Tuple.Create<System.Object, System.Int32>(Html.Raw(Url.Action("ErrorQueue", "System", new { area = "" }))
             
             #line default
             #line hidden
-, 3090), false)
-, Tuple.Create(Tuple.Create("", 3154), Tuple.Create("\');", 3154), true)
+, 3190), false)
+, Tuple.Create(Tuple.Create("", 3254), Tuple.Create("\');", 3254), true)
 );
 
 WriteLiteral(">\r\n                <span");
@@ -543,7 +554,7 @@ WriteLiteral(">\r\n");
 WriteLiteral("        ");
 
             
-            #line 55 "..\..\Views\Core\_Layout.cshtml"
+            #line 56 "..\..\Views\Core\_Layout.cshtml"
    Write(RenderBody());
 
             
@@ -560,18 +571,18 @@ WriteLiteral(">\r\n        <a");
 
 WriteLiteral(" href=\"https://www.rohatsu.com\"");
 
-WriteAttribute("title", Tuple.Create(" title=\"", 3909), Tuple.Create("\"", 3976)
-, Tuple.Create(Tuple.Create("", 3917), Tuple.Create("Powered", 3917), true)
-, Tuple.Create(Tuple.Create(" ", 3924), Tuple.Create("by", 3925), true)
-, Tuple.Create(Tuple.Create(" ", 3927), Tuple.Create("RIFF", 3928), true)
-, Tuple.Create(Tuple.Create(" ", 3932), Tuple.Create("Framework", 3933), true)
+WriteAttribute("title", Tuple.Create(" title=\"", 4009), Tuple.Create("\"", 4076)
+, Tuple.Create(Tuple.Create("", 4017), Tuple.Create("Powered", 4017), true)
+, Tuple.Create(Tuple.Create(" ", 4024), Tuple.Create("by", 4025), true)
+, Tuple.Create(Tuple.Create(" ", 4027), Tuple.Create("RIFF", 4028), true)
+, Tuple.Create(Tuple.Create(" ", 4032), Tuple.Create("Framework", 4033), true)
             
-            #line 59 "..\..\Views\Core\_Layout.cshtml"
-, Tuple.Create(Tuple.Create(" ", 3942), Tuple.Create<System.Object, System.Int32>(RIFF.Core.RFCore.sShortVersion
+            #line 60 "..\..\Views\Core\_Layout.cshtml"
+, Tuple.Create(Tuple.Create(" ", 4042), Tuple.Create<System.Object, System.Int32>(RIFF.Core.RFCore.sShortVersion
             
             #line default
             #line hidden
-, 3943), false)
+, 4043), false)
 );
 
 WriteLiteral(" style=\"color: #cad5de; text-decoration: none; background-color: rgba(255,255,255" +
@@ -583,18 +594,18 @@ WriteLiteral(" width=\"16\"");
 
 WriteLiteral(" height=\"16\"");
 
-WriteAttribute("title", Tuple.Create(" title=\"", 4093), Tuple.Create("\"", 4160)
-, Tuple.Create(Tuple.Create("", 4101), Tuple.Create("Powered", 4101), true)
-, Tuple.Create(Tuple.Create(" ", 4108), Tuple.Create("by", 4109), true)
-, Tuple.Create(Tuple.Create(" ", 4111), Tuple.Create("RIFF", 4112), true)
-, Tuple.Create(Tuple.Create(" ", 4116), Tuple.Create("Framework", 4117), true)
+WriteAttribute("title", Tuple.Create(" title=\"", 4193), Tuple.Create("\"", 4260)
+, Tuple.Create(Tuple.Create("", 4201), Tuple.Create("Powered", 4201), true)
+, Tuple.Create(Tuple.Create(" ", 4208), Tuple.Create("by", 4209), true)
+, Tuple.Create(Tuple.Create(" ", 4211), Tuple.Create("RIFF", 4212), true)
+, Tuple.Create(Tuple.Create(" ", 4216), Tuple.Create("Framework", 4217), true)
             
-            #line 59 "..\..\Views\Core\_Layout.cshtml"
-                                                                                                                                                                                   , Tuple.Create(Tuple.Create(" ", 4126), Tuple.Create<System.Object, System.Int32>(RIFF.Core.RFCore.sShortVersion
+            #line 60 "..\..\Views\Core\_Layout.cshtml"
+                                                                                                                                                                                   , Tuple.Create(Tuple.Create(" ", 4226), Tuple.Create<System.Object, System.Int32>(RIFF.Core.RFCore.sShortVersion
             
             #line default
             #line hidden
-, 4127), false)
+, 4227), false)
 );
 
 WriteLiteral(" alt=\"(c) rohatsu software studios\"");
@@ -606,7 +617,7 @@ WriteLiteral(" /></a>\r\n    </div>\r\n\r\n");
 WriteLiteral("    ");
 
             
-            #line 62 "..\..\Views\Core\_Layout.cshtml"
+            #line 63 "..\..\Views\Core\_Layout.cshtml"
 Write(Scripts.Render("~/bundles/core"));
 
             
@@ -617,7 +628,7 @@ WriteLiteral("\r\n");
 WriteLiteral("    ");
 
             
-            #line 63 "..\..\Views\Core\_Layout.cshtml"
+            #line 64 "..\..\Views\Core\_Layout.cshtml"
 Write(Scripts.Render("~/bundles/custom"));
 
             
@@ -628,7 +639,7 @@ WriteLiteral("\r\n");
 WriteLiteral("    ");
 
             
-            #line 64 "..\..\Views\Core\_Layout.cshtml"
+            #line 65 "..\..\Views\Core\_Layout.cshtml"
 Write(RenderSection("scripts", required: false));
 
             
@@ -639,7 +650,7 @@ WriteLiteral("\r\n");
 WriteLiteral("    ");
 
             
-            #line 65 "..\..\Views\Core\_Layout.cshtml"
+            #line 66 "..\..\Views\Core\_Layout.cshtml"
 Write(RenderSection("PageScripts", required: false));
 
             
@@ -653,7 +664,7 @@ WriteLiteral(">\r\n        var RFlayout;\r\n\r\n        $(function () {\r\n     
 "IFF.Web.Core.LayoutBase({\r\n                urlSetPresentationMode: \'");
 
             
-            #line 72 "..\..\Views\Core\_Layout.cshtml"
+            #line 73 "..\..\Views\Core\_Layout.cshtml"
                                     Write(Url.Action("SetPresentationMode", "Process", new { area = "" }));
 
             
@@ -662,7 +673,7 @@ WriteLiteral(">\r\n        var RFlayout;\r\n\r\n        $(function () {\r\n     
 WriteLiteral("\',\r\n                isPresentationMode: ");
 
             
-            #line 73 "..\..\Views\Core\_Layout.cshtml"
+            #line 74 "..\..\Views\Core\_Layout.cshtml"
                                 Write(presentationMode ? "true" : "false");
 
             
@@ -671,7 +682,7 @@ WriteLiteral("\',\r\n                isPresentationMode: ");
 WriteLiteral(",\r\n                urlHelp: \'");
 
             
-            #line 74 "..\..\Views\Core\_Layout.cshtml"
+            #line 75 "..\..\Views\Core\_Layout.cshtml"
                       Write(ViewBag.HelpUrl);
 
             
@@ -680,7 +691,7 @@ WriteLiteral(",\r\n                urlHelp: \'");
 WriteLiteral("\',\r\n                urlSystemStatus: \'");
 
             
-            #line 75 "..\..\Views\Core\_Layout.cshtml"
+            #line 76 "..\..\Views\Core\_Layout.cshtml"
                              Write(Url.Action("GetSystemStatus", "Process", new { area = "" }));
 
             
@@ -689,13 +700,13 @@ WriteLiteral("\',\r\n                urlSystemStatus: \'");
 WriteLiteral("\',\r\n");
 
             
-            #line 76 "..\..\Views\Core\_Layout.cshtml"
+            #line 77 "..\..\Views\Core\_Layout.cshtml"
                 
             
             #line default
             #line hidden
             
-            #line 76 "..\..\Views\Core\_Layout.cshtml"
+            #line 77 "..\..\Views\Core\_Layout.cshtml"
                  if (ViewBag.SuppressMenu == null)
                 {
 
@@ -707,13 +718,13 @@ WriteLiteral("                    ");
 WriteLiteral("\r\n                menuItems: [\r\n");
 
             
-            #line 80 "..\..\Views\Core\_Layout.cshtml"
+            #line 81 "..\..\Views\Core\_Layout.cshtml"
                     
             
             #line default
             #line hidden
             
-            #line 80 "..\..\Views\Core\_Layout.cshtml"
+            #line 81 "..\..\Views\Core\_Layout.cshtml"
                      foreach(var menuItem in menu.Items)
                         {
 
@@ -725,7 +736,7 @@ WriteLiteral("                            ");
 WriteLiteral(" ");
 
             
-            #line 82 "..\..\Views\Core\_Layout.cshtml"
+            #line 83 "..\..\Views\Core\_Layout.cshtml"
                           Write(RenderMenu(menuItem));
 
             
@@ -734,7 +745,7 @@ WriteLiteral(" ");
 WriteLiteral("\r\n");
 
             
-            #line 83 "..\..\Views\Core\_Layout.cshtml"
+            #line 84 "..\..\Views\Core\_Layout.cshtml"
                             }
 
             
@@ -745,7 +756,7 @@ WriteLiteral("                ],\r\n                ");
 WriteLiteral("\r\n");
 
             
-            #line 86 "..\..\Views\Core\_Layout.cshtml"
+            #line 87 "..\..\Views\Core\_Layout.cshtml"
                     }
 
             
@@ -754,7 +765,7 @@ WriteLiteral("\r\n");
 WriteLiteral("                suppressMenu: ");
 
             
-            #line 87 "..\..\Views\Core\_Layout.cshtml"
+            #line 88 "..\..\Views\Core\_Layout.cshtml"
                           Write(ViewBag.SuppressMenu == null ? "false" : "true");
 
             

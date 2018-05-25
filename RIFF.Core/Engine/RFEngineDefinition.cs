@@ -32,6 +32,12 @@ namespace RIFF.Core
         [IgnoreDataMember]
         public KeyValuePair<string, string> LicenseTokens { get; set; }
 
+        [IgnoreDataMember]
+        public string Environment { get; set; }
+
+        [IgnoreDataMember]
+        public string Assembly { get; set; }
+
         [DataMember]
         public TimeSpan MaxRuntime { get; private set; }
 
