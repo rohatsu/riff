@@ -18,7 +18,7 @@ namespace RIFF.Core
             {
                 CancellationTokenSource = new CancellationTokenSource(),
                 Catalog = null,
-                UserConfig = new RFUserConfig(dbConnection, environment),
+                UserConfig = new RFCachedUserConfig(dbConnection, environment),
                 UserRole = new RFSQLUserRole(dbConnection),
                 SystemConfig = new RFSystemConfig
                 {
@@ -52,7 +52,7 @@ namespace RIFF.Core
         }
 
         public override IRFSystemContext Start()
-        {            
+        {
             var manager = new RFDispatchQueueSink(_context, _workQueue);
             _queueMonitor = new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue); // always use in-proc for console requests
 

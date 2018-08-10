@@ -28,6 +28,11 @@ namespace RIFF.Core
             Setup();
         }
 
+        private static Level EffectiveLevel(Level level)
+        {
+            return level != Level.Debug && RFStatic.IsShutdown ? Level.Info : level;
+        }
+
         public void Critical(object caller, string message)
         {
             Log(caller, Level.Critical, message);
@@ -251,7 +256,7 @@ namespace RIFF.Core
                             insertCommand.Parameters.AddWithValue("@IOTime", p.IOTime);
                             insertCommand.Parameters.AddWithValue("@ProcessingTime", p.ProcessingTime);
                             insertCommand.Parameters.AddWithValue("@Success", p.Success);
-                            insertCommand.Parameters.AddWithValue("@Message", RFStringHelpers.StringToSQL(p.Message, true, 2014, true));
+                            insertCommand.Parameters.AddWithValue("@Message", RFStringHelpers.StringToSQL(p.Message, true, 1014, true));
                             insertCommand.Parameters.AddWithValue("@NumUpdates", p.NumUpdates);
                             insertCommand.ExecuteNonQuery();
                         }
@@ -277,7 +282,7 @@ namespace RIFF.Core
         protected void Log(object caller, Level level, string message, Exception ex = null)
         {
             log4net.NDC.Push(caller != null ? caller.ToString() : String.Empty);
-            _log.Logger.Log(GetType(), level, message, ex);
+            _log.Logger.Log(GetType(), EffectiveLevel(level), message, ex);
             log4net.NDC.Pop();
         }
 

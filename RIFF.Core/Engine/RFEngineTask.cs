@@ -101,7 +101,7 @@ namespace RIFF.Core
             {
                 Range = RangeFunc(context),
                 Schedules = SchedulesFunc(context),
-                IsEnabled = context.UserConfig.GetBool(CONFIG_SECTION, TaskName, true, true, "Is Enabled")
+                IsEnabled = context.UserConfig.GetBool(CONFIG_SECTION, TaskName, false, true, "Is Enabled")
             };
         }
 
@@ -116,7 +116,7 @@ namespace RIFF.Core
                 Range = RangeFunc(c),
                 Schedules = SchedulesFunc(c),
                 TriggerKey = triggerKey,
-                IsEnabled = c.UserConfig.GetBool(CONFIG_SECTION, TaskName, true, true, "Is Enabled")
+                IsEnabled = c.UserConfig.GetBool(CONFIG_SECTION, TaskName, false, true, "Is Enabled")
             });
         }
     }

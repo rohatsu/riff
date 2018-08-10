@@ -255,10 +255,10 @@ namespace RIFF.Core
         /// <returns></returns>
         public RFEngineTaskDefinition AddScheduledTask(string taskName, Func<List<RFSchedulerSchedule>> schedulesFunc, Func<RFSchedulerRange> rangeFunc, RFEngineProcessDefinition process, bool isSystem)
         {
-            var task = new RFScheduledEngineTaskDefinition
+            var task = new RFSchedulerTaskDefinition
             {
-                RangeFunc = rangeFunc,
-                SchedulesFunc = schedulesFunc,
+                RangeFunc = _ => rangeFunc(),
+                SchedulesFunc = _ => schedulesFunc(),
                 TaskName = taskName,
                 TaskProcess = process,
                 IsSystem = isSystem

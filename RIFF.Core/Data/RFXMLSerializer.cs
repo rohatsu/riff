@@ -263,6 +263,11 @@ namespace RIFF.Core
             return new DataContractSerializer(type, mPotentialTypes);
         }
 
+        public static void PreloadType(Type type)
+        {
+            GetOrCreateSerializer(type.FullName, true, type);
+        }
+
         protected static DataContractSerializer GetOrCreateSerializer(Type type, bool isCaching = false)
         {
             return GetOrCreateSerializer(type.FullName, isCaching, type);

@@ -52,9 +52,9 @@ namespace RIFF.Core
             }
             catch (MessageQueueException mqe)
             {
-                Log.Warning(this, "Shutting down worker thread: {0}", mqe.Message);
                 if (!IsExiting())
                 {
+                    Log.Warning(this, "Shutting down worker thread: {0}", mqe.Message);
                     Shutdown();
                 }
             }
