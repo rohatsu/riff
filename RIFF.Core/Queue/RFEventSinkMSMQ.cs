@@ -18,11 +18,21 @@ namespace RIFF.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2002:DoNotLockOnObjectsWithWeakIdentity")]
         public void RaiseEvent(object raisedBy, RFEvent e, string processingKey)
         {
-            lock (_eventQueue) // Send is not thread-safe, would need to use thread-local instances
+            try
             {
-                _eventQueue.Send(new RFWorkQueueItem { Item = e, ProcessingKey = processingKey });
+                lock (_eventQueue) // Send is not thread-safe, would need to use thread-local instances
+                {
+                    _eventQueue.Send(new RFWorkQueueItem { Item = e, ProcessingKey = processingKey });
+                }
+                RFStatic.Log.Debug(typeof(RFEventSinkMSMQ), "Sent event {0} to MSMQ", e);
             }
-            RFStatic.Log.Debug(typeof(RFEventSinkMSMQ), "Sent event {0} to MSMQ", e);
+            catch (MessageQueueException)
+            {
+                if (!RFStatic.IsShutdown)
+                {
+                    throw;
+                }
+            }
         }
     }
 }

@@ -26,6 +26,8 @@ namespace RIFF.Web.Core.App_Start
     {
         public static IRFWebConfig Config { get; private set; }
 
+        public static IContainer Container { get; private set; }
+
         public static RFConsoleExecutor ConsoleExecutor { get; private set; }
 
         public static IRFProcessingContext Context { get; private set; }
@@ -216,16 +218,21 @@ namespace RIFF.Web.Core.App_Start
             }
 
             var engine = RIFFSection.GetDefaultEngine();
+            var config = engine.BuildEngineConfiguration();
             EngineConfig = engine;
-            var context = RFEnvironments.StartWeb(engine.Environment, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly });
+
+            var enableWebProcessing = RFSettings.GetAppSetting("EnableWebProcessing", false);
+            var context =
+                enableWebProcessing ?
+                RFEnvironments.StartLocal(engine.Environment, config, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly }).Start() :
+                RFEnvironments.StartWeb(engine.Environment, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly });
             UserRole = context.UserRole;
 
             // this context is for read-only operations
             builder.RegisterInstance(context).As<IRFProcessingContext>();
             builder.RegisterInstance(context).As<IRFSystemContext>();
-            builder.RegisterInstance(engine.BuildEngineConfiguration()).As<RFEngineDefinition>();
+            builder.RegisterInstance(config).As<RFEngineDefinition>();
 
-            var config = engine.BuildEngineConfiguration();
             var engineConsole = config.Console;
             if (config.Console == null)
             {
@@ -239,9 +246,9 @@ namespace RIFF.Web.Core.App_Start
             var httpConfig = GlobalConfiguration.Configuration;
             builder.RegisterWebApiFilterProvider(httpConfig);
 
-            var container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
-            httpConfig.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+            Container = builder.Build();
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(Container));
+            httpConfig.DependencyResolver = new AutofacWebApiDependencyResolver(Container);
         }
 
         public static void InitializeJSON()

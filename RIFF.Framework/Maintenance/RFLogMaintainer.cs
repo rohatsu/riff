@@ -107,7 +107,7 @@ namespace RIFF.Framework
                         {
                             try
                             {
-                                foreach (var file in Directory.GetFiles(logDirectory, "*.*", SearchOption.TopDirectoryOnly))
+                                foreach (var file in Directory.GetFiles(logDirectory, "*.*", SearchOption.AllDirectories))
                                 {
                                     try
                                     {

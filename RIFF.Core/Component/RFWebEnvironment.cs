@@ -11,7 +11,7 @@ namespace RIFF.Core
             {
                 CancellationTokenSource = new CancellationTokenSource(),
                 Catalog = null,
-                UserConfig = new RFUserConfig(connectionString: dbConnection, environmentName: environment),
+                UserConfig = new RFCachedUserConfig(connectionString: dbConnection, environmentName: environment),
                 UserRole = new RFSQLUserRole(dbConnection),
                 SystemConfig = new RFSystemConfig
                 {

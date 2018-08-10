@@ -111,6 +111,7 @@ namespace RIFF.Core
         public void UserError(string message, params object[] formats)
         {
             var fullMessage = String.Format(message, formats ?? new object[0]);
+            _systemLog?.Warning(_parent, fullMessage);
             _userLog?.LogEntry(new RFUserLogEntry
             {
                 Description = fullMessage,
@@ -122,7 +123,6 @@ namespace RIFF.Core
                 ValueDate = _valueDate ?? RFDate.NullDate,
                 Username = "system"
             });
-            _systemLog?.Warning(_parent, "UserError {0}: {1}", _valueDate ?? RFDate.NullDate, fullMessage);
             _errors.Add(fullMessage);
         }
 

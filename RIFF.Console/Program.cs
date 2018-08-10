@@ -42,7 +42,7 @@ namespace RIFF
                     try
                     {
                         System.Console.Write("> ");
-                        var input = System.Console.ReadLine();
+                        var input = ReadLine();
                         executor.ExecuteCommand(input);
                     }
                     catch (Exception ex)

@@ -16,7 +16,7 @@ namespace RIFF.Core
             {
                 CancellationTokenSource = new CancellationTokenSource(),
                 Catalog = null,
-                UserConfig = new RFUserConfig(dbConnection, environment),
+                UserConfig = new RFCachedUserConfig(dbConnection, environment),
                 SystemConfig = new RFSystemConfig
                 {
                     Environment = environment,
