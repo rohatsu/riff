@@ -40,7 +40,7 @@ namespace RIFF.Core
 
         public void Critical(object caller, string message, params object[] args)
         {
-            Log(caller, Level.Critical, String.Format(message, args ?? new object[0]));
+            Log(caller, Level.Critical, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]));
         }
 
         public void Debug(object caller, string message)
@@ -50,7 +50,7 @@ namespace RIFF.Core
 
         public void Debug(object caller, string message, params object[] args)
         {
-            Log(caller, Level.Debug, String.Format(message, args ?? new object[0]));
+            Log(caller, Level.Debug, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]));
         }
 
         public void Error(object caller, string message)
@@ -60,7 +60,7 @@ namespace RIFF.Core
 
         public void Error(object caller, string message, params object[] args)
         {
-            Log(caller, Level.Error, String.Format(message, args ?? new object[0]));
+            Log(caller, Level.Error, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]));
         }
 
         public void Exception(object caller, string message, Exception ex)
@@ -70,7 +70,7 @@ namespace RIFF.Core
 
         public void Exception(object caller, Exception ex, string message, params object[] args)
         {
-            Log(caller, Level.Error, String.Format(message, args ?? new object[0]), ex);
+            Log(caller, Level.Error, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]), ex);
         }
 
         [SuppressMessage("Microsoft.Security", "CA2100")]
@@ -216,7 +216,7 @@ namespace RIFF.Core
 
         public void Info(object caller, string message, params object[] args)
         {
-            Log(caller, Level.Info, String.Format(message, args ?? new object[0]));
+            Log(caller, Level.Info, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]));
         }
 
         public void LogEvent(object caller, RFEvent e)
@@ -276,7 +276,7 @@ namespace RIFF.Core
 
         public void Warning(object caller, string message, params object[] args)
         {
-            Log(caller, Level.Warn, String.Format(message, args ?? new object[0]));
+            Log(caller, Level.Warn, ((args?.Length ?? 0) == 0) ? message : String.Format(message, args ?? new object[0]));
         }
 
         protected void Log(object caller, Level level, string message, Exception ex = null)
