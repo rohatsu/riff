@@ -24,7 +24,7 @@ namespace RIFF.Core
         /// </summary>
         public void Action(string action, string area, RFDate? valueDate, string message, params object[] param)
         {
-            var fullMessage = String.Format(message, param ?? new object[0]);
+            var fullMessage = ((param?.Length ?? 0) == 0) ? message : String.Format(message, param ?? new object[0]);
             _userLog?.LogEntry(new RFUserLogEntry
             {
                 Description = fullMessage,
@@ -70,7 +70,7 @@ namespace RIFF.Core
         /// </summary>
         public void SystemError(string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _systemLog?.Error(_parent, fullMessage);
             _errors.Add(fullMessage);
         }
@@ -80,7 +80,7 @@ namespace RIFF.Core
         /// </summary>
         public void SystemError(Exception ex, string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _systemLog?.Exception(_parent, ex, fullMessage);
             _errors.Add(fullMessage);
         }
@@ -90,7 +90,7 @@ namespace RIFF.Core
         /// </summary>
         public Exception SystemException(string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _errors.Add(fullMessage);
             throw new RFSystemException(_parent, fullMessage);
         }
@@ -100,7 +100,7 @@ namespace RIFF.Core
         /// </summary>
         public Exception SystemException(Exception ex, string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _errors.Add(fullMessage);
             throw new RFSystemException(_parent, ex, fullMessage);
         }
@@ -110,7 +110,7 @@ namespace RIFF.Core
         /// </summary>
         public void UserError(string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _systemLog?.Warning(_parent, fullMessage);
             _userLog?.LogEntry(new RFUserLogEntry
             {
@@ -131,7 +131,7 @@ namespace RIFF.Core
         /// </summary>
         public Exception UserException(string message, params object[] formats)
         {
-            var fullMessage = String.Format(message, formats ?? new object[0]);
+            var fullMessage = ((formats?.Length ?? 0) == 0) ? message : String.Format(message, formats);
             _errors.Add(fullMessage);
             throw new RFLogicException(_parent, fullMessage);
         }

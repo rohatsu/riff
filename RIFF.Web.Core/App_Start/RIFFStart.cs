@@ -224,7 +224,7 @@ namespace RIFF.Web.Core.App_Start
             var enableWebProcessing = RFSettings.GetAppSetting("EnableWebProcessing", false);
             var context =
                 enableWebProcessing ?
-                RFEnvironments.StartLocal(engine.Environment, config, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly }).Start() :
+                RFEnvironments.StartConsole(engine.Environment, config, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly }).Start() :
                 RFEnvironments.StartWeb(engine.Environment, engine.Database, new string[] { "RIFF.Core", "RIFF.Framework", engine.Assembly });
             UserRole = context.UserRole;
 
