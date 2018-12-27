@@ -14,6 +14,8 @@ namespace RIFF.Framework
             public string ArchivePath { get; set; }
 
             public bool Enabled { get; set; }
+
+            public Func<RFRawReport, string> FileNameFunc { get; set; }
         }
 
         public RFRawReportArchiverProcessor(Config config) : base(config)
@@ -34,7 +36,8 @@ namespace RIFF.Framework
                     }
                     var outputDirectory = Path.Combine(_config.ArchivePath, inputReport.ValueDate.ToString("yyyy-MM-dd"));
                     Directory.CreateDirectory(outputDirectory);
-                    var outputPath = Path.Combine(outputDirectory, String.Format("{0}_{1}.csv", inputReport.SourceUniqueKey, inputReport.UpdateTime.ToLocalTime().ToString("yyyyMMdd_HHmmss")));
+                    var outputFileName = _config.FileNameFunc != null ? _config.FileNameFunc(inputReport) : String.Format("{0}_{1}.csv", inputReport.SourceUniqueKey, inputReport.UpdateTime.ToLocalTime().ToString("yyyyMMdd_HHmmss"));
+                    var outputPath = Path.Combine(outputDirectory, outputFileName);
                     File.WriteAllBytes(outputPath, Encoding.UTF8.GetBytes(csvBuilder.ToString()));
                 }
                 result.WorkDone = true;

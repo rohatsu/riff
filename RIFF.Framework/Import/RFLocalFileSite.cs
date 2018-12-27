@@ -52,7 +52,8 @@ namespace RIFF.Framework
 
         public override void MoveFile(string sourcePath, string destinationPath)
         {
-            if(File.Exists(destinationPath))
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+            if (File.Exists(destinationPath))
             {
                 File.Delete(destinationPath);
             }
