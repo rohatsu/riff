@@ -1,0 +1,3 @@
+RIFF.Web.Core/Scripts/*.js linguist-vendored
+RIFF.Web.Core/Scripts/codemirror/* linguist-vendored
+RIFF.Web.Core/Scripts/typings/* linguist-vendored
