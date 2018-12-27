@@ -91,7 +91,7 @@ namespace RIFF.Framework
         {
             if(ArchivePath.NotBlank())
             {
-                var destinationPath = CombinePath(ArchivePath, availableFile.FileAttributes.FileName);
+                var destinationPath = CombinePath(string.Format(ArchivePath, DateTime.Today), availableFile.FileAttributes.FileName);                
                 MoveFile(availableFile.FileAttributes.FullPath, destinationPath);
             }
         }

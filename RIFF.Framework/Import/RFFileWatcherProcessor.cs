@@ -81,127 +81,137 @@ namespace RIFF.Framework
                 var availableFiles = mConfig.SourceSite.CheckSite(mConfig.MonitoredFiles);
                 var utcNow = DateTime.UtcNow;
                 var filesToRemove = new List<RFFileAvailableEvent>();
-                foreach (var availableFile in availableFiles)
+                foreach (var availableFileName in availableFiles.GroupBy(f => f.FileAttributes.FileName))
                 {
-                    if (RFSeenFiles.IsExpired(availableFile.FileAttributes, utcNow, mConfig.SourceSite.MaxAge))
+                    bool canArchive = true;
+                    foreach (var availableFile in availableFileName)
                     {
-                        var monitoredFile = mConfig.MonitoredFiles.FirstOrDefault(m => m.FileKey == availableFile.FileKey);
-                        if (monitoredFile.RemoveExpired)
+                        if (RFSeenFiles.IsExpired(availableFile.FileAttributes, utcNow, mConfig.SourceSite.MaxAge))
                         {
-                            filesToRemove.Add(availableFile);
-                        }
-                        continue;
-                    }
-                    if (!HaveSeenFile(seenFiles, availableFile))
-                    {
-                        try
-                        {
-                            if (!IsCancelling)
+                            var monitoredFile = mConfig.MonitoredFiles.FirstOrDefault(m => m.FileKey == availableFile.FileKey);
+                            if (monitoredFile.RemoveExpired)
                             {
-                                Log.Info("Retrieving new file {0} from {1}", availableFile.FileAttributes.FileName, mConfig.SourceSite);
-
-                                var data = mConfig.SourceSite.GetFile(availableFile);
-                                var fileAttributes = availableFile.FileAttributes;
-                                var monitoredFile = mConfig.MonitoredFiles.FirstOrDefault(m => m.FileKey == availableFile.FileKey);
-
-                                if (monitoredFile.FileKey == RFInternalFileKey.ZIPArchive)
+                                filesToRemove.Add(availableFile);
+                                canArchive = false;
+                            }
+                            continue;
+                        }
+                        if (!HaveSeenFile(seenFiles, availableFile))
+                        {
+                            try
+                            {
+                                if (!IsCancelling)
                                 {
-                                    // unpack and process each file if it matches monitored files
-                                    Log.Info("Attempting to download and unpack archive {0}", fileAttributes.FileName);
-                                    using (var ms = new MemoryStream(data))
+                                    Log.Info("Retrieving new file {0} from {1}", availableFile.FileAttributes.FileName, mConfig.SourceSite);
+
+                                    var data = mConfig.SourceSite.GetFile(availableFile);
+                                    var fileAttributes = availableFile.FileAttributes;
+                                    var monitoredFile = mConfig.MonitoredFiles.FirstOrDefault(m => m.FileKey == availableFile.FileKey);
+
+                                    if (monitoredFile.FileKey == RFInternalFileKey.ZIPArchive)
                                     {
-                                        foreach (var file in RIFF.Interfaces.Compression.ZIP.ZIPUtils.UnzipArchive(ms))
+                                        // unpack and process each file if it matches monitored files
+                                        Log.Info("Attempting to download and unpack archive {0}", fileAttributes.FileName);
+                                        using (var ms = new MemoryStream(data))
                                         {
-                                            foreach (var candidateFile in mConfig.MonitoredFiles)
+                                            foreach (var file in RIFF.Interfaces.Compression.ZIP.ZIPUtils.UnzipArchive(ms))
                                             {
-                                                var isMatch = false;
-                                                if (!string.IsNullOrWhiteSpace(candidateFile.FileNameRegex))
+                                                foreach (var candidateFile in mConfig.MonitoredFiles)
                                                 {
-                                                    var regex = new Regex(candidateFile.FileNameRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-                                                    isMatch |= regex.IsMatch(file.Item1.FileName);
-                                                }
-                                                if (!isMatch && !string.IsNullOrWhiteSpace(candidateFile.FileNameWildcard))
-                                                {
-                                                    var regex = new Regex(RFRegexHelpers.WildcardToRegex(candidateFile.FileNameWildcard), RegexOptions.IgnoreCase | RegexOptions.Compiled);
-                                                    isMatch |= regex.IsMatch(file.Item1.FileName);
-                                                }
-                                                if (isMatch)
-                                                {
-                                                    try
+                                                    var isMatch = false;
+                                                    if (!string.IsNullOrWhiteSpace(candidateFile.FileNameRegex))
                                                     {
-                                                        // .zip does not contain timezone information
-                                                        // so set file's update time to archive's
-                                                        // update time
-                                                        var newAttrs = new RFFileTrackedAttributes
-                                                        {
-                                                            FileName = file.Item1.FileName,
-                                                            FileSize = file.Item1.FileSize,
-                                                            FullPath = file.Item1.FullPath,
-                                                            ModifiedDate = fileAttributes.ModifiedDate
-                                                        };
-                                                        if (!destinationOpen)
-                                                        {
-                                                            mConfig.DestinationSite.Open(Context);
-                                                            destinationOpen = true;
-                                                        }
-                                                        if (ProcessFile(new RFFileAvailableEvent
-                                                        {
-                                                            FileKey = candidateFile.FileKey,
-                                                            FileAttributes = newAttrs,
-                                                            SourceSite = availableFile.SourceSite
-                                                        }, file.Item2, candidateFile, seenFiles))
-                                                        {
-                                                            newFiles++;
-                                                        }
+                                                        var regex = new Regex(candidateFile.FileNameRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                                        isMatch |= regex.IsMatch(file.Item1.FileName);
                                                     }
-                                                    catch (Exception ex)
+                                                    if (!isMatch && !string.IsNullOrWhiteSpace(candidateFile.FileNameWildcard))
                                                     {
-                                                        Log.UserError("Error extracting file {0} from archive {1}: {2}", file.Item1.FileName, availableFile.FileAttributes.FileName, ex.Message);
+                                                        var regex = new Regex(RFRegexHelpers.WildcardToRegex(candidateFile.FileNameWildcard), RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                                        isMatch |= regex.IsMatch(file.Item1.FileName);
+                                                    }
+                                                    if (isMatch)
+                                                    {
+                                                        try
+                                                        {
+                                                            // .zip does not contain timezone information
+                                                            // so set file's update time to archive's
+                                                            // update time
+                                                            var newAttrs = new RFFileTrackedAttributes
+                                                            {
+                                                                FileName = file.Item1.FileName,
+                                                                FileSize = file.Item1.FileSize,
+                                                                FullPath = file.Item1.FullPath,
+                                                                ModifiedDate = fileAttributes.ModifiedDate
+                                                            };
+                                                            if (!destinationOpen)
+                                                            {
+                                                                mConfig.DestinationSite.Open(Context);
+                                                                destinationOpen = true;
+                                                            }
+                                                            if (ProcessFile(new RFFileAvailableEvent
+                                                            {
+                                                                FileKey = candidateFile.FileKey,
+                                                                FileAttributes = newAttrs,
+                                                                SourceSite = availableFile.SourceSite
+                                                            }, file.Item2, candidateFile, seenFiles))
+                                                            {
+                                                                newFiles++;
+                                                            }
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            Log.UserError("Error extracting file {0} from archive {1}: {2}", file.Item1.FileName, availableFile.FileAttributes.FileName, ex.Message);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    // add archive to seen files
-                                    seenFiles.MarkSeenFile(monitoredFile.FileKey, fileAttributes);
+                                        // add archive to seen files
+                                        seenFiles.MarkSeenFile(monitoredFile.FileKey, fileAttributes);
+                                    }
+                                    else
+                                    {
+                                        if (!destinationOpen)
+                                        {
+                                            mConfig.DestinationSite.Open(Context);
+                                            destinationOpen = true;
+                                        }
+
+                                        if (ProcessFile(availableFile, data, monitoredFile, seenFiles))
+                                        {
+                                            newFiles++;
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                var errorCode = ex.HResult & 0xFFFF;
+                                canArchive = false;
+
+                                if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
+                                {
+                                    Log.Info("Unable to download file {0}: {1}", availableFile.FileAttributes.FileName, ex.Message);
                                 }
                                 else
                                 {
-                                    if (!destinationOpen)
-                                    {
-                                        mConfig.DestinationSite.Open(Context);
-                                        destinationOpen = true;
-                                    }
-
-                                    if (ProcessFile(availableFile, data, monitoredFile, seenFiles))
-                                    {
-                                        newFiles++;
-                                    }
-                                }
-
-                                // archive
-                                try
-                                {
-                                    mConfig.SourceSite.ArchiveFile(availableFile);
-                                } catch (Exception ex)
-                                {
-                                    Log.Warning("Unable to archive file {0}: {1}", availableFile.FileAttributes.FileName, ex.Message);
+                                    Log.UserError("Error downloading file {0}: {1}", availableFile.FileAttributes.FileName, ex.Message);
                                 }
                             }
                         }
+                    }
+
+                    if (canArchive)
+                    {
+                        // archive
+                        try
+                        {
+                            mConfig.SourceSite.ArchiveFile(availableFileName.First());
+                        }
                         catch (Exception ex)
                         {
-                            var errorCode = ex.HResult & 0xFFFF;
-
-                            if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
-                            {
-                                Log.Info("Unable to download file {0}: {1}", availableFile.FileAttributes.FileName, ex.Message);
-                            }
-                            else
-                            {
-                                Log.UserError("Error downloading file {0}: {1}", availableFile.FileAttributes.FileName, ex.Message);
-                            }
+                            Log.Warning("Unable to archive file {0}: {1}", availableFileName.First().FileAttributes.FileName, ex.Message);
                         }
                     }
                 }

@@ -61,9 +61,9 @@ namespace RIFF
 
         private static string ReadLine()
         {
-            var inputStream = Console.OpenStandardInput(65536);
-            var bytes = new byte[65536];
-            var outputLength = inputStream.Read(bytes, 0, 65536);
+            var inputStream = Console.OpenStandardInput(8192);
+            var bytes = new byte[8192];
+            var outputLength = inputStream.Read(bytes, 0, 8192);
             //Console.WriteLine(outputLength);
             var chars = Encoding.UTF7.GetChars(bytes, 0, outputLength);
             return new string(chars);
