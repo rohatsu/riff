@@ -368,7 +368,7 @@ namespace RIFF.Core
                     do
                     {
                         dt = dt.AddDays(isBackward ? -1 : 1);
-                    } while (dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday || (dt.Month == 1 && dt.Day == 1)); // also roll over Jan 1st
+                    } while (dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday/* || (dt.Month == 1 && dt.Day == 1)*/); // also roll over Jan 1st
                     numDays--;
                 }
                 return new RFDate(dt);
