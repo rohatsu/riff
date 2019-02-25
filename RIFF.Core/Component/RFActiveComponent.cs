@@ -185,6 +185,7 @@ namespace RIFF.Core
 
         public List<RFInstruction> Command(string command, string param)
         {
+            Log.Info(this, $"Processing service command {command}");
             switch (command.ToLower())
             {
                 case RFServiceEvent.START_COMMAND:

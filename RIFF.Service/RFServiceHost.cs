@@ -134,13 +134,21 @@ namespace RIFF.Service
 
         protected override void OnStart(string[] args)
         {
-            System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
+            try
+            {
+                System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                log4net.GlobalContext.Properties["LogName"] = _args != null && _args.Length > 0 ? _args[0] : "Service";
+                XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
+                StartEnvironment();
 
-            log4net.GlobalContext.Properties["LogName"] = _args != null && _args.Length > 0 ? _args[0] : "Service";
-            XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
-            StartEnvironment();
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            }
+            catch (Exception ex)
+            {
+                Environment.FailFast("Error starting RFService", ex);
+                throw;
+            }
         }
 
         protected override void OnStop()

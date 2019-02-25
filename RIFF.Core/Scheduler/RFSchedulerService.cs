@@ -35,15 +35,16 @@ namespace RIFF.Core
 
         protected void Reload()
         {
-            lock(_sync)
+            lock (_sync)
             {
                 _configs = _configFuncs.Select(c => c(_context)).ToList();
             }
+            _context.SystemLog.Info(this, "Reloaded schedules.");
         }
 
         public override List<RFInstruction> CustomCommand(string command, string param)
         {
-            switch(command)
+            switch (command)
             {
                 case RELOAD_COMMAND:
                     Reload();
@@ -57,10 +58,10 @@ namespace RIFF.Core
 
         protected void List()
         {
-            lock(_sync)
+            lock (_sync)
             {
                 int n = 1;
-                foreach(var config in _configs)
+                foreach (var config in _configs)
                 {
                     Console.WriteLine($"Schedule #{n++}");
                     Console.WriteLine($"  Trigger Key = {config.TriggerKey.FriendlyString()}");
@@ -74,25 +75,25 @@ namespace RIFF.Core
         public override void Start()
         {
             _context.SystemLog.Debug(this, "Scheduler Service starting");
-            while(!IsExiting())
+            while (!IsExiting())
             {
                 Thread.Sleep(1000 - DateTime.Now.Millisecond);
 
-                if(IsExiting())
+                if (IsExiting())
                 {
                     return;
                 }
 
                 var now = DateTime.Now;
                 var interval = new RFInterval(_lastTrigger, now);
-                lock(_sync)
+                lock (_sync)
                 {
-                    foreach(var config in _configs)
+                    foreach (var config in _configs)
                     {
-                        if(config.ShouldTrigger(interval))
+                        if (config.ShouldTrigger(interval))
                         {
                             var key = config.TriggerKey;
-                            if(config.GraphInstance != null)
+                            if (config.GraphInstance != null)
                             {
                                 key = key.CreateForInstance(config.GraphInstance(interval));
                                 _context.SaveEntry(RFDocument.Create(key, new RFGraphProcessorTrigger { TriggerStatus = true, TriggerTime = interval.IntervalEnd }));
