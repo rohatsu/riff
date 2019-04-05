@@ -42,9 +42,13 @@ namespace RIFF.Core
             sMajorVersion,
             sMinorVersion);
 
+#if !NETSTANDARD2_0
         public static readonly string sVersion = String.Format("{0}.{1} ({2})",
             sShortVersion,
             Properties.Resources.BuildNumber.Trim(new char[] { '\n', '\r', '\t', ' ' }),
             Properties.Resources.BuildDate.Trim(new char[] { '\n', '\r', '\t', ' ' }));
+#else
+        public static readonly string sVersion = String.Format("{0} Core", sShortVersion);
+#endif
     }
 }

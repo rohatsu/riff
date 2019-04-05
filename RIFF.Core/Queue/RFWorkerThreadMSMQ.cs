@@ -1,6 +1,7 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2019 rohatsu software studios limited / www.rohatsu.com
 using System;
 using System.Data.Common;
+#if !NETSTANDARD2_0
 using System.Messaging;
 using System.Transactions;
 
@@ -111,3 +112,4 @@ namespace RIFF.Core
         }
     }
 }
+#endif

@@ -62,6 +62,23 @@ namespace RIFF.Core
             return se.Start();
         }
 
+#if NETSTANDARD2_0
+        /// <summary>
+        /// Lightweight context for core processing (no engine)
+        /// </summary>
+        /// <param name="dbConnection">Database connection string.</param>
+        /// <returns>Context for accessing the environment.</returns>
+        public static IRFProcessingContext StartCore(string environment, string dbConnection, Dictionary<string, string> settings = null)
+        {
+            var se = new RFCoreEnvironment(environment: environment, dbConnection: dbConnection);
+            if (settings != null)
+            {
+                RFSettings.Load(settings);
+            }
+            return se.Start();
+        }
+#endif
+
         internal static void LogLicenseInfo(RFEngineDefinition config)
         {
             var license = RIFF.Core.RFPublicRSA.GetHost(config.LicenseTokens.Key, config.LicenseTokens.Value);

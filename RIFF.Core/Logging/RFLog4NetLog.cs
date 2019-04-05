@@ -319,6 +319,7 @@ namespace RIFF.Core
         {
             if (!_isSetup)
             {
+#if !NETSTANDARD2_0
                 // add database appender for warnings
 
                 var appender = new AdoNetAppender
@@ -402,7 +403,17 @@ namespace RIFF.Core
                 var hierarchy = (Hierarchy)LogManager.GetRepository();
                 hierarchy.Root.AddAppender(appender);
                 hierarchy.Configured = true;
-
+#else
+                /*
+                // add console logger
+                var hierarchy = (Hierarchy)LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+                var consoleAppender = new ConsoleAppender();
+                consoleAppender.Layout = new PatternLayout(@"%newline%utcdate %-5level %property{LogName} (%thread/%property{NDC}) - %message%newline%newline%newline");
+                consoleAppender.Threshold = Level.Info;
+                hierarchy.Root.AddAppender(consoleAppender);
+                hierarchy.Configured = true;
+                */
+#endif
                 _isSetup = true;
             }
             _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

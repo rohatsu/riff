@@ -26,49 +26,55 @@ namespace RIFF.Framework
             Attachments.Add(new Attachment(new MemoryStream(content), fileName, mimeType));
         }
 
+        public MailMessage PrepareMessage(string subject, params object[] formats)
+        {
+            var sender = RFSettings.GetAppSetting("SmtpSender", null);
+            if (string.IsNullOrWhiteSpace(subject))
+            {
+                throw new RFLogicException(this, "E-mail subject cannot be empty.");
+            }
+            var body = GenerateBody();
+            var mailMessage = new MailMessage
+            {
+                Body = body,
+                IsBodyHtml = true,
+                From = new MailAddress(sender),
+                Subject = String.Format(subject, formats),
+                Sender = new MailAddress(sender)
+            };
+            foreach (var recipient in Config.To.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                mailMessage.To.Add(recipient.Trim());
+            }
+            if (!string.IsNullOrWhiteSpace(Config.Cc))
+            {
+                foreach (var cc in Config.Cc.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    mailMessage.CC.Add(cc.Trim());
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(Config.Bcc))
+            {
+                foreach (var bcc in Config.Bcc.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    mailMessage.Bcc.Add(bcc.Trim());
+                }
+            }
+            foreach (var att in Attachments)
+            {
+                mailMessage.Attachments.Add(att);
+            }
+            return PostProcess(mailMessage);
+        }
+
         public void Send(string subject, params object[] formats)
         {
             try
             {
                 if (!string.IsNullOrWhiteSpace(Config.To) && Config.Enabled)
                 {
-                    var sender = RFSettings.GetAppSetting("SmtpSender", null);
-                    if (string.IsNullOrWhiteSpace(subject))
-                    {
-                        throw new RFLogicException(this, "E-mail subject cannot be empty.");
-                    }
-                    var body = GenerateBody();
-                    var mailMessage = new MailMessage
-                    {
-                        Body = body,
-                        IsBodyHtml = true,
-                        From = new MailAddress(sender),
-                        Subject = String.Format(subject, formats),
-                        Sender = new MailAddress(sender)
-                    };
-                    foreach (var recipient in Config.To.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        mailMessage.To.Add(recipient.Trim());
-                    }
-                    if (!string.IsNullOrWhiteSpace(Config.Cc))
-                    {
-                        foreach (var cc in Config.Cc.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            mailMessage.CC.Add(cc.Trim());
-                        }
-                    }
-                    if (!string.IsNullOrWhiteSpace(Config.Bcc))
-                    {
-                        foreach (var bcc in Config.Bcc.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            mailMessage.Bcc.Add(bcc.Trim());
-                        }
-                    }
-                    foreach (var att in Attachments)
-                    {
-                        mailMessage.Attachments.Add(att);
-                    }
-                    mailMessage = PostProcess(mailMessage);
+                    var mailMessage = PrepareMessage(subject, formats);
+
                     var smtpClient = new SmtpClient();
                     smtpClient.Send(mailMessage);
                 }

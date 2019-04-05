@@ -46,10 +46,15 @@ namespace RIFF.Core
         }
 
         public override IRFSystemContext Start()
-        {            
-            var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
+        {
             var manager = new RFDispatchQueueSink(_context, _workQueue);
+
+#if !NETSTANDARD2_0
+            var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
             _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, manager, manager, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
+#else
+            _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
+#endif
             _workQueueMonitor.StartThread();
 
             _processingContext = _context.GetProcessingContext(null, manager, manager, _workQueueMonitor);

@@ -6,10 +6,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+#if !NETSTANDARD2_0
 using System.Web.Razor.Parser;
+#endif
 
 namespace RIFF.Core
 {
+#if NETSTANDARD2_0
+    internal class ParserHelpers
+    {
+        public static string SanitizeClassName(string className)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in className)
+            {
+                if (char.IsLetterOrDigit(c))
+                {
+                    sb.Append(c);
+                }
+                else
+                {
+                    sb.Append('_');
+                }
+            }
+            return sb.ToString();
+        }
+    }
+#endif
+
     public static class RFRazor
     {
         private static ICachingProvider _cachingProvider;
