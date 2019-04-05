@@ -1,16 +1,16 @@
 mkdir Nuget
 cd RIFF.Core
-..\nuget pack RIFF.Core.csproj -IncludeReferencedProjects -Symbols -Version 2.1.20
+..\nuget pack RIFF.Core.csproj -IncludeReferencedProjects -Symbols -Version 2.1.22
 cd..
 cd RIFF.Console
-..\nuget pack RIFF.Console.csproj -IncludeReferencedProjects -Symbols -Version 2.1.20
+..\nuget pack RIFF.Console.csproj -IncludeReferencedProjects -Symbols -Version 2.1.22
 cd..
 cd RIFF.Framework
-..\nuget pack RIFF.Framework.csproj -IncludeReferencedProjects -Symbols -Version 2.1.20
+..\nuget pack RIFF.Framework.csproj -IncludeReferencedProjects -Symbols -Version 2.1.22
 cd..
 cd RIFF.Web.Core
-..\nuget pack RIFF.Web.Core.csproj -IncludeReferencedProjects -Symbols -Version 2.1.20
-..\nuget pack RIFF.Web.Core.nuspec -Version 2.1.20
+..\nuget pack RIFF.Web.Core.csproj -IncludeReferencedProjects -Symbols -Version 2.1.22
+..\nuget pack RIFF.Web.Core.nuspec -Version 2.1.22
 cd ..
 move RIFF.Core\*.nupkg Nuget\
 move RIFF.Console\*.nupkg Nuget\

@@ -98,7 +98,7 @@ module RIFFWebCore {
         export function message(message: string, callback: () => any) {
             var result = DevExpress.ui.dialog.alert("<p style='padding: 10px 20px 20px 5px;'>" + message + "</p>", 'Message');
             result.done(function (dialogResult) {
-                if (dialogResult && callback) {
+                if (callback) {
                     callback();
                 }
             });
