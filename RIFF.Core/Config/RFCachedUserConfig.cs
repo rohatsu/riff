@@ -27,8 +27,18 @@ namespace RIFF.Core
             {
                 if (_cache == null || (DateTime.UtcNow - _cacheUpdate).TotalMilliseconds > _timeout)
                 {
-                    _cache = base.GetAllValues();
-                    _cacheUpdate = DateTime.UtcNow;
+                    try
+                    {
+                        _cache = base.GetAllValues();
+                        _cacheUpdate = DateTime.UtcNow;
+                    } catch(Exception ex)
+                    {
+                        RFStatic.Log.Exception(this, "Error refreshing configuration", ex);
+                        if(_cache == null)
+                        {
+                            throw;
+                        }
+                    }
                 }
             }
         }
