@@ -69,6 +69,7 @@ namespace RIFF.Core
             catch (Exception ex)
             {
                 RFStatic.Log.Exception(this, ex, "Error retrieving user config values");
+                throw;
             }
             return entries;
         }
