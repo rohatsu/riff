@@ -8,7 +8,7 @@ namespace RIFF.Core
 {
     public static class RFNetworkHelpers
     {
-        public static T RetryNetworkOperation<T>(Func<T> operation, int numTries = 3, int delay = 500, bool throwOnFail = true) where T : class
+        public static T RetryNetworkOperation<T>(Func<T> operation, int numTries = 3, int delay = 500, bool throwOnFail = true, string message = null) where T : class
         {
             while (true)
             {
@@ -21,7 +21,7 @@ namespace RIFF.Core
                     numTries--;
                     if (numTries > 0)
                     {
-                        RFStatic.Log.Warning(typeof(RFNetworkHelpers), "Error trying network operation ({0} retries left): {1}", numTries, ex.Message);
+                        RFStatic.Log.Warning(typeof(RFNetworkHelpers), "Error trying network operation {0} ({1} retries left): {2}", message, numTries, ex.Message);
                         if (delay > 0)
                         {
                             System.Threading.Thread.Sleep(delay);

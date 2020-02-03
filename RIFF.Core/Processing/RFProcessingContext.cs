@@ -190,7 +190,7 @@ namespace RIFF.Core
                             }
                             if (candidateDates.Count == 0)
                             {
-                                SystemLog.Warning(this, "No latest date instance item found for key {0}", key);
+                                SystemLog.Info(this, "No latest date instance item found for key {0}", key);
                                 return null;
                             }
                             foreach (var latestDate in candidateDates.OrderByDescending(d => d))

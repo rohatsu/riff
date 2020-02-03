@@ -138,7 +138,7 @@ namespace RIFF.Web.System {
                 this.resetGrid);
         }
 
-        resetGrid() {
+        resetGrid = () => {
             this.refreshGrid(null /*this.getValueDate()*/);
             this.editRow(this.editingKeyType, this.editingContentType, this.editingKeyReference);
         }

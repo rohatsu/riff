@@ -200,7 +200,7 @@ namespace RIFF.Web.Core.Controllers
         {
             using(var userConfig = new RFConfigActivity(Context, Username))
             {
-                return Json(userConfig.GetConfigs().Select(c => new
+                return Json(userConfig.GetConfigs().OrderBy(c => c.Section).ThenBy(c => c.Item).ThenBy(c => c.Key).Select(c => new
                 {
                     Section = c.Section,
                     Item = c.Item,

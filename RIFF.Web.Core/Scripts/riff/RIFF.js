@@ -1152,6 +1152,10 @@ var RIFF;
                 function DataEditorPage(options) {
                     var _this = _super.call(this) || this;
                     _this.options = options;
+                    _this.resetGrid = function () {
+                        _this.refreshGrid(null /*this.getValueDate()*/);
+                        _this.editRow(_this.editingKeyType, _this.editingContentType, _this.editingKeyReference);
+                    };
                     return _this;
                 }
                 DataEditorPage.prototype.onInitialize = function () {
@@ -1246,10 +1250,6 @@ var RIFF;
                 };
                 DataEditorPage.prototype.update = function () {
                     RIFFWebCore.Helpers.postUserAction(this.options.urlUpdateDocument, { type: this.editingKeyType, keyReference: this.editingKeyReference, data: this.contentEditor.getValue('') }, "Catalog updated.", this.resetGrid);
-                };
-                DataEditorPage.prototype.resetGrid = function () {
-                    this.refreshGrid(null /*this.getValueDate()*/);
-                    this.editRow(this.editingKeyType, this.editingContentType, this.editingKeyReference);
                 };
                 DataEditorPage.prototype.copy = function () {
                     $('#updatebutton').hide();
