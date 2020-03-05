@@ -1,4 +1,5 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2019 rohatsu software studios limited / www.rohatsu.com
+using RIFF.Core;
 using System;
 
 namespace RIFF.Web.Core.Helpers
@@ -9,6 +10,14 @@ namespace RIFF.Web.Core.Helpers
 
         public static JsonError Throw(string action, string message)
         {
+            try
+            {
+                RFStatic.Log.Warning(typeof(JsonError), "API response error in {0}: {1}", action, message);
+            }
+            catch (Exception)
+            {
+
+            }
             return new JsonError
             {
                 ErrorMessage = String.Format("({0}) {1}", action, message)

@@ -11,7 +11,8 @@ namespace RIFF.Web.Core.Helpers
         {
             Exception ex = filterContext.Exception;
             filterContext.ExceptionHandled = true;
-            filterContext.Result = new JsonResult { Data = JsonError.Throw(filterContext.RouteData.Values["action"].ToString(), ex), JsonRequestBehavior = JsonRequestBehavior.AllowGet, ContentEncoding = Encoding.UTF8, ContentType = "application/json" };
+            filterContext.HttpContext.Response.StatusCode = 500;
+            filterContext.Result = new JsonResult { Data = JsonError.Throw(string.Format("{0}/{1}/{2}", filterContext.RouteData.DataTokens["area"].ToString(), filterContext.RouteData.Values["controller"].ToString(), filterContext.RouteData.Values["action"].ToString()), ex), JsonRequestBehavior = JsonRequestBehavior.AllowGet, ContentEncoding = Encoding.UTF8, ContentType = "application/json" };
         }
     }
 }
