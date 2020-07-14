@@ -6,7 +6,7 @@ Source code distributed under GNU Affero General Public License v3.0 for user re
 
 Please contact [rohatsu software studios limited](https://www.rohatsu.com) regarding implementations and commercial licensing.
 
-&copy; 2014 - 2019 rohatsu software studios limited
+&copy; 2014 - 2020 rohatsu software studios limited
 
 ### Features
 
@@ -34,9 +34,9 @@ Please contact [rohatsu software studios limited](https://www.rohatsu.com) regar
 ### Technology Stack
 
 * Windows Server 2008 R2+
-* C# / .NET Framework 4.6.2
+* C# / .NET Framework 4.8
 * ASP.NET MVC 5.2
-* TypeScript 2.8
+* TypeScript 3.4
 * XML serialization
 * WCF
 * SQL Server
