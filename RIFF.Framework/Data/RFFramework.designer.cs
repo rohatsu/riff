@@ -22,7 +22,7 @@ namespace RIFF.Framework.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="RIFF")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="RIFF_Guard")]
 	public partial class RFFrameworkDataContext : System.Data.Linq.DataContext
 	{
 		
