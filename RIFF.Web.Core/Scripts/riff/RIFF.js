@@ -114,8 +114,6 @@ var RIFF;
         })(Core = Web.Core || (Web.Core = {}));
     })(Web = RIFF.Web || (RIFF.Web = {}));
 })(RIFF || (RIFF = {}));
-/// <reference path="../../typings/knockout/knockout.d.ts" />
-/// <reference path="../../typings/knockout.mapping/knockout.mapping.d.ts" />
 /// <reference path="Controls.ts" />
 var RIFF;
 (function (RIFF) {
@@ -1032,6 +1030,7 @@ var RIFF;
     })(Web = RIFF.Web || (RIFF.Web = {}));
 })(RIFF || (RIFF = {}));
 /// <reference path="../Core/PageBase.ts" />
+var ko;
 var RIFF;
 (function (RIFF) {
     var Web;

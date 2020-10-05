@@ -1,5 +1,7 @@
 ﻿/// <reference path="../Core/PageBase.ts" />
 
+var ko: any;
+
 namespace RIFF.Web.System {
     interface MirrorOptions {
         urlGetFiles: string,
