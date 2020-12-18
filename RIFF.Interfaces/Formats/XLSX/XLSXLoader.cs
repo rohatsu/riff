@@ -57,7 +57,7 @@ namespace RIFF.Interfaces.Formats.XLSX
                             {
                                 if (DateUtil.IsCellDateFormatted(cell))
                                 {
-                                    dr[i] = cell.DateCellValue;
+                                    dr[i] = cell.DateCellValue.ToString("yyyy-MM-dd");
                                 }
                                 else
                                 {
