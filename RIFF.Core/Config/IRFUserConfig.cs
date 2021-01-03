@@ -14,6 +14,8 @@ namespace RIFF.Core
 
         int? GetInt(string section, string item, bool mandatory, int? defaultValue, params string[] path);
 
+        //int GetInt(string section, string item, bool mandatory, int defaultValue, params string[] path);
+
         string GetString(string section, string item, bool mandatory, params string[] path);
 
         bool UpdateValue(int userConfigKeyID, string environment, string newValue, string userName);

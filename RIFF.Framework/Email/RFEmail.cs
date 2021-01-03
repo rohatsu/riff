@@ -40,7 +40,8 @@ namespace RIFF.Framework
                 IsBodyHtml = true,
                 From = new MailAddress(sender),
                 Subject = String.Format(subject, formats),
-                Sender = new MailAddress(sender)
+                Sender = new MailAddress(sender),
+                Priority = Config.Priority == 1 ? MailPriority.High : (Config.Priority == -1 ? MailPriority.Low : MailPriority.Normal)
             };
             foreach (var recipient in Config.To.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -205,6 +206,9 @@ namespace RIFF.Framework
         [DataMember]
         public string To { get; set; }
 
+        [DataMember]
+        public int Priority { get; set; }
+
         public static RFEmailConfig ReadFromConfig(IRFUserConfig config, string section, string emailName)
         {
             return new RFEmailConfig
@@ -213,7 +217,8 @@ namespace RIFF.Framework
                 To = config.GetString(section, emailName, true, "To"),
                 Cc = config.GetString(section, emailName, false, "Cc"),
                 Bcc = config.GetString(section, emailName, false, "Bcc"),
-                SendAsImage = config.GetBool(section, emailName, false, false, "Send as Image")
+                SendAsImage = config.GetBool(section, emailName, false, false, "Send as Image"),
+                Priority = config.GetInt(section, emailName, false, 0, "Priority").Value
             };
         }
     }
