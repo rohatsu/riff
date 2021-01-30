@@ -25,7 +25,7 @@
   <dependency id="knockout.mapping.TypeScript.DefinitelyTyped" version="0.2.8" />
   <dependency id="knockout.TypeScript.DefinitelyTyped" version="1.1.6" />
   <dependency id="knockoutjs" version="3.5.0" />
-  <dependency id="log4net" version="2.0.8" />
+  <dependency id="log4net" version="2.0.12" />
   <dependency id="Microsoft.AspNet.Cors" version="5.2.7" />
   <dependency id="Microsoft.AspNet.Mvc" version="5.2.7" />
   <dependency id="Microsoft.AspNet.Razor" version="3.2.7" />
