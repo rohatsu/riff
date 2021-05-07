@@ -91,7 +91,7 @@ namespace RIFF.Core
             }
         }
 
-        public decimal? GetDecimal(string section, string item, bool mandatory, decimal? defaultValue, params string[] path)
+        private decimal? InternalGetDecimal(string section, string item, bool mandatory, params string[] path)
         {
             var stringValue = GetString(section, item, mandatory, path);
             if (!string.IsNullOrWhiteSpace(stringValue))
@@ -108,7 +108,22 @@ namespace RIFF.Core
                 throw new RFSystemException(this, "Can't find valid mandatory config entry {0}/{1}/{2}", section, item, String.Join("/", path));
             }
 
-            return defaultValue;
+            return null;
+        }
+
+        public decimal GetDecimal(string section, string item, decimal defaultValue, params string[] path)
+        {
+            return InternalGetDecimal(section, item, false, path) ?? defaultValue;
+        }
+
+        public decimal GetDecimal(string section, string item, params string[] path)
+        {
+            return InternalGetDecimal(section, item, true, path).Value;
+        }
+
+        public decimal? TryGetDecimal(string section, string item, params string[] path)
+        {
+            return InternalGetDecimal(section, item, false, path);
         }
 
         public T GetEnum<T>(string section, string item, bool mandatory, params string[] path) where T : struct, IConvertible
@@ -131,7 +146,7 @@ namespace RIFF.Core
             return new List<T>();
         }
 
-        public int? GetInt(string section, string item, bool mandatory, int? defaultValue, params string[] path)
+        private int? InternalGetInt(string section, string item, bool mandatory, params string[] path)
         {
             var stringValue = GetString(section, item, mandatory, path);
             if (!string.IsNullOrWhiteSpace(stringValue))
@@ -148,7 +163,22 @@ namespace RIFF.Core
                 throw new RFSystemException(this, "Can't find mandatory config entry {0}/{1}/{2}", section, item, String.Join("/", path));
             }
 
-            return defaultValue;
+            return null;
+        }
+
+        public int GetInt(string section, string item, int defaultValue, params string[] path)
+        {
+            return InternalGetInt(section, item, false, path) ?? defaultValue;
+        }
+
+        public int GetInt(string section, string item, params string[] path)
+        {
+            return InternalGetInt(section, item, true, path).Value;
+        }
+
+        public int? TryGetInt(string section, string item, params string[] path)
+        {
+            return InternalGetInt(section, item, false, path);
         }
 
         public virtual string GetString(string section, string item, bool mandatory, params string[] path)

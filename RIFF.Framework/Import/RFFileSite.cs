@@ -57,12 +57,12 @@ namespace RIFF.Framework
 
             if (userConfig != null)
             {
-                MaxAge = userConfig.GetDecimal(configSection, siteKey, false, null, "MaxAge");
+                MaxAge = userConfig.TryGetDecimal(configSection, siteKey, "MaxAge");
                 Enabled = userConfig.GetBool(configSection, siteKey, false, true, "Enabled");
                 PGPSuffixes = userConfig.GetString(configSection, siteKey, false, "PGPSuffixes");
                 PGPKeyPath = userConfig.GetString(configSection, siteKey, false, "PGPKeyPath");
                 PGPKeyPassword = userConfig.GetString(configSection, siteKey, false, "PGPKeyPassword");
-                WriteCooldown = userConfig.GetInt(configSection, siteKey, false, null, "WriteCooldown");
+                WriteCooldown = userConfig.TryGetInt(configSection, siteKey, "WriteCooldown");
                 ScanArchives = userConfig.GetBool(configSection, siteKey, false, false, "ScanArchives");
                 ArchivePath = userConfig.GetString(configSection, siteKey, false, "ArchivePath");
                 UseTemporaryName = userConfig.GetBool(configSection, siteKey, false, false, "UseTemporaryName");

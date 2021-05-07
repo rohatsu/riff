@@ -218,7 +218,7 @@ namespace RIFF.Framework
                 Cc = config.GetString(section, emailName, false, "Cc"),
                 Bcc = config.GetString(section, emailName, false, "Bcc"),
                 SendAsImage = config.GetBool(section, emailName, false, false, "Send as Image"),
-                Priority = config.GetInt(section, emailName, false, 0, "Priority").Value
+                Priority = config.GetInt(section, emailName, 0, "Priority")
             };
         }
     }

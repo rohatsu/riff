@@ -60,7 +60,7 @@ namespace RIFF.Framework
                 SiteKey = siteKey,
                 SiteType = (RFFTPSiteType)Enum.Parse(typeof(RFFTPSiteType), userConfig.GetString(CONFIG_SECTION, siteKey, true, "SiteType"), true),
                 Hostname = userConfig.GetString(CONFIG_SECTION, siteKey, true, "Hostname"),
-                Port = userConfig.GetInt(CONFIG_SECTION, siteKey, false, null, "Port"),
+                Port = userConfig.TryGetInt(CONFIG_SECTION, siteKey, "Port"),
                 Username = userConfig.GetString(CONFIG_SECTION, siteKey, true, "Username"),
                 Password = userConfig.GetString(CONFIG_SECTION, siteKey, false, "Password"),
                 ConnectionKeyPath = userConfig.GetString(CONFIG_SECTION, siteKey, false, "ConnectionKeyPath"),
