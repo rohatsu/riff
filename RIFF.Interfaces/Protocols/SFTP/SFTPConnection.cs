@@ -17,21 +17,24 @@ namespace RIFF.Interfaces.Protocols.SFTP
         protected static readonly int DEFAULT_PORT = 22;
         protected SftpClient _client;
         protected volatile bool _isCancelling;
+        protected bool _logRetries;
 
-        public SFTPConnection(string host, int? port, string username, string password, int timeout = 120, int retries = 5)
+        public SFTPConnection(string host, int? port, string username, string password, int timeout = 120, int retries = 5, bool logRetries = true)
         {
             _client = new SftpClient(host, port ?? DEFAULT_PORT, username, password);
+            _logRetries = logRetries;
             Connect(timeout, retries);
         }
 
-        public SFTPConnection(string host, int? port, string username, string keyFile, string keyPassword, int timeout = 120, int retries = 5)
+        public SFTPConnection(string host, int? port, string username, string keyFile, string keyPassword, int timeout = 120, int retries = 5, bool logRetries = true)
         {
             var pkf = new PrivateKeyFile(keyFile, keyPassword);
             _client = new SftpClient(host, port ?? DEFAULT_PORT, username, new PrivateKeyFile[] { pkf });
+            _logRetries = logRetries;
             Connect(timeout, retries);
         }
 
-        public SFTPConnection(string host, int? port, string username, string password, string keyFile, string keyPassword, int timeout = 120, int retries = 5)
+        public SFTPConnection(string host, int? port, string username, string password, string keyFile, string keyPassword, int timeout = 120, int retries = 5, bool logRetries = true)
         {
             var pkf = new PrivateKeyFile(keyFile, keyPassword);
 
@@ -41,6 +44,7 @@ namespace RIFF.Interfaces.Protocols.SFTP
 
             var con = new ConnectionInfo(host, port ?? DEFAULT_PORT, username, methods.ToArray());
             _client = new SftpClient(con);
+            _logRetries = logRetries;
             Connect(timeout, retries);
         }
 
@@ -132,7 +136,10 @@ namespace RIFF.Interfaces.Protocols.SFTP
                     numTries++;
                     if (numTries < retries)
                     {
-                        RFStatic.Log.Warning(typeof(SFTPConnection), "Unable to connect to {0}: {1}, retrying..", _client.ConnectionInfo.Host, ex.Message);
+                        if(_logRetries)
+                            RFStatic.Log.Warning(typeof(SFTPConnection), "Unable to connect to {0}: {1}, retrying..", _client.ConnectionInfo.Host, ex.Message);
+                        else
+                            RFStatic.Log.Info(typeof(SFTPConnection), "Unable to connect to {0}: {1}, retrying..", _client.ConnectionInfo.Host, ex.Message);
                         Thread.Sleep(5000);
                     }
                     else

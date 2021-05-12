@@ -49,6 +49,10 @@ namespace RIFF.Framework
 
         public bool UseTemporaryName { get; set; }
 
+        public bool LogRetries { get; set; }
+
+        public bool LogFailures { get; set; }
+
         protected RFFileSite(RFEnum siteKey, string configSection, IRFUserConfig userConfig)
         {
             SiteKey = siteKey;
@@ -66,6 +70,8 @@ namespace RIFF.Framework
                 ScanArchives = userConfig.GetBool(configSection, siteKey, false, false, "ScanArchives");
                 ArchivePath = userConfig.GetString(configSection, siteKey, false, "ArchivePath");
                 UseTemporaryName = userConfig.GetBool(configSection, siteKey, false, false, "UseTemporaryName");
+                LogRetries = userConfig.GetBool(configSection, siteKey, false, true, "LogRetries");
+                LogFailures = userConfig.GetBool(configSection, siteKey, false, true, "LogFailures");
             }
         }
 

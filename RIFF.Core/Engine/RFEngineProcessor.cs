@@ -1,6 +1,7 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2019 rohatsu software studios limited / www.rohatsu.com
 using System;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace RIFF.Core
 {
@@ -95,7 +96,15 @@ namespace RIFF.Core
         /// <summary>
         /// Main worker function
         /// </summary>
-        public abstract RFProcessingResult Process();
+        public virtual RFProcessingResult Process()
+        {
+            return ProcessAsync().Result;
+        }
+
+        public virtual Task<RFProcessingResult> ProcessAsync()
+        {
+            return Task.FromResult(RFProcessingResult.Success(false));
+        }
 
         public override string ToString()
         {

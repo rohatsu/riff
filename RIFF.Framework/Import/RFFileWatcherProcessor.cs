@@ -242,13 +242,23 @@ namespace RIFF.Framework
                     Log.Info("Interrupted when checking for files on {0} - {1} new files of {2} total", mConfig.SourceSite, newFiles, availableFiles.Count);
                 }
             }
-            catch (RFTransientSystemException)
+            catch (RFTransientSystemException ex)
             {
-                throw;
+                if (mConfig.SourceSite.LogRetries)
+                    throw;
+                else if(mConfig.SourceSite.LogFailures)
+                    Log.Warning("Error checking site: {0}, ignoring", ex.Message);
+                else
+                    Log.Info("Error checking site: {0}, ignoring", ex.Message);
             }
             catch (Exception ex)
             {
-                Log.UserError("Error checking file site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
+                if (mConfig.SourceSite.LogRetries)
+                    Log.UserError("Error checking file site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
+                else if(mConfig.SourceSite.LogFailures)
+                    Log.Warning("Error checking file site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
+                else
+                    Log.Info("Error checking file site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
             }
             finally
             {
@@ -265,7 +275,10 @@ namespace RIFF.Framework
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning("Error closing site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
+                    if(mConfig.SourceSite.LogFailures || mConfig.SourceSite.LogRetries)
+                        Log.Warning("Error closing site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
+                    else
+                        Log.Info("Error closing site {0}: {1}", mConfig.SourceSite.SiteKey, ex.Message);
                 }
             }
             result.WorkDone = newFiles > 0;
