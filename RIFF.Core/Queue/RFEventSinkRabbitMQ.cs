@@ -31,7 +31,7 @@ namespace RIFF.Core
                     IBasicProperties props = _channel.CreateBasicProperties();
                     props.ContentType = "text/plain";
                     props.DeliveryMode = 2;
-                    _channel.BasicPublish(_eventExchange, null, props, _formatter.Write(new RFWorkQueueItem { Item = e, ProcessingKey = processingKey }));
+                    _channel.BasicPublish(_eventExchange, string.Empty, props, _formatter.Write(new RFWorkQueueItem { Item = e, ProcessingKey = processingKey }));
                 }
                 RFStatic.Log.Debug(typeof(RFEventSinkRabbitMQ), "Sent event {0} to RabbitMQ", e);
             }

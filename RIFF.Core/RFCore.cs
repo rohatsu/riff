@@ -36,7 +36,7 @@ namespace RIFF.Core
         public static readonly string sDateFormat = "yyyy-MM-dd";
         public static readonly string sDateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
         public static readonly string sMajorVersion = "2";
-        public static readonly string sMinorVersion = "1";
+        public static readonly string sMinorVersion = "2";
 
         public static readonly string sShortVersion = String.Format("v{0}.{1}",
             sMajorVersion,

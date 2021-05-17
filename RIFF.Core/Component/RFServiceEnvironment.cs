@@ -47,25 +47,25 @@ namespace RIFF.Core
 
         public override IRFSystemContext Start()
         {
-            var manager = new RFDispatchQueueSink(_context, _workQueue);
+            var internalQueue = new RFDispatchQueueSink(_context, _workQueue);
 
             if (RFSettings.GetAppSetting("UseRabbitMQ", false))
             {
-                _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorRabbitMQ(_context, manager, manager, _workQueue);
+                _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorRabbitMQ(_context, internalQueue, internalQueue, _workQueue);
             }
             else
             {
 
 #if !NETSTANDARD2_0
                 var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
-                _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, manager, manager, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
+                _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, internalQueue, internalQueue, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, internalQueue, internalQueue, _workQueue);
 #else
-            _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
+            _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, internalQueue, internalQueue, _workQueue);
 #endif
             }
             _workQueueMonitor.StartThread();
 
-            _processingContext = _context.GetProcessingContext(null, manager, manager, _workQueueMonitor);
+            _processingContext = _context.GetProcessingContext(null, internalQueue, internalQueue, _workQueueMonitor);
             _context.Engine.Initialize(_processingContext);
             return _processingContext; // this is the root environment (time triggers) which doesn't have a tracker
         }
