@@ -146,16 +146,16 @@ namespace RIFF.Framework
                     {
                         if (Password.IsBlank())
                         {
-                            _connection = new SFTPConnection(Hostname, Port, Username, ConnectionKeyPath, ConnectionKeyPassword);
+                            _connection = new SFTPConnection(Hostname, Port, Username, ConnectionKeyPath, ConnectionKeyPassword, logRetries: LogRetries);
                         }
                         else
                         {
-                            _connection = new SFTPConnection(Hostname, Port, Username, Password, ConnectionKeyPath, ConnectionKeyPassword);
+                            _connection = new SFTPConnection(Hostname, Port, Username, Password, ConnectionKeyPath, ConnectionKeyPassword, logRetries: LogRetries);
                         }
                     }
                     else
                     {
-                        _connection = new SFTPConnection(Hostname, Port, Username, Password);
+                        _connection = new SFTPConnection(Hostname, Port, Username, Password, logRetries: LogRetries);
                     }
                     break;
 
