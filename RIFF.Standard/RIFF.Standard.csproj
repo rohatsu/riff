@@ -114,18 +114,23 @@
     <Compile Include="..\RIFF.Core\Queue\RFDispatchQueueMonitorBase.cs" Link="RFDispatchQueueMonitorBase.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFDispatchQueueMonitorInProc.cs" Link="RFDispatchQueueMonitorInProc.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFDispatchQueueMonitorMSMQ.cs" Link="RFDispatchQueueMonitorMSMQ.cs" />
+    <Compile Include="..\RIFF.Core\Queue\RFDispatchQueueMonitorRabbitMQ.cs" Link="RFDispatchQueueMonitorRabbitMQ.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFDispatchQueueSink.cs" Link="RFDispatchQueueSink.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFDispatchStoreSQL.cs" Link="RFDispatchStoreSQL.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFEvent.cs" Link="RFEvent.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFEventSinkMSMQ.cs" Link="RFEventSinkMSMQ.cs" />
+    <Compile Include="..\RIFF.Core\Queue\RFEventSinkRabbitMQ.cs" Link="RFEventSinkRabbitMQ.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFFormatterMSMQ.cs" Link="RFFormatterMSMQ.cs" />
+    <Compile Include="..\RIFF.Core\Queue\RFFormatterRabbitMQ.cs" Link="RFFormatterRabbitMQ.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFGraphDispatchQueue.cs" Link="RFGraphDispatchQueue.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFInstruction.cs" Link="RFInstruction.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFInterval.cs" Link="RFInterval.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFRequestTracker.cs" Link="RFRequestTracker.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFSingleCommandTrigger.cs" Link="RFSingleCommandTrigger.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFWorkDoneMonitorMSMQ.cs" Link="RFWorkDoneMonitorMSMQ.cs" />
+    <Compile Include="..\RIFF.Core\Queue\RFWorkDoneMonitorRabbitMQ.cs" Link="RFWorkDoneMonitorRabbitMQ.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFWorkerThreadMSMQ.cs" Link="RFWorkerThreadMSMQ.cs" />
+    <Compile Include="..\RIFF.Core\Queue\RFWorkerThreadRabbitMQ.cs" Link="RFWorkerThreadRabbitMQ.cs" />
     <Compile Include="..\RIFF.Core\Queue\RFWorkQueueItem.cs" Link="RFWorkQueueItem.cs" />
     <Compile Include="..\RIFF.Core\RFCore.cs" Link="RFCore.cs" />
     <Compile Include="..\RIFF.Core\Scheduler\RFScheduler.cs" Link="RFScheduler.cs" />
@@ -144,6 +149,7 @@
     <PackageReference Include="lz4net" Version="1.0.15.93" />
     <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
     <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
     <PackageReference Include="RazorEngine.NetCore" Version="2.2.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>

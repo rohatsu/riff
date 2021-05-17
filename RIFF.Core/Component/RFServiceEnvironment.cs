@@ -49,12 +49,20 @@ namespace RIFF.Core
         {
             var manager = new RFDispatchQueueSink(_context, _workQueue);
 
+            if (RFSettings.GetAppSetting("UseRabbitMQ", false))
+            {
+                _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorRabbitMQ(_context, manager, manager, _workQueue);
+            }
+            else
+            {
+
 #if !NETSTANDARD2_0
-            var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
-            _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, manager, manager, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
+                var useMSMQ = RFSettings.GetAppSetting("UseMSMQ", true);
+                _workQueueMonitor = useMSMQ ? (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorMSMQ(_context, manager, manager, _workQueue) : (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
 #else
             _workQueueMonitor = (RFDispatchQueueMonitorBase)new RFDispatchQueueMonitorInProc(_context, manager, manager, _workQueue);
 #endif
+            }
             _workQueueMonitor.StartThread();
 
             _processingContext = _context.GetProcessingContext(null, manager, manager, _workQueueMonitor);
