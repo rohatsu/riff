@@ -90,11 +90,24 @@ namespace RIFF.Interfaces.Formats.CSV
         {
             using (var reader = new StreamReader(data, encoding))
             {
+                StringBuilder fullLine = new StringBuilder();
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    yield return line;
+                    fullLine.Append(line);
+                    if(fullLine.ToString().Count(c => c == '\"') % 2 == 0)
+                    {
+                        // we are not inside a quote, return line
+                        yield return fullLine.ToString();
+                        fullLine = new StringBuilder();
+                    }
+                    else
+                    {
+                        // we are inside a quote, continue appending lines
+                    }
                 }
+                if (fullLine.Length > 0)
+                    yield return fullLine.ToString();
             }
         }
     }

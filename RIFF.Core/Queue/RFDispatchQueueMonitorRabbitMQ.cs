@@ -40,7 +40,7 @@ namespace RIFF.Core
 
             // our private event queue
             var process = System.Diagnostics.Process.GetCurrentProcess();
-            _eventQueue = string.Join("_", _eventQueue, Environment.MachineName, process.Id, process.MainModule.FileName).ToLower();
+            _eventQueue = string.Join("_", _eventQueue, Environment.MachineName, process.Id, System.IO.Path.GetFileNameWithoutExtension(process.MainModule.FileName)).Replace('.', '_').ToLower();
 
             _channel.ExchangeDeclare(_eventExchange, "fanout", true, false);
             _channel.QueueDeclare(_eventQueue, true, true, true);
