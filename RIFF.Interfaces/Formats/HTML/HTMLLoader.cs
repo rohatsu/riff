@@ -1,5 +1,8 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2019 rohatsu software studios limited / www.rohatsu.com
+#if !(NETSTANDARD2_0)
 using HtmlAgilityPack;
+#endif
+
 using RIFF.Core;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,16 @@ using System.Linq;
 
 namespace RIFF.Interfaces.Formats.HTML
 {
+#if (NETSTANDARD2_0)
+    public class HTMLLoader : IRFFormatLoader
+    {
+        public List<DataTable> Load(MemoryStream stream)
+        {
+            throw new NotImplementedException("Not supported on .NET Standard");
+        }
+    }
+
+#else
     public class HTMLLoader : IRFFormatLoader
     {
         public HTMLLoader()
@@ -68,4 +81,5 @@ namespace RIFF.Interfaces.Formats.HTML
             return typeof(HTMLLoader);
         }
     }
+#endif
 }

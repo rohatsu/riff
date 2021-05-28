@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 
-#if !NETSTANDARD2_0
-
 namespace RIFF.Core
 {
     public class EngineCollection : ConfigurationElementCollection
@@ -238,5 +236,3 @@ namespace RIFF.Core
         }
     }
 }
-
-#endif

@@ -23,9 +23,9 @@ namespace RIFF.Core
                 {
                     return new KeyValuePair<string, DateTime>(tokens[0], expiry);
                 }
-                throw new SecurityException("Your license has expired, please obtain a new license.");
+                return new KeyValuePair<string, DateTime>("Evaluation license", DateTime.Today);
             }
-            throw new SecurityException("Invalid license token.");
+            return new KeyValuePair<string, DateTime>("Evaluation license", DateTime.Today);
         }
 
         public static string SignData(string message, RSAParameters privateKey)

@@ -36,6 +36,7 @@ namespace RIFF.Core
             return defaultValue;
         }
 
+        /*
 #if NETSTANDARD2_0
         public static void Load(Dictionary<string, string> settings)
         {
@@ -49,24 +50,24 @@ namespace RIFF.Core
             }
         }
 #endif
-
+        */
         public static string GetAppSetting(string settingName)
         {
-#if !NETSTANDARD2_0
+//#if !NETSTANDARD2_0
             return ConfigurationManager.AppSettings[settingName].ThrowIfBlank($"Missing AppSetting {settingName}");
-#else
+/*#else
             return _settings[settingName.ToLower().Trim()];
-#endif
+#endif*/
         }
 
         public static string GetAppSetting(string settingName, string defaultValue)
         {
-#if !NETSTANDARD2_0
+//#if !NETSTANDARD2_0
             var s = ConfigurationManager.AppSettings[settingName];
             return s.IsBlank() ? defaultValue : s;
-#else
+/*#else
             return (settingName.NotBlank() && _settings.ContainsKey(settingName.ToLower().Trim()) ? _settings[settingName.ToLower().Trim()]?.Trim() : null) ?? defaultValue;
-#endif
+#endif*/
         }
 
         public static RFSchedulerRange GetDowntime()

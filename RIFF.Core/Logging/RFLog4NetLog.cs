@@ -318,7 +318,7 @@ namespace RIFF.Core
         protected void Setup()
         {
             if (!_isSetup)
-            {
+            {                
 #if !NETSTANDARD2_0
                 // add database appender for warnings
 

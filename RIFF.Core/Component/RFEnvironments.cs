@@ -62,7 +62,7 @@ namespace RIFF.Core
             return se.Start();
         }
 
-#if NETSTANDARD2_0
+        /*
         /// <summary>
         /// Lightweight context for core processing (no engine)
         /// </summary>
@@ -76,8 +76,7 @@ namespace RIFF.Core
                 RFSettings.Load(settings);
             }
             return se.Start();
-        }
-#endif
+        }*/
 
         internal static void LogLicenseInfo(RFEngineDefinition config)
         {

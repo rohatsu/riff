@@ -3,7 +3,9 @@ using RIFF.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if !(NETSTANDARD2_0)
 using System.Net.FtpClient;
+#endif
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -11,6 +13,46 @@ namespace RIFF.Interfaces.Protocols.FTP
 {
     public class FTPConnection : IFTPConnection, IDisposable
     {
+#if (NETSTANDARD2_0)
+        public FTPConnection(string host, int? port, string username, string password, int timeout = 120, int retries = 5)
+        {
+        }
+
+        public void Cancel()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteFile(string fullPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<RFFileTrackedAttributes> ListFiles(string directory, string regexString = null, bool recursive = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PutFile(string directory, string fileName, byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] RetrieveFile(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveFile(string sourcePath, string destinationPath)
+        {
+            throw new NotImplementedException();
+        }
+#else
         protected static readonly int DEFAULT_PORT = 21;
         protected FtpClient _client;
 
@@ -141,6 +183,7 @@ namespace RIFF.Interfaces.Protocols.FTP
             }
             _client.SetWorkingDirectory("..");
         }
+#endif
 
         #region IDisposable Support
 
@@ -160,12 +203,14 @@ namespace RIFF.Interfaces.Protocols.FTP
             {
                 if (disposing)
                 {
+                    #if !(NETSTANDARD2_0)
                     // TODO: dispose managed state (managed objects).
                     if (_client != null)
                     {
                         _client.Dispose();
                     }
                     _client = null;
+                    #endif
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -179,6 +224,6 @@ namespace RIFF.Interfaces.Protocols.FTP
         //       unmanaged resources. ~FTPConnection() { // Do not change this code. Put cleanup code
         // in Dispose(bool disposing) above. Dispose(false); }
 
-        #endregion IDisposable Support
+#endregion IDisposable Support
     }
 }

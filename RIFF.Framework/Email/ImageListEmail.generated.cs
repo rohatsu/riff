@@ -22,7 +22,7 @@ namespace RIFF.Framework
     using System.Text;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    public partial class ImageListEmail : RazorEngine.Templating.TemplateBase<RIFF.Framework.RFImageListEmailModel>
+    public partial class ImageListEmail : RIFF.Framework.RFTemplateBase<RIFF.Framework.RFImageListEmailModel>
     {
 #line hidden
 

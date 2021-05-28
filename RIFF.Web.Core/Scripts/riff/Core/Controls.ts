@@ -89,4 +89,34 @@
             }
         }
     }
+
+    export class TextBox extends Control<DevExpress.ui.dxTextBox, DevExpress.ui.dxTextBoxOptions>
+    {
+        defaults(): DevExpress.ui.dxTextBoxOptions {
+            return {
+                activeStateEnabled: true,
+                hoverStateEnabled: true,
+            }
+        }
+    }
+
+    export class Button extends Control<DevExpress.ui.dxButton, DevExpress.ui.dxButtonOptions>
+    {
+        defaults(): DevExpress.ui.dxButtonOptions {
+            return {
+                activeStateEnabled: true,
+                hoverStateEnabled: true,
+            }
+        }
+    }
+
+    export class DropDownBox extends Control<DevExpress.ui.dxDropDownBox, DevExpress.ui.dxDropDownBoxOptions>
+    {
+        defaults(): DevExpress.ui.dxDropDownBoxOptions {
+            return {
+                activeStateEnabled: true,
+                hoverStateEnabled: true,
+            }
+        }
+    }
 }

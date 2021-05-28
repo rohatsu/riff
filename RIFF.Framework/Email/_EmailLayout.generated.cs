@@ -17,7 +17,7 @@ namespace RIFF.Framework
     using System.Text;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    public partial class _EmailLayout : RazorEngine.Templating.TemplateBase<dynamic>
+    public partial class _EmailLayout : RIFF.Framework.RFTemplateBase<dynamic>
     {
 #line hidden
 

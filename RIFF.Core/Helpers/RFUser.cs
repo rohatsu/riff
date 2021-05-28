@@ -1,8 +1,11 @@
 // ROHATSU RIFF FRAMEWORK / copyright (c) 2014-2019 rohatsu software studios limited / www.rohatsu.com
 using System;
 using System.Collections.Generic;
+
 #if !NETSTANDARD2_0
 using System.DirectoryServices.AccountManagement;
+#endif
+
 using System.Linq;
 
 namespace RIFF.Core
@@ -30,6 +33,7 @@ namespace RIFF.Core
                 }
                 else
                 {
+#if !NETSTANDARD2_0
                     // try AD
                     try
                     {
@@ -67,6 +71,7 @@ namespace RIFF.Core
                     {
                         RFStatic.Log.Debug(typeof(RFUser), "Error retrieving username: {0}", ex.Message);
                     }
+#endif
                 }
 
                 // fallback to NT username
@@ -91,14 +96,16 @@ namespace RIFF.Core
 
         public static string IsLocalUser(System.Security.Principal.IPrincipal principal)
         {
+#if !NETSTANDARD2_0
             var domainContext = new PrincipalContext(ContextType.Machine);
             var matchedPrincipal = Principal.FindByIdentity(domainContext, principal.Identity.Name);
             if (matchedPrincipal != null)
             {
                 return matchedPrincipal.DisplayName;
             }
+#endif
             return null;
         }
     }
 }
-#endif
+

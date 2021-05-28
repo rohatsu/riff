@@ -59,7 +59,7 @@ namespace RIFF.Core
             }
             catch (Exception ex)
             {
-                Log.Warning(this, "Error in Shutdown/Abort: {0}", ex.Message);
+                Log.Info(this, "Error in Shutdown/Abort: {0}", ex.Message);
             }
         }
 

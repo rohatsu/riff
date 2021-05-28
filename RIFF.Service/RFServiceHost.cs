@@ -43,7 +43,7 @@ namespace RIFF.Service
                 }
                 catch (SecurityException)
                 {
-                    RFStatic.Log.Error(this, "EventLog source has not been created. Please run \"RIFF.Service.exe /install\" as Administrator to create.");
+                    Console.WriteLine("EventLog source has not been created. Please run \"RIFF.Service.exe /install\" as Administrator to create.");
                     return;
                 }
 

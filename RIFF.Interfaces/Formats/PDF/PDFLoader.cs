@@ -37,7 +37,7 @@ namespace RIFF.Interfaces.Formats.PDF
             PdfDictionary fileArray = null;
             PdfDictionary file = null;
 
-            PRStream prstream = null;
+            PrStream prstream = null;
 
             Attachment fContent = null;
             List<Attachment> lstAtt = null;
@@ -48,14 +48,14 @@ namespace RIFF.Interfaces.Formats.PDF
 
             lstAtt = new List<Attachment>();
 
-            documentNames = (PdfDictionary)PdfReader.GetPdfObject(catalog.Get(PdfName.NAMES));
+            documentNames = (PdfDictionary)PdfReader.GetPdfObject(catalog.Get(PdfName.Names));
 
             if (documentNames != null)
             {
-                embeddedFiles = (PdfDictionary)PdfReader.GetPdfObject(documentNames.Get(PdfName.EMBEDDEDFILES));
+                embeddedFiles = (PdfDictionary)PdfReader.GetPdfObject(documentNames.Get(PdfName.Embeddedfiles));
                 if (embeddedFiles != null)
                 {
-                    PdfArray filespecs = embeddedFiles.GetAsArray(PdfName.NAMES);
+                    PdfArray filespecs = embeddedFiles.GetAsArray(PdfName.Names);
 
                     for (int i = 0; i < filespecs.Size; i++)
                     {
@@ -66,7 +66,7 @@ namespace RIFF.Interfaces.Formats.PDF
 
                         foreach (PdfName key in file.Keys)
                         {
-                            prstream = (PRStream)PdfReader.GetPdfObject(file.GetAsIndirectObject(key));
+                            prstream = (PrStream)PdfReader.GetPdfObject(file.GetAsIndirectObject(key));
 
                             fContent = new Attachment();
                             fContent.Name = fileArray.GetAsString(key).ToString();
@@ -89,25 +89,25 @@ namespace RIFF.Interfaces.Formats.PDF
             for (int page = 1; page <= reader.NumberOfPages; page++)
             {
                 var cpage = reader.GetPageN(page);
-                var content = cpage.Get(PdfName.CONTENTS);
+                var content = cpage.Get(PdfName.Contents);
 
-                var ir = (PRIndirectReference)content;
+                var ir = (PrIndirectReference)content;
 
                 var value = reader.GetPdfObject(ir.Number);
 
                 if (value.IsStream())
                 {
-                    PRStream prstream = (PRStream)value;
+                    PrStream prstream = (PrStream)value;
 
                     var streamBytes = PdfReader.GetStreamBytes(prstream);
 
-                    var tokenizer = new PRTokeniser(new RandomAccessFileOrArray(streamBytes));
+                    var tokenizer = new PrTokeniser(new RandomAccessFileOrArray(streamBytes));
 
                     try
                     {
                         while (tokenizer.NextToken())
                         {
-                            if (tokenizer.TokenType == PRTokeniser.TK_STRING)
+                            if (tokenizer.TokenType == PrTokeniser.TK_STRING)
                             {
                                 string str = tokenizer.StringValue;
                                 sb.AppendLine(str);

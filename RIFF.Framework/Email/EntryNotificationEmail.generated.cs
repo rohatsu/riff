@@ -17,7 +17,7 @@ namespace RIFF.Framework
     using System.Text;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    public partial class EntryNotificationEmail : RazorEngine.Templating.TemplateBase<RIFF.Framework.RFEntryNotificationEmail>
+    public partial class EntryNotificationEmail : RIFF.Framework.RFTemplateBase<RIFF.Framework.RFEntryNotificationEmail>
     {
 #line hidden
 

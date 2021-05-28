@@ -17,7 +17,7 @@ namespace RIFF.Framework
     using System.Text;
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
-    public partial class ImageEmail : RazorEngine.Templating.TemplateBase<System.Drawing.Image>
+    public partial class ImageEmail : RIFF.Framework.RFTemplateBase<System.Drawing.Image>
     {
 #line hidden
 

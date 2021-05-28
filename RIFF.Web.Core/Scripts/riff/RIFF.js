@@ -111,6 +111,48 @@ var RIFF;
                 return DateBox;
             }(Control));
             Core.DateBox = DateBox;
+            var TextBox = /** @class */ (function (_super) {
+                __extends(TextBox, _super);
+                function TextBox() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                TextBox.prototype.defaults = function () {
+                    return {
+                        activeStateEnabled: true,
+                        hoverStateEnabled: true,
+                    };
+                };
+                return TextBox;
+            }(Control));
+            Core.TextBox = TextBox;
+            var Button = /** @class */ (function (_super) {
+                __extends(Button, _super);
+                function Button() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                Button.prototype.defaults = function () {
+                    return {
+                        activeStateEnabled: true,
+                        hoverStateEnabled: true,
+                    };
+                };
+                return Button;
+            }(Control));
+            Core.Button = Button;
+            var DropDownBox = /** @class */ (function (_super) {
+                __extends(DropDownBox, _super);
+                function DropDownBox() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                DropDownBox.prototype.defaults = function () {
+                    return {
+                        activeStateEnabled: true,
+                        hoverStateEnabled: true,
+                    };
+                };
+                return DropDownBox;
+            }(Control));
+            Core.DropDownBox = DropDownBox;
         })(Core = Web.Core || (Web.Core = {}));
     })(Web = RIFF.Web || (RIFF.Web = {}));
 })(RIFF || (RIFF = {}));
