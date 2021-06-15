@@ -57,11 +57,11 @@ namespace RIFF.Core
 
             // create worker threads
             _workerThreads = new List<RFWorkerThreadRabbitMQ>();
-            var rabbitSink = new RFEventSinkRabbitMQ(_channel, _eventExchange); // has remote proxies for sending back events
-
             for (int i = 0; i < _workerThreadsCount; i++)
             {
-                var t = new RFWorkerThreadRabbitMQ(_context, _channel, _workerQueue, rabbitSink);
+                var threadChannel = _connection.CreateModel();
+                var rabbitSink = new RFEventSinkRabbitMQ(threadChannel, _eventExchange); // has remote proxies for sending back events
+                var t = new RFWorkerThreadRabbitMQ(_context, threadChannel, _workerQueue, rabbitSink);
                 t.StartThread();
                 _workerThreads.Add(t);
             }

@@ -46,6 +46,7 @@ namespace RIFF.Core
         protected override void Stop()
         {
             _channel.BasicCancel(_consumerTag);
+            _channel.Close();
             _thread.Interrupt();
         }
 

@@ -36,6 +36,12 @@ namespace RIFF.Framework
 
                 switch(tokens[0])
                 {
+                    case "savetest":
+                        {
+                            _context.SaveDocument(new RFGenericCatalogKey { Name = "text", Plane = RFPlane.User, Root = "RHT", StoreType = RFStoreType.Document },
+                                new RFRawReport(), true);
+                            break;
+                        }
                     case "importupdates":
                         {
                             if(tokens.Length < 2)

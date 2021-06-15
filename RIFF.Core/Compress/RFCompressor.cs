@@ -67,10 +67,9 @@ namespace RIFF.Core
             else
             {
                 result = new byte[outputLength];
-                LZ4.LZ4Codec.Decode(
+                K4os.Compression.LZ4.LZ4Codec.Decode(
                     inputBuffer, inputOffset + WRAP_OFFSET_8, inputLength,
-                    result, 0, outputLength,
-                    true);
+                    result, 0, outputLength);
             }
 
             return result;
@@ -88,17 +87,8 @@ namespace RIFF.Core
             var outputLength = inputLength;
             var outputBuffer = new byte[outputLength];
 
-            if (inputLength > 100000)
-            {
-                // high compression for large sets only
-                outputLength = LZ4.LZ4Codec.EncodeHC(
-                    inputBuffer, inputOffset, inputLength, outputBuffer, 0, outputLength);
-            }
-            else
-            {
-                outputLength = LZ4.LZ4Codec.Encode(
-                    inputBuffer, inputOffset, inputLength, outputBuffer, 0, outputLength);
-            }
+            outputLength = K4os.Compression.LZ4.LZ4Codec.Encode(
+                inputBuffer, inputOffset, inputLength, outputBuffer, 0, outputLength);
 
             byte[] result;
 
