@@ -30,6 +30,7 @@ namespace RIFF.Core
             _consumer.Received += (ch, ea) =>
             {
                 _queue_ReceiveCompleted(_formatter.Read(ea.Body));
+                _channel.BasicAck(ea.DeliveryTag, false);
             };
         }
 
@@ -39,7 +40,7 @@ namespace RIFF.Core
 
         protected override void Run()
         {
-            _consumerTag = _channel.BasicConsume(_workerQueue, true, _consumer);
+            _consumerTag = _channel.BasicConsume(_workerQueue, false, _consumer);
             _context.CancellationTokenSource.Token.WaitHandle.WaitOne();
         }
 
